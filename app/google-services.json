@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "920540131081",
+    "firebase_url": "https://pixelfighter-ws1718.firebaseio.com",
+    "project_id": "pixelfighter-ws1718",
+    "storage_bucket": "pixelfighter-ws1718.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:920540131081:android:6b1500dc7ae89b64",
+        "android_client_info": {
+          "package_name": "de.lmu.ifi.pixelfighter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "920540131081-04nik977sskmucr4i5ug4b8jqolt9mk3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "de.lmu.ifi.pixelfighter",
+            "certificate_hash": "1c25e6c9aff39b7e27bacc7dbb00d6c0d8c43122"
+          }
+        },
+        {
+          "client_id": "920540131081-ks013oeo6reiv2ovfdcm2mmo6l56v72o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCg7CEHHSQiy-fXRFcuYiKkCrYsOoJ3llw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "920540131081-ks013oeo6reiv2ovfdcm2mmo6l56v72o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
