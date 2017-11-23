@@ -1,8 +1,5 @@
 package de.lmu.ifi.pixelfighter.models;
 
-import com.google.firebase.database.Exclude;
-import com.google.firebase.database.IgnoreExtraProperties;
-
 /**
  * Created by michael on 23.11.17.
  */
@@ -10,6 +7,19 @@ import com.google.firebase.database.IgnoreExtraProperties;
 public class Player extends BaseKeyModel {
 
     private String username;
-    private String activeGameKey;
 
+    public Player() {
+    }
+
+    public Player(String username) {
+        this.username = username;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 }

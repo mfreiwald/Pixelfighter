@@ -1,7 +1,5 @@
 package de.lmu.ifi.pixelfighter.services.firebase;
 
-import android.util.Log;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -12,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.lmu.ifi.pixelfighter.models.BaseModel;
-import de.lmu.ifi.pixelfighter.models.callbacks.Callback;
 import de.lmu.ifi.pixelfighter.services.firebase.callbacks.ServiceCallback;
 
 /**
@@ -34,12 +31,18 @@ public abstract class BaseService<Model extends BaseModel> {
         return model;
     }
 
+    protected Model wrapModel(DataSnapshot dataSnapshot) {
+        Model noKey = wrap(dataSnapshot);
+        if(noKey == null) return null;
+        return wrapKey(dataSnapshot, noKey);
+    }
+
     protected void findSingle(String key, final ServiceCallback<Model> callback) {
         dbRef.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Model m = wrapKey(dataSnapshot, wrap(dataSnapshot));
-                if(m == null) callback.failure("Error");
+                Model m = wrapModel(dataSnapshot);
+                if(m == null) callback.failure("Model is null");
                 else callback.success(m);
             }
 
@@ -56,7 +59,7 @@ public abstract class BaseService<Model extends BaseModel> {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Model> result = new ArrayList<>();
                 for(DataSnapshot child : dataSnapshot.getChildren()) {
-                    Model childObj = wrapKey(child, wrap(child));
+                    Model childObj = wrapModel(child);
                     result.add(childObj);
                 }
                 callback.success(result);
@@ -68,6 +71,5 @@ public abstract class BaseService<Model extends BaseModel> {
             }
         });
     }
-
 
 }

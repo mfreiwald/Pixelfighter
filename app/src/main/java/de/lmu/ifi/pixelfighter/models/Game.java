@@ -1,5 +1,7 @@
 package de.lmu.ifi.pixelfighter.models;
 
+import com.google.firebase.database.Exclude;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
@@ -8,11 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.lmu.ifi.pixelfighter.models.callbacks.Callback;
-import de.lmu.ifi.pixelfighter.models.callbacks.GameCallback;
-import de.lmu.ifi.pixelfighter.services.firebase.GameService;
-import de.lmu.ifi.pixelfighter.services.firebase.callbacks.ServiceCallback;
-
 /**
  * Created by michael on 23.11.17.
  */
@@ -20,12 +17,21 @@ import de.lmu.ifi.pixelfighter.services.firebase.callbacks.ServiceCallback;
 public class Game extends BaseKeyModel {
 
     private Board board = new Board();
-    private Map<String, List<Player>> players = new HashMap<>();
+    private Map<String, List<String>> players = new HashMap<>();
     private boolean isActive = true;
     private String startTime;
     private String endTime;
 
     public Game() {
+        this.players.put(Team.Blue.name(), new ArrayList<String>());
+        this.players.put(Team.Green.name(), new ArrayList<String>());
+        this.players.put(Team.Red.name(), new ArrayList<String>());
+        this.players.put(Team.Yellow.name(), new ArrayList<String>());
+    }
+
+    public Game(Board board) {
+        this();
+        this.board = board;
     }
 
     public Board getBoard() {
@@ -36,11 +42,11 @@ public class Game extends BaseKeyModel {
         this.board = board;
     }
 
-    public Map<String, List<Player>> getPlayers() {
+    public Map<String, List<String>> getPlayers() {
         return players;
     }
 
-    public void setPlayers(Map<String, List<Player>> players) {
+    public void setPlayers(Map<String, List<String>> players) {
         this.players = players;
     }
 
@@ -68,6 +74,7 @@ public class Game extends BaseKeyModel {
         this.endTime = endTime;
     }
 
+    @Exclude
     public DateTime getTimeRemaining() {
         DateTime now = DateTime.now(DateTimeZone.UTC);
         DateTime end = new DateTime(endTime);
@@ -75,4 +82,5 @@ public class Game extends BaseKeyModel {
         DateTime remaining = new DateTime(remainingMillis);
         return remaining;
     }
+
 }
