@@ -1,10 +1,4 @@
-package de.lmu.ifi.pixelfighter.demo3;
-
-import android.graphics.Color;
-
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.IgnoreExtraProperties;
+package de.lmu.ifi.pixelfighter.demo.demo3;
 
 /**
  * Created by michael on 20.11.17.

@@ -1,4 +1,4 @@
-package de.lmu.ifi.pixelfighter.demo3;
+package de.lmu.ifi.pixelfighter.demo.demo3;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -16,7 +16,7 @@ import de.lmu.ifi.pixelfighter.R;
 
 public class GameActivity extends AppCompatActivity {
 
-    private Game game = MainActivity.game;
+    private Game game = null; //MainActivity.game;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

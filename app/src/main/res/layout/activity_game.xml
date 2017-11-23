@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:columnCount="7"
-    tools:context="de.lmu.ifi.pixelfighter.demo3.GameActivity">
+    tools:context=".demo.demo3.GameActivity">
 
     <Button
         android:layout_width="50dp"

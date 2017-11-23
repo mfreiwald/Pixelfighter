@@ -1,35 +1,15 @@
 package de.lmu.ifi.pixelfighter;
 
-import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.List;
-
-import de.lmu.ifi.pixelfighter.demo.view.GameSurface;
-import de.lmu.ifi.pixelfighter.demo2.GameView;
-import de.lmu.ifi.pixelfighter.demo3.Board;
-import de.lmu.ifi.pixelfighter.demo3.Game;
-import de.lmu.ifi.pixelfighter.demo3.GameActivity;
-import de.lmu.ifi.pixelfighter.demo3.Pixel;
-import de.lmu.ifi.pixelfighter.demo3.Team;
+import de.lmu.ifi.pixelfighter.models.Game;
+import de.lmu.ifi.pixelfighter.models.callbacks.Callback;
+import de.lmu.ifi.pixelfighter.services.firebase.GameService;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
     //private GameView gameSurface;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-    public static Game game;
+    //public static Game game;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +35,43 @@ public class MainActivity extends AppCompatActivity {
         //gameSurface = new GameView(this);
         //this.setContentView(gameSurface);
 
+
+        GameService.joinGame(new Callback<Game>() {
+            @Override
+            public void onLoaded(Game game) {
+                Log.d("JoinGame", "Join game " + game.getKey());
+            }
+
+            @Override
+            public void onError(String message) {
+                Log.d("JoinGame", message);
+            }
+        });
+
+        /*
+        de.lmu.ifi.pixelfighter.demo.demo3.board.Board.loadBoardFromFB(new de.lmu.ifi.pixelfighter.demo.demo3.board.Board.Result<de.lmu.ifi.pixelfighter.demo.demo3.board.Board>() {
+            @Override
+            public void value(de.lmu.ifi.pixelfighter.demo.demo3.board.Board result) {
+                Log.d("Main", "Board = " + result);
+
+
+                result.setPixel(0, 0, de.lmu.ifi.pixelfighter.demo.demo3.board.Board.Team.Yellow, "miexec", new de.lmu.ifi.pixelfighter.demo.demo3.board.Board.Callback() {
+                    @Override
+                    public void success() {
+                        Log.d("Main", "Set pixel was successfull");
+                    }
+
+                    @Override
+                    public void failure(Error error, DatabaseError databaseError) {
+                        Log.d("Main", "Set pixel failure. " + error);
+
+                    }
+
+                });
+            }
+        });
+        */
+
     }
 
     @Override
@@ -68,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startGame(View view) {
-
+        /*
         final String username = ((EditText)findViewById(R.id.userName)).getText().toString();
 
         final String teamName;
@@ -120,16 +137,17 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
+        */
     }
 
     public void resetGameBoard(View view) {
-
+        /*
         Board board = new Board();
         board.reset();
 
         DatabaseReference myRef = database.getReference("board");
         myRef.setValue(board);
+        */
     }
 
 }

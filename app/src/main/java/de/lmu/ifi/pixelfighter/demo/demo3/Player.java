@@ -1,4 +1,4 @@
-package de.lmu.ifi.pixelfighter.demo3;
+package de.lmu.ifi.pixelfighter.demo.demo3;
 
 /**
  * Created by michael on 21.11.17.

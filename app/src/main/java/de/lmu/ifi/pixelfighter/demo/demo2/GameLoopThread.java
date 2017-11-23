@@ -1,4 +1,4 @@
-package de.lmu.ifi.pixelfighter.demo2;
+package de.lmu.ifi.pixelfighter.demo.demo2;
 
 import android.graphics.Canvas;
 

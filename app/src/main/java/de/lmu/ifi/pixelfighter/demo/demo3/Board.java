@@ -1,6 +1,4 @@
-package de.lmu.ifi.pixelfighter.demo3;
-
-import android.graphics.Color;
+package de.lmu.ifi.pixelfighter.demo.demo3;
 
 import java.util.ArrayList;
 import java.util.List;

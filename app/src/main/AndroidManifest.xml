@@ -3,6 +3,7 @@
     package="de.lmu.ifi.pixelfighter">
 
     <application
+        android:name=".DefaultApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -16,7 +17,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".demo3.GameActivity"></activity>
+        <activity android:name=".demo.demo3.GameActivity"></activity>
     </application>
 
 </manifest>
