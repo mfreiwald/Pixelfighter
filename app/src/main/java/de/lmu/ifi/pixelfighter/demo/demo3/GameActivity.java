@@ -57,11 +57,11 @@ public class GameActivity extends AppCompatActivity {
             Pixel pixel = pixelList.get(i);
             Button button = (Button)rootView.getChildAt(i);
             if(pixel.getTeamName().equals("red")) {
-                button.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
+                button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.btn_red)));
             } else if (pixel.getTeamName().equals("green")) {
-                button.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN));
+                button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.btn_green)));
             } else {
-                button.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY));
+                button.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
             }
 
         }

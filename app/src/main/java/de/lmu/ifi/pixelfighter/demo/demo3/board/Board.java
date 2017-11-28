@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
@@ -128,12 +129,28 @@ public class Board {
     }
 
     public static void loadBoardFromFB(final Result<Board> result) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference("board3").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Board board = dataSnapshot.getValue(Board.class);
-                result.value(board);
+                try {
+                    Board board = dataSnapshot.getValue(Board.class);
+                    if(board == null) {
+                        Board b = new Board();
+                        b.reset(6, 9);
+                        database.getReference("board3").setValue(b);
+                        loadBoardFromFB(result);
+                    } else {
+                        result.value(board);
+                    }
+                } catch (DatabaseException e) {
+                    Board b = new Board();
+                    b.reset(6, 9);
+                    database.getReference("board3").setValue(b);
+                    loadBoardFromFB(result);
+                }
+
+
             }
 
             @Override

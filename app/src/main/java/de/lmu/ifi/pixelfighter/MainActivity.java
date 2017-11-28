@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
+        /*
         de.lmu.ifi.pixelfighter.demo.demo3.board.Board.loadBoardFromFB(new de.lmu.ifi.pixelfighter.demo.demo3.board.Board.Result<de.lmu.ifi.pixelfighter.demo.demo3.board.Board>() {
             @Override
             public void value(de.lmu.ifi.pixelfighter.demo.demo3.board.Board result) {
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
-
+*/
 
     }
 

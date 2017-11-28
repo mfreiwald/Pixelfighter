@@ -49,6 +49,8 @@ public class Game {
     }
 
     public void setPixel(final int x, final int y, final Callback callback) {
+        board.setPixel(x, y, teamName);
+        callback.success();
         database.getReference("board").runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
