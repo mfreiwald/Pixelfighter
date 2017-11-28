@@ -96,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
         AuthenticationService.getInstance().register("michael", new Callback<Player>() {
             @Override
             public void onLoaded(Player player) {
-                Toast.makeText(MainActivity.this, "Successful registed. Your Key="+player.getKey(), Toast.LENGTH_LONG).show();
                 Log.d("Toast", "Successful registed. Your Key="+player.getKey());
 
                 settings.setPlayerKey(player.getKey());
@@ -106,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onError(String message) {
-                Toast.makeText(MainActivity.this, "Error: " + message, Toast.LENGTH_LONG).show();
                 Log.d("Toast", "Error: " + message);
 
             }
@@ -124,7 +122,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onError(String message) {
-                Toast.makeText(MainActivity.this, "Error: " + message, Toast.LENGTH_LONG).show();
                 Log.d("Toast", "Error: " + message);
                 settings.setPlayerKey("");
                 register();
@@ -139,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
             GameService.getInstance().searchAndJoinGame(player, Team.Red, new Callback<Game>() {
                 @Override
                 public void onLoaded(Game game) {
-                    Toast.makeText(MainActivity.this, "Your are playing now on Game " + game.getKey(), Toast.LENGTH_LONG).show();
                     Log.d("Toast", "Your are playing now on Game " + game.getKey());
                     settings.setActiveGameKey(game.getKey());
                 }
@@ -147,7 +143,6 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onError(String message) {
                     Log.d("Toast", "Error: " + message);
-                    Toast.makeText(MainActivity.this, "Error: " + message, Toast.LENGTH_LONG).show();
                 }
             });
         } else {

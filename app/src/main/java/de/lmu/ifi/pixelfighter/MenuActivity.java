@@ -3,6 +3,9 @@ package de.lmu.ifi.pixelfighter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
+import android.util.Log;
+
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MenuActivity extends AppCompatActivity {
@@ -11,6 +14,7 @@ public class MenuActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
+        ButterKnife.bind(this);
     }
 
     @OnClick(R.id.button_desc)
@@ -27,7 +31,8 @@ public class MenuActivity extends AppCompatActivity {
 
     @OnClick(R.id.button_game)
     public void onClickGame() {
-        Intent intentGame = new Intent(MenuActivity.this, StatisticsActivity.class);
+        Log.d("Menu", "Start Main Activity");
+        Intent intentGame = new Intent(MenuActivity.this, MainActivity.class);
         startActivity(intentGame);
     }
 
