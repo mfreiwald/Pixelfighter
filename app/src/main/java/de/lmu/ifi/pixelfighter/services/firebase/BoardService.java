@@ -6,4 +6,7 @@ package de.lmu.ifi.pixelfighter.services.firebase;
 
 public class BoardService {
 
+    BoardService() {
+        
+    }
 }
