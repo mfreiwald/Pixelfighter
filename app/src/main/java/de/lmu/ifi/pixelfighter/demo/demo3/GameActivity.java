@@ -2,8 +2,8 @@ package de.lmu.ifi.pixelfighter.demo.demo3;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +16,19 @@ import de.lmu.ifi.pixelfighter.R;
 
 public class GameActivity extends AppCompatActivity {
 
-    private Game game = null; //MainActivity.game;
+    private Game game = MainActivity.game;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         updateView();
+        game.setUpdateCallback(new Game.Callback() {
+            @Override
+            public void success() {
+                updateView();
+            }
+        });
     }
 
 

@@ -17,6 +17,8 @@ public class Game {
 
     private Board board;
     private String teamName;
+    private Callback updateCallback;
+
 
     public Game(Board board, String teamName) {
         this.board = board;
@@ -26,6 +28,8 @@ public class Game {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Game.this.board = dataSnapshot.getValue(Board.class);
+                if(updateCallback != null)
+                    updateCallback.success();
             }
 
             @Override
@@ -33,6 +37,10 @@ public class Game {
 
             }
         });
+    }
+
+    public void setUpdateCallback(Callback updateCallback) {
+        this.updateCallback = updateCallback;
     }
 
 
