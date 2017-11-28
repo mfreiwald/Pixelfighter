@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:columnCount="7"
+    android:background="@color/background"
     tools:context=".demo.demo3.GameActivity">
 
     <Button
