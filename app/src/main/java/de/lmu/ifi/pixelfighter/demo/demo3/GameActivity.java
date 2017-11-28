@@ -60,6 +60,8 @@ public class GameActivity extends AppCompatActivity {
                 button.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
             } else if (pixel.getTeamName().equals("green")) {
                 button.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN));
+            } else {
+                button.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY));
             }
 
         }
