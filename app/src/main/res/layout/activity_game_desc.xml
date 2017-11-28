@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context="de.lmu.ifi.pixelfighter.GameDescActivity"
+android:orientation="vertical">
+
+
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/desc"
+    android:textSize="30sp"
+    android:layout_gravity="center"
+    android:layout_marginTop="@dimen/top_margin"
+    />
+
+<ImageView
+    android:id="@+id/imageView"
+    android:layout_width="@dimen/img_width"
+    android:layout_height="@dimen/img_height"
+    app:srcCompat="@drawable/logo"
+    android:layout_gravity="center" />
+
+<TextView
+    android:id="@+id/textView"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="To play the game follow these steps" />
+
+
+</LinearLayout>
+

@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Pixelfighter</string>
+    <string name="main">MAIN MENU</string>
+    <string name="stats">YOUR STATS</string>
+    <string name="desc">GAME DESCRIPTION</string>
+    <string name="buttonGame">GAME</string>
+    <string name="buttonDesc">GAME DESCRIPTION</string>
+    <string name="buttonStats">STATISTICS</string>
+    <string name="buttonReset">RESET</string>
+    <string name="title_activity_game_desc">GameDescActivity</string>
 </resources>
