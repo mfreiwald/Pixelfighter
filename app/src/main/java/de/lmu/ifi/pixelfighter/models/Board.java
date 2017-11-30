@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * Created by michael on 23.11.17.
  */
 
-public class Board {
+public class Board extends BaseModel {
 
     private int width;
     private int height;
