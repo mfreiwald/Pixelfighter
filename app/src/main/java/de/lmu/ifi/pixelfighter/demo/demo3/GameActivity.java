@@ -33,19 +33,21 @@ public class GameActivity extends AppCompatActivity {
 
 
     public void click(View view) {
-        String tag = (String)view.getTag();
+        String tag = (String) view.getTag();
 
         String[] split = tag.split(",");
         int x = Integer.parseInt(split[0]);
         int y = Integer.parseInt(split[1]);
 
-        Log.d("Click", "On view ("+x+","+y+")");
-        game.setPixel(x, y, new Game.Callback() {
-            @Override
-            public void success() {
-                updateView();
-            }
-        });
+        Log.d("Click", "On view (" + x + "," + y + ")");
+        if (game.getBoard().getPixelList().get(Board.getListPosFromCoords(x, y)).teamName.isEmpty()) {
+            game.setPixel(x, y, new Game.Callback() {
+                @Override
+                public void success() {
+                    updateView();
+                }
+            });
+        }
     }
 
     private void updateView() {
@@ -53,10 +55,10 @@ public class GameActivity extends AppCompatActivity {
                 .findViewById(android.R.id.content)).getChildAt(0);
 
         List<Pixel> pixelList = this.game.getBoard().getPixelList();
-        for(int i=0; i<pixelList.size(); i++) {
+        for (int i = 0; i < pixelList.size(); i++) {
             Pixel pixel = pixelList.get(i);
-            Button button = (Button)rootView.getChildAt(i);
-            if(pixel.getTeamName().equals("red")) {
+            Button button = (Button) rootView.getChildAt(i);
+            if (pixel.getTeamName().equals("red")) {
                 button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.btn_red)));
             } else if (pixel.getTeamName().equals("green")) {
                 button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.btn_green)));
