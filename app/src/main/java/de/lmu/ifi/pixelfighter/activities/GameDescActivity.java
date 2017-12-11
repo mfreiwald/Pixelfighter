@@ -1,25 +1,19 @@
-package de.lmu.ifi.pixelfighter;
+package de.lmu.ifi.pixelfighter.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
 import butterknife.ButterKnife;
-import butterknife.OnClick;
+import de.lmu.ifi.pixelfighter.R;
 
-public class StatisticsActivity extends AppCompatActivity {
+public class GameDescActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_statistics);
+        setContentView(R.layout.activity_game_desc);
+        setTitle("");
         ButterKnife.bind(this);
-
     }
-
-    @OnClick(R.id.button_reset)
-    public void onClickReset() {
-        //Delete Statistics from Firebase
-    }
-
 }

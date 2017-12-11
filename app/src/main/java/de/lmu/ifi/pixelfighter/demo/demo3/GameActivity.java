@@ -11,7 +11,7 @@ import android.widget.Button;
 
 import java.util.List;
 
-import de.lmu.ifi.pixelfighter.MainActivity;
+import de.lmu.ifi.pixelfighter.activities.MainActivity;
 import de.lmu.ifi.pixelfighter.R;
 
 public class GameActivity extends AppCompatActivity {

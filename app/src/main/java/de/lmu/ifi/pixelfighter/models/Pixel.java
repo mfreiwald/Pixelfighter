@@ -52,4 +52,14 @@ public class Pixel {
     public void setY(int y) {
         this.y = y;
     }
+
+    @Override
+    public String toString() {
+        return "Pixel{" +
+                "team=" + team +
+                ", playerKey='" + playerKey + '\'' +
+                ", x=" + x +
+                ", y=" + y +
+                '}';
+    }
 }

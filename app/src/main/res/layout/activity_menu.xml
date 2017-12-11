@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="de.lmu.ifi.pixelfighter.MenuActivity"
+    tools:context="de.lmu.ifi.pixelfighter.activities.MenuActivity"
     android:background="@color/colorAccent"
     android:theme="@style/AppTheme.AppBarOverlay"
     android:orientation="vertical">

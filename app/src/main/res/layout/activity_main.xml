@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/background"
-    tools:context="de.lmu.ifi.pixelfighter.MainActivity">
+    tools:context="de.lmu.ifi.pixelfighter.activities.MainActivity">
 
 
     <TextView

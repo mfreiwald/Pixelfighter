@@ -1,4 +1,4 @@
-package de.lmu.ifi.pixelfighter;
+package de.lmu.ifi.pixelfighter.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -16,6 +15,7 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
+import de.lmu.ifi.pixelfighter.R;
 import de.lmu.ifi.pixelfighter.demo.demo3.Board;
 import de.lmu.ifi.pixelfighter.demo.demo3.GameActivity;
 import de.lmu.ifi.pixelfighter.models.Game;
@@ -24,6 +24,7 @@ import de.lmu.ifi.pixelfighter.models.Team;
 import de.lmu.ifi.pixelfighter.models.callbacks.Callback;
 import de.lmu.ifi.pixelfighter.models.callbacks.GameCallback;
 import de.lmu.ifi.pixelfighter.services.android.Settings;
+import de.lmu.ifi.pixelfighter.services.android.Singleton;
 import de.lmu.ifi.pixelfighter.services.firebase.AuthenticationService;
 import de.lmu.ifi.pixelfighter.services.firebase.GameService;
 
@@ -131,13 +132,20 @@ public class MainActivity extends AppCompatActivity {
 
     private void step1(final Player player) {
 
+        final Intent intent = new Intent(this, de.lmu.ifi.pixelfighter.activities.GameActivity.class);
+
+        Singleton.getInstance().setPlayerKey(player.getKey());
+        Singleton.getInstance().setTeam(Team.Red);
         String gameKey = settings.getActiveGameKey();
         if(gameKey == null || gameKey.isEmpty()) {
+            // ToDo: choose team!
             GameService.getInstance().searchAndJoinGame(player, Team.Red, new Callback<Game>() {
                 @Override
                 public void onLoaded(Game game) {
                     Log.d("Toast", "Your are playing now on Game " + game.getKey());
                     settings.setActiveGameKey(game.getKey());
+                    Singleton.getInstance().setGame(game);
+                    startActivity(intent);
                 }
 
                 @Override
@@ -151,11 +159,27 @@ public class MainActivity extends AppCompatActivity {
                 public void onClosed() {
                     Log.d("Toast", "Your Game was already closed");
                     // Search for new game?
+                    GameService.getInstance().searchAndJoinGame(player, Team.Red, new Callback<Game>() {
+                        @Override
+                        public void onLoaded(Game game) {
+                            Log.d("Toast", "Your are playing now on Game " + game.getKey());
+                            settings.setActiveGameKey(game.getKey());
+                            Singleton.getInstance().setGame(game);
+                            startActivity(intent);
+                        }
+
+                        @Override
+                        public void onError(String message) {
+                            Log.d("Toast", "Error: " + message);
+                        }
+                    });
                 }
 
                 @Override
                 public void onLoaded(Game game) {
                     Log.d("Toast", "You loaded Game " + game.getKey());
+                    Singleton.getInstance().setGame(game);
+                    startActivity(intent);
                 }
 
                 @Override
@@ -180,8 +204,12 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
     }
 
+
+
     public void startGame(View view) {
 
+
+        /*
         final String username = ((EditText)findViewById(R.id.userName)).getText().toString();
 
         final String teamName;
@@ -233,17 +261,17 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
+        */
     }
 
     public void resetGameBoard(View view) {
-
+        /*
         Board board = new Board();
         board.reset();
 
         DatabaseReference myRef = database.getReference("board");
         myRef.setValue(board);
-
+        */
     }
 
 }

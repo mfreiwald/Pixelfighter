@@ -1,4 +1,4 @@
-package de.lmu.ifi.pixelfighter;
+package de.lmu.ifi.pixelfighter.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,6 +7,7 @@ import android.util.Log;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.lmu.ifi.pixelfighter.R;
 
 public class MenuActivity extends AppCompatActivity {
 
