@@ -1,9 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="de.lmu.ifi.pixelfighter.activities.ChooseTeamActivity">
 
-</android.support.constraint.ConstraintLayout>
+
+    <Button
+        android:id="@+id/btnRandom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/btn_none"
+        android:onClick="selectedTeam"
+        android:text="Random Team" />
+
+    <Button
+        android:id="@+id/btnRed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/btn_red"
+        android:onClick="selectedTeam"
+        android:text="Team Red" />
+
+    <Button
+        android:id="@+id/btnBlue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/btn_blue"
+        android:onClick="selectedTeam"
+        android:text="Team Blue" />
+
+    <Button
+        android:id="@+id/btnGreen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/btn_green"
+        android:onClick="selectedTeam"
+        android:text="Team Green" />
+
+    <Button
+        android:id="@+id/btnYellow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/btn_yellow"
+        android:onClick="selectedTeam"
+        android:text="Team Yellow" />
+
+</LinearLayout>

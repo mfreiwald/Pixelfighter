@@ -11,6 +11,8 @@ import de.lmu.ifi.pixelfighter.models.Team;
 
 public class Rules {
 
+    private static boolean ALLOW_DIAGONAL = false;
+
     public static boolean validate(final Board board, final Team team, final int x, final int y) {
 
         Log.d("Rules", "Validate " + team + " at ("+x+","+y+")");
@@ -51,12 +53,24 @@ public class Rules {
         // - - -
         // - x -
         // - - -
+
+
         for(int _x = this.x-1; _x <= this.x+1; _x++) {
             for(int _y = this.y-1; _y <= this.y+1; _y++) {
                 if(_x < 0 || _x >= this.board.getWidth())
                     continue;
                 if(_y < 0 || _y >= this.board.getHeight())
                     continue;
+
+                if(!ALLOW_DIAGONAL) {
+                    if(
+                            (_x == this.x-1 && _y == this.y-1) ||
+                            (_x == this.x+1 && _y == this.y-1) ||
+                            (_x == this.x-1 && _y == this.y+1) ||
+                            (_x == this.x+1 && _y == this.y+1)
+                            )
+                        continue;
+                }
 
                 Log.d("Rules:isAtOwnTeam", "Check field ("+_x+","+_y+")");
                 if(this.board.getPixels().get(_x).get(_y).getTeam().equals(this.team))

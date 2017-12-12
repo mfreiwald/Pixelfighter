@@ -32,11 +32,6 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = "MainActivity";
 
-    //private GameView gameSurface;
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-
-    public static de.lmu.ifi.pixelfighter.demo.demo3.Game game;
-
     Settings settings;
 
     @Override
@@ -44,16 +39,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Set fullscreen
-        //this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-        //        WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        // Set No Title
-        //this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-        //gameSurface = new GameView(this);
-        //this.setContentView(gameSurface);
-
+        // check for settings
         settings = new Settings();
         String key = settings.getPlayerKey();
         if(key == null || key.isEmpty()) {
@@ -61,39 +48,15 @@ public class MainActivity extends AppCompatActivity {
         } else {
             login(key);
         }
-
-
-
-
-        /*
-        de.lmu.ifi.pixelfighter.demo.demo3.board.Board.loadBoardFromFB(new de.lmu.ifi.pixelfighter.demo.demo3.board.Board.Result<de.lmu.ifi.pixelfighter.demo.demo3.board.Board>() {
-            @Override
-            public void value(de.lmu.ifi.pixelfighter.demo.demo3.board.Board result) {
-                Log.d("Main", "Board = " + result);
-
-
-                result.setPixel(0, 0, de.lmu.ifi.pixelfighter.demo.demo3.board.Board.Team.Yellow, "miexec", new de.lmu.ifi.pixelfighter.demo.demo3.board.Board.Callback() {
-                    @Override
-                    public void success() {
-                        Log.d("Main", "Set pixel was successfull");
-                    }
-
-                    @Override
-                    public void failure(Error error, DatabaseError databaseError) {
-                        Log.d("Main", "Set pixel failure. " + error);
-
-                    }
-
-                });
-            }
-        });
-*/
-
     }
 
+
+
+
+
+
+
     private void register() {
-        String android_id = android.provider.Settings.Secure.getString(this.getContentResolver(),
-                android.provider.Settings.Secure.ANDROID_ID);
         AuthenticationService.getInstance().register("michael", new Callback<Player>() {
             @Override
             public void onLoaded(Player player) {

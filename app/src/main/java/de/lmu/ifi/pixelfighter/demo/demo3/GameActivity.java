@@ -16,7 +16,7 @@ import de.lmu.ifi.pixelfighter.R;
 
 public class GameActivity extends AppCompatActivity {
 
-    private Game game = MainActivity.game;
+    private Game game;// = MainActivity.game;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
