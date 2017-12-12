@@ -5,10 +5,14 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import java.util.List;
+import java.util.Map;
+
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.lmu.ifi.pixelfighter.R;
 import de.lmu.ifi.pixelfighter.models.Game;
+import de.lmu.ifi.pixelfighter.models.Team;
 import de.lmu.ifi.pixelfighter.models.callbacks.GameCallback;
 import de.lmu.ifi.pixelfighter.services.android.Settings;
 import de.lmu.ifi.pixelfighter.services.android.Singleton;
@@ -60,6 +64,16 @@ public class MenuActivity extends AppCompatActivity {
                 public void onLoaded(Game game) {
                     Log.d("Toast", "You loaded Game " + game.getKey());
                     Singleton.getInstance().setGame(game);
+
+                    for(Map.Entry<String, List<String>> teams : game.getPlayers().entrySet()) {
+                        if(teams.getValue().contains(Singleton.getInstance().getPlayer().getKey())) {
+                            Singleton.getInstance().setTeam(Team.valueOf(teams.getKey()));
+                            break;
+                        }
+                    }
+
+
+
                     Intent intent = new Intent(MenuActivity.this, GameActivity.class);
                     startActivity(intent);
                 }

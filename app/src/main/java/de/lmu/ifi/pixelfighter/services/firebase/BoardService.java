@@ -75,6 +75,10 @@ public class BoardService extends BaseService<Board> {
         // ToDo: get current user data
         Player player = Singleton.getInstance().getPlayer();
         final Team team = Singleton.getInstance().getTeam();
+        if(player == null || team == null) {
+            callback.failure("Player or Team is null");
+            return;
+        }
 
         final Pixel newPixel = new Pixel();
         newPixel.setPlayerKey(player.getKey());

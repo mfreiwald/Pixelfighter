@@ -74,6 +74,11 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
     }
 
     @Override
+    public void onBackPressed() {
+        
+    }
+
+    @Override
     public void onUpdate(Pixel pixel) {
         Log.d("GameActivity", "Pixel Update " + pixel);
         updateButton(pixel.getTeam(), pixel.getX(), pixel.getY());
@@ -106,6 +111,7 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
         for(int x=0; x<this.boardService.getBoard().getWidth(); x++) {
             for(int y=0; y<this.boardService.getBoard().getHeight(); y++) {
                 Pixel pixel = this.boardService.getBoard().getPixels().get(x).get(y);
+                Log.d("GameActivity", "Pixel: " + pixel);
                 updateButton(pixel.getTeam(), pixel.getX(), pixel.getY());
             }
         }
