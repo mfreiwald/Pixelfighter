@@ -8,6 +8,11 @@ import android.util.Log;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.lmu.ifi.pixelfighter.R;
+import de.lmu.ifi.pixelfighter.models.Game;
+import de.lmu.ifi.pixelfighter.models.callbacks.GameCallback;
+import de.lmu.ifi.pixelfighter.services.android.Settings;
+import de.lmu.ifi.pixelfighter.services.android.Singleton;
+import de.lmu.ifi.pixelfighter.services.firebase.GameService;
 
 public class MenuActivity extends AppCompatActivity {
 
@@ -32,9 +37,40 @@ public class MenuActivity extends AppCompatActivity {
 
     @OnClick(R.id.button_game)
     public void onClickGame() {
-        Log.d("Menu", "Start Main Activity");
-        Intent intentGame = new Intent(MenuActivity.this, MainActivity.class);
-        startActivity(intentGame);
+
+        Settings settings = new Settings();
+        String gameKey = settings.getActiveGameKey();
+        if(gameKey == null || gameKey.isEmpty()) {
+            // ToDo: choose team!
+
+            Intent intent = new Intent(MenuActivity.this, ChooseTeamActivity.class);
+            startActivity(intent);
+
+        } else {
+            GameService.getInstance().loadGame(gameKey, new GameCallback() {
+                @Override
+                public void onClosed() {
+                    Log.d("Toast", "Your Game was already closed");
+                    // Search for new game?
+                    Intent intent = new Intent(MenuActivity.this, ChooseTeamActivity.class);
+                    startActivity(intent);
+                }
+
+                @Override
+                public void onLoaded(Game game) {
+                    Log.d("Toast", "You loaded Game " + game.getKey());
+                    Singleton.getInstance().setGame(game);
+                    Intent intent = new Intent(MenuActivity.this, GameActivity.class);
+                    startActivity(intent);
+                }
+
+                @Override
+                public void onError(String message) {
+                    Log.d("Toast", "Error: " + message);
+
+                }
+            });
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 package de.lmu.ifi.pixelfighter.services.android;
 
 import de.lmu.ifi.pixelfighter.models.Game;
+import de.lmu.ifi.pixelfighter.models.Player;
 import de.lmu.ifi.pixelfighter.models.Team;
 
 /**
@@ -16,7 +17,7 @@ public class Singleton {
     }
 
     private Game game;
-    private String playerKey;
+    private Player player;
     private Team team;
 
     private Singleton() {
@@ -31,12 +32,12 @@ public class Singleton {
         this.game = game;
     }
 
-    public String getPlayerKey() {
-        return playerKey;
+    public Player getPlayer() {
+        return player;
     }
 
-    public void setPlayerKey(String playerKey) {
-        this.playerKey = playerKey;
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
     public Team getTeam() {

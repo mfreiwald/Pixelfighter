@@ -10,6 +10,7 @@ import de.lmu.ifi.pixelfighter.game.Rules;
 import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.Game;
 import de.lmu.ifi.pixelfighter.models.Pixel;
+import de.lmu.ifi.pixelfighter.models.Player;
 import de.lmu.ifi.pixelfighter.models.Team;
 import de.lmu.ifi.pixelfighter.services.android.Singleton;
 import de.lmu.ifi.pixelfighter.services.firebase.callbacks.ServiceCallback;
@@ -72,11 +73,11 @@ public class BoardService extends BaseService<Board> {
     public void setPixel(final int x, final int y, final ServiceCallback<Pixel> callback) {
         // get current user & team
         // ToDo: get current user data
-        String playerKey = Singleton.getInstance().getPlayerKey();
+        Player player = Singleton.getInstance().getPlayer();
         final Team team = Singleton.getInstance().getTeam();
 
         final Pixel newPixel = new Pixel();
-        newPixel.setPlayerKey(playerKey);
+        newPixel.setPlayerKey(player.getKey());
         newPixel.setTeam(team);
         newPixel.setX(x);
         newPixel.setY(y);

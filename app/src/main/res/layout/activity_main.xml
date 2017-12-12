@@ -13,38 +13,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Choose Username"
-        android:textColor="@color/colorAccent"/>
+        android:textColor="@color/colorAccent" />
 
     <EditText
-        android:id="@+id/userName"
+        android:id="@+id/usernameEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Name"
-        android:textColor="@color/colorAccent"/>
+        android:text="Name" />
 
     <Button
-        android:id="@+id/buttonRed"
+        android:id="@+id/btnRegister"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@android:color/holo_red_light"
-        android:onClick="startGame"
-        android:text="Start with Team Red" />
-
-    <Button
-        android:id="@+id/buttonGreen"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@android:color/holo_green_light"
-        android:onClick="startGame"
-        android:text="Start with Team Green" />
-
-    <Button
-        android:id="@+id/button9"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="resetGameBoard"
-        android:text="Reset Gameboard" />
+        android:text="Lets play" />
 
 </LinearLayout>

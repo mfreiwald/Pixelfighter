@@ -3,6 +3,7 @@ package de.lmu.ifi.pixelfighter.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 
 import butterknife.ButterKnife;
@@ -10,7 +11,10 @@ import de.lmu.ifi.pixelfighter.R;
 import de.lmu.ifi.pixelfighter.game.RandomTeam;
 import de.lmu.ifi.pixelfighter.models.Game;
 import de.lmu.ifi.pixelfighter.models.Team;
+import de.lmu.ifi.pixelfighter.models.callbacks.Callback;
+import de.lmu.ifi.pixelfighter.services.android.Settings;
 import de.lmu.ifi.pixelfighter.services.android.Singleton;
+import de.lmu.ifi.pixelfighter.services.firebase.GameService;
 
 public class ChooseTeamActivity extends AppCompatActivity {
 
@@ -35,7 +39,22 @@ public class ChooseTeamActivity extends AppCompatActivity {
         }
 
         Singleton.getInstance().setTeam(selectedTeam);
-        Intent intent = new Intent(this, GameActivity.class);
-        startActivity(intent);
+
+        GameService.getInstance().searchAndJoinGame(Singleton.getInstance().getPlayer(), selectedTeam, new Callback<Game>() {
+            @Override
+            public void onLoaded(Game game) {
+                Log.d("Toast", "Your are playing now on Game " + game.getKey());
+                Settings settings = new Settings();
+                settings.setActiveGameKey(game.getKey());
+                Singleton.getInstance().setGame(game);
+                Intent intent = new Intent(ChooseTeamActivity.this, GameActivity.class);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onError(String message) {
+                Log.d("Toast", "Error: " + message);
+            }
+        });
     }
 }
