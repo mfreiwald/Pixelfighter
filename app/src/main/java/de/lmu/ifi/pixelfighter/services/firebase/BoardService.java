@@ -1,10 +1,7 @@
 package de.lmu.ifi.pixelfighter.services.firebase;
 
-import android.util.Log;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
@@ -14,7 +11,6 @@ import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.Game;
 import de.lmu.ifi.pixelfighter.models.Pixel;
 import de.lmu.ifi.pixelfighter.models.Team;
-import de.lmu.ifi.pixelfighter.models.callbacks.Callback;
 import de.lmu.ifi.pixelfighter.services.android.Singleton;
 import de.lmu.ifi.pixelfighter.services.firebase.callbacks.ServiceCallback;
 import de.lmu.ifi.pixelfighter.services.firebase.callbacks.UpdateCallback;

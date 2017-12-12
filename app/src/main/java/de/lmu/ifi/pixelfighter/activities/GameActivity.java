@@ -1,8 +1,8 @@
 package de.lmu.ifi.pixelfighter.activities;
 
 import android.content.res.ColorStateList;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -11,14 +11,11 @@ import android.widget.Button;
 import android.widget.GridLayout;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import de.lmu.ifi.pixelfighter.R;
-import de.lmu.ifi.pixelfighter.demo.demo3.Game;
 import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.Pixel;
 import de.lmu.ifi.pixelfighter.models.Team;
-import de.lmu.ifi.pixelfighter.models.callbacks.GameCallback;
 import de.lmu.ifi.pixelfighter.services.android.Singleton;
 import de.lmu.ifi.pixelfighter.services.firebase.BoardService;
 import de.lmu.ifi.pixelfighter.services.firebase.callbacks.ServiceCallback;

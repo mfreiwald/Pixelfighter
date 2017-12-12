@@ -5,19 +5,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
-import com.google.firebase.database.ValueEventListener;
 
 import de.lmu.ifi.pixelfighter.R;
-import de.lmu.ifi.pixelfighter.demo.demo3.Board;
-import de.lmu.ifi.pixelfighter.demo.demo3.GameActivity;
 import de.lmu.ifi.pixelfighter.models.Game;
 import de.lmu.ifi.pixelfighter.models.Player;
 import de.lmu.ifi.pixelfighter.models.Team;

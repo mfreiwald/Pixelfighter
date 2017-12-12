@@ -1,11 +1,10 @@
 package de.lmu.ifi.pixelfighter.activities;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.lmu.ifi.pixelfighter.R;
 import de.lmu.ifi.pixelfighter.game.RandomTeam;
