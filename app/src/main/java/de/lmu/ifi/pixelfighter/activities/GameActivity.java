@@ -75,7 +75,7 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
 
     @Override
     public void onBackPressed() {
-        
+
     }
 
     @Override
