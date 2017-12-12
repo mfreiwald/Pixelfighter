@@ -7,7 +7,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.Game;
@@ -73,6 +75,7 @@ public class GameService extends BaseKeyService<Game> {
     private void createNewGame(ServiceCallback<Game> callback) {
         Board board = new Board(4,10);
         Game game = new Game(board);
+        Log.d("GameService", "Add Game " + game.toString());
         add(game, callback);
     }
 
@@ -115,6 +118,10 @@ public class GameService extends BaseKeyService<Game> {
                 Game game = mutableData.getValue(Game.class);
                 if(game == null) {
                     return Transaction.success(mutableData);
+                }
+                List teams = game.getPlayers().get(team.name());
+                if(teams == null) {
+                    game.getPlayers().put(team.name(), new ArrayList<String>());
                 }
                 game.getPlayers().get(team.name()).add(player.getKey());
                 mutableData.setValue(game);

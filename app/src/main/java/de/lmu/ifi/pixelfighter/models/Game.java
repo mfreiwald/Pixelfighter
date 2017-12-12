@@ -83,4 +83,14 @@ public class Game extends BaseKeyModel {
         return remaining;
     }
 
+    @Override
+    public String toString() {
+        return "Game{" +
+                "board=" + board +
+                ", players=" + players +
+                ", isActive=" + isActive +
+                ", startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
+                '}';
+    }
 }
