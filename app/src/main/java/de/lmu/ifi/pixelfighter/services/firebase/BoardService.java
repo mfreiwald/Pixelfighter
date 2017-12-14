@@ -24,7 +24,7 @@ public class BoardService extends BaseService<Board> {
 
     private final Board board;
     private final UpdateCallback<Pixel> updateCallback;
-    private final ValueEventListener listener = new ValueEventListener() {
+    private final ValueEventListener pixelListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             Pixel pixel = dataSnapshot.getValue(Pixel.class);
@@ -57,7 +57,7 @@ public class BoardService extends BaseService<Board> {
     public void register() {
         for(int x=0; x<this.board.getWidth(); x++) {
             for(int y=0; y<this.board.getHeight(); y++) {
-                dbRef.child("pixels").child(Integer.toString(x)).child(Integer.toString(y)).addValueEventListener(listener);
+                dbRef.child("pixels").child(Integer.toString(x)).child(Integer.toString(y)).addValueEventListener(pixelListener);
             }
         }
     }
@@ -65,7 +65,7 @@ public class BoardService extends BaseService<Board> {
     public void unregister() {
         for(int x=0; x<this.board.getWidth(); x++) {
             for(int y=0; y<this.board.getHeight(); y++) {
-                dbRef.child("pixels").child(Integer.toString(x)).child(Integer.toString(y)).removeEventListener(listener);
+                dbRef.child("pixels").child(Integer.toString(x)).child(Integer.toString(y)).removeEventListener(pixelListener);
             }
         }
     }

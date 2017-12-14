@@ -16,7 +16,7 @@ import de.lmu.ifi.pixelfighter.models.Team;
 import de.lmu.ifi.pixelfighter.models.callbacks.GameCallback;
 import de.lmu.ifi.pixelfighter.services.android.Settings;
 import de.lmu.ifi.pixelfighter.services.android.Singleton;
-import de.lmu.ifi.pixelfighter.services.firebase.GameService;
+import de.lmu.ifi.pixelfighter.services.firebase.GamesService;
 
 public class MenuActivity extends AppCompatActivity {
 
@@ -51,7 +51,7 @@ public class MenuActivity extends AppCompatActivity {
             startActivity(intent);
 
         } else {
-            GameService.getInstance().loadGame(gameKey, new GameCallback() {
+            GamesService.getInstance().loadGame(gameKey, new GameCallback() {
                 @Override
                 public void onClosed() {
                     Log.d("Toast", "Your Game was already closed");

@@ -1,5 +1,6 @@
 package de.lmu.ifi.pixelfighter.activities;
 
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -18,14 +20,16 @@ import de.lmu.ifi.pixelfighter.models.Pixel;
 import de.lmu.ifi.pixelfighter.models.Team;
 import de.lmu.ifi.pixelfighter.services.android.Singleton;
 import de.lmu.ifi.pixelfighter.services.firebase.BoardService;
+import de.lmu.ifi.pixelfighter.services.firebase.GameService;
+import de.lmu.ifi.pixelfighter.services.firebase.GamesService;
 import de.lmu.ifi.pixelfighter.services.firebase.callbacks.ServiceCallback;
 import de.lmu.ifi.pixelfighter.services.firebase.callbacks.UpdateCallback;
 
-public class GameActivity extends AppCompatActivity implements UpdateCallback<Pixel>, View.OnClickListener {
+public class GameActivity extends AppCompatActivity implements UpdateCallback<Pixel>, GameService.Callback, View.OnClickListener {
 
 
     private BoardService boardService;
-
+    private GameService gameService;
     private ArrayList<ArrayList<Button>> buttons;
 
     @Override
@@ -34,7 +38,9 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
         setContentView(R.layout.activity_game2);
 
         this.boardService = new BoardService(Singleton.getInstance().getGame(), this);
+        this.gameService = new GameService(Singleton.getInstance().getGame(), this);
         final Board board = this.boardService.getBoard();
+
 
         GridLayout layout = findViewById(R.id.layout);
         layout.setColumnCount(board.getWidth());
@@ -64,6 +70,7 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
     protected void onResume() {
         super.onResume();
         boardService.register();
+        gameService.register();
         updateBoard();
     }
 
@@ -71,6 +78,7 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
     protected void onPause() {
         super.onPause();
         boardService.unregister();
+        gameService.unregister();
     }
 
     @Override
@@ -82,6 +90,13 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
     public void onUpdate(Pixel pixel) {
         Log.d("GameActivity", "Pixel Update " + pixel);
         updateButton(pixel.getTeam(), pixel.getX(), pixel.getY());
+    }
+
+    @Override
+    public void onGameOver() {
+        Toast.makeText(this, "Game is over", Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(this, ChooseTeamActivity.class);
+        startActivity(intent);
     }
 
     @Override

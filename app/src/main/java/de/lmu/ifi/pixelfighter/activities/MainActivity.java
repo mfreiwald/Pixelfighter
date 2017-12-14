@@ -7,21 +7,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.lmu.ifi.pixelfighter.R;
-import de.lmu.ifi.pixelfighter.models.Game;
 import de.lmu.ifi.pixelfighter.models.Player;
-import de.lmu.ifi.pixelfighter.models.Team;
 import de.lmu.ifi.pixelfighter.models.callbacks.Callback;
-import de.lmu.ifi.pixelfighter.models.callbacks.GameCallback;
 import de.lmu.ifi.pixelfighter.services.android.Settings;
 import de.lmu.ifi.pixelfighter.services.android.Singleton;
 import de.lmu.ifi.pixelfighter.services.firebase.AuthenticationService;
-import de.lmu.ifi.pixelfighter.services.firebase.GameService;
 
 public class MainActivity extends AppCompatActivity {
 

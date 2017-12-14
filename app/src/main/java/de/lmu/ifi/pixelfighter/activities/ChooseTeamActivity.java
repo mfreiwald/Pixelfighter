@@ -14,7 +14,7 @@ import de.lmu.ifi.pixelfighter.models.Team;
 import de.lmu.ifi.pixelfighter.models.callbacks.Callback;
 import de.lmu.ifi.pixelfighter.services.android.Settings;
 import de.lmu.ifi.pixelfighter.services.android.Singleton;
-import de.lmu.ifi.pixelfighter.services.firebase.GameService;
+import de.lmu.ifi.pixelfighter.services.firebase.GamesService;
 
 public class ChooseTeamActivity extends AppCompatActivity {
 
@@ -40,7 +40,7 @@ public class ChooseTeamActivity extends AppCompatActivity {
 
         Singleton.getInstance().setTeam(selectedTeam);
 
-        GameService.getInstance().searchAndJoinGame(Singleton.getInstance().getPlayer(), selectedTeam, new Callback<Game>() {
+        GamesService.getInstance().searchAndJoinGame(Singleton.getInstance().getPlayer(), selectedTeam, new Callback<Game>() {
             @Override
             public void onLoaded(Game game) {
                 Log.d("Toast", "Your are playing now on Game " + game.getKey());
