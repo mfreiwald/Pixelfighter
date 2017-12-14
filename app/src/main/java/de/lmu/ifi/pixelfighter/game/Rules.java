@@ -115,7 +115,9 @@ public class Rules {
                 Log.d("RULES", "Allies amount: " + adjacentAllies.size());
 
                 //Turn this enemy into an ally
-                if (adjacentAllies.size() >= 3 && checkIfAlliesStandTogether(adjacentAllies)) {
+                if (adjacentAllies.size() >= 3
+//                        && checkIfAlliesStandTogether(adjacentAllies)
+                        ) {
                     // => Hier check, ob diese Allies sich auch gegenseitig berühren und Mauer bilden
                     enemy.setTeam(team);
                     updateList.add(enemy);
@@ -128,7 +130,11 @@ public class Rules {
     }
 
     private boolean checkIfAlliesStandTogether(ArrayList<Pixel> adjacentAllies) {
-        
+
+        for (Pixel ally : adjacentAllies) {
+            if (!isAtOwnTeam(ally))
+                return false;
+        }
 
         return true;
     }
@@ -164,6 +170,33 @@ public class Rules {
                 }
 
                 if (this.board.getPixels().get(_x).get(_y).getTeam().equals(this.team))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isAtOwnTeam(Pixel pixel) {
+
+        for (int _x = pixel.getX() - 1; _x <= pixel.getX() + 1; _x++) {
+            for (int _y = pixel.getY() - 1; _y <= pixel.getY() + 1; _y++) {
+                if (_x < 0 || _x >= this.board.getWidth())
+                    continue;
+                if (_y < 0 || _y >= this.board.getHeight())
+                    continue;
+
+                if (!ALLOW_DIAGONAL) {
+                    if (
+                            (_x == pixel.getX() - 1 && _y == pixel.getY() - 1) ||
+                                    (_x == pixel.getX() + 1 && _y == pixel.getY() - 1) ||
+                                    (_x == pixel.getX() - 1 && _y == pixel.getY() + 1) ||
+                                    (_x == pixel.getX() + 1 && _y == pixel.getY() + 1)
+
+                            )
+                        continue;
+                }
+
+                if (pixel.getTeam().equals(this.team))
                     return true;
             }
         }

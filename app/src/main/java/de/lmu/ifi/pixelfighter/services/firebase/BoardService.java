@@ -1,5 +1,7 @@
 package de.lmu.ifi.pixelfighter.services.firebase;
 
+import android.util.Log;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.GenericTypeIndicator;
@@ -32,9 +34,11 @@ public class BoardService extends BaseService<Board> {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             Pixel pixel = dataSnapshot.getValue(Pixel.class);
-            board.getPixels().get(pixel.getX()).set(pixel.getY(), pixel);
-            if (updateCallback != null)
-                updateCallback.onUpdate(pixel);
+            if (pixel != null) {
+                board.getPixels().get(pixel.getX()).set(pixel.getY(), pixel);
+                if (updateCallback != null)
+                    updateCallback.onUpdate(pixel);
+            }
         }
 
         @Override
@@ -135,10 +139,11 @@ public class BoardService extends BaseService<Board> {
                     return Transaction.success(mutableData);
                 }
 
-                // ToDo: Run Game Validation
-                // ToDo: Problem, Board ist nicht aktuell !!!
-                if (Rules.validate(board, team, x, y)) {
-                    ArrayList<Pixel> pixelsToUpdate = Rules.checkForEnemiesToConvert(board, team, x, y);
+                ArrayList<Pixel> pixelsToUpdate = Rules.checkForEnemiesToConvert(board, team, x, y);
+                Log.d("RULES", "amount of pixels to update: " + pixelsToUpdate.size());
+
+
+                if (!pixelsToUpdate.isEmpty()) {
                     mutableData.setValue(pixelsToUpdate);
                     return Transaction.success(mutableData);
                 } else {
@@ -155,7 +160,7 @@ public class BoardService extends BaseService<Board> {
                         List<Pixel> updates = dataSnapshot.getValue(t);
                         callback.success(updates);
                     } else {
-                        callback.failure("Not valid to set");
+                        callback.failure("No valid results for enemy check");
                     }
                 } else {
                     callback.failure(databaseError.getMessage());
