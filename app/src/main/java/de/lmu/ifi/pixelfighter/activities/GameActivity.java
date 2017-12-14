@@ -101,8 +101,8 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
                 updateButton(pixel.getTeam(), pixel.getX(), pixel.getY());
 
                 //Die Umgebung auf Gegner überprüfen, die umgefärbt werden müssen
-                Log.d("GameActivity", "Running enemy check now");
-                runEnemyCheck(pixel.getX(), pixel.getY());
+//                Log.d("GameActivity", "Running enemy check now");
+//                runEnemyCheck(pixel.getX(), pixel.getY());
             }
 
             @Override
