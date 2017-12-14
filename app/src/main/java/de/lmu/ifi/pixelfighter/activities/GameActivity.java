@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.GridLayout;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.lmu.ifi.pixelfighter.R;
 import de.lmu.ifi.pixelfighter.models.Board;
@@ -42,19 +43,19 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
         buttons = new ArrayList<>();
 
         DisplayMetrics dm = getResources().getDisplayMetrics();
-        int dpInPx = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, dm);
-        for(int y=0; y<board.getHeight(); y++) {
-            ArrayList<Button> row = new ArrayList<>();
-            for(int x=0; x<board.getWidth(); x++) {
+        int dpInPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, dm);
+        for (int y = 0; y < board.getHeight(); y++) {
+            ArrayList<Button> column = new ArrayList<>();
+            for (int x = 0; x < board.getWidth(); x++) {
                 Button button = new Button(this);
                 button.setHeight(dpInPx);
                 button.setWidth(dpInPx);
-                button.setTag(x+","+y);
+                button.setTag(x + "," + y);
                 button.setOnClickListener(this);
                 layout.addView(button);
-                row.add(button);
+                column.add(button);
             }
-            buttons.add(row);
+            buttons.add(column);
         }
 
         updateBoard();
@@ -73,10 +74,10 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
         boardService.unregister();
     }
 
-    @Override
-    public void onBackPressed() {
-
-    }
+//    @Override
+//    public void onBackPressed() {
+//
+//    }
 
     @Override
     public void onUpdate(Pixel pixel) {
@@ -86,18 +87,40 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
 
     @Override
     public void onClick(View view) {
-        String tag = (String)view.getTag();
+        String tag = (String) view.getTag();
 
         String[] split = tag.split(",");
         int x = Integer.parseInt(split[0]);
         int y = Integer.parseInt(split[1]);
 
-        Log.d("Click", "On view ("+x+","+y+")");
+        Log.d("Click", "On view (" + x + "," + y + ")");
         this.boardService.setPixel(x, y, new ServiceCallback<Pixel>() {
             @Override
             public void success(Pixel pixel) {
-                Log.d("GameActivity", "Successfull set pixel " + pixel.toString());
+                Log.d("GameActivity", "Successfully set pixel " + pixel.toString());
                 updateButton(pixel.getTeam(), pixel.getX(), pixel.getY());
+
+                //Die Umgebung auf Gegner überprüfen, die umgefärbt werden müssen
+                runEnemyCheck(pixel.getX(), pixel.getY());
+            }
+
+            @Override
+            public void failure(String message) {
+                Log.d("GameActivity", message);
+            }
+        });
+
+
+    }
+
+    private void runEnemyCheck(int x, int y) {
+        this.boardService.runEnemyCheck(x, y, new ServiceCallback<List<Pixel>>() {
+            @Override
+            public void success(List<Pixel> updateList) {
+                Log.d("GameActivity", "Successfully ran enemy check. Amount of pixels to update: " + updateList.size());
+                for (Pixel pixel : updateList) {
+                    updateButton(pixel.getTeam(), pixel.getX(), pixel.getY());
+                }
             }
 
             @Override
@@ -108,8 +131,8 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
     }
 
     private void updateBoard() {
-        for(int x=0; x<this.boardService.getBoard().getWidth(); x++) {
-            for(int y=0; y<this.boardService.getBoard().getHeight(); y++) {
+        for (int x = 0; x < this.boardService.getBoard().getWidth(); x++) {
+            for (int y = 0; y < this.boardService.getBoard().getHeight(); y++) {
                 Pixel pixel = this.boardService.getBoard().getPixels().get(x).get(y);
                 Log.d("GameActivity", "Pixel: " + pixel);
                 updateButton(pixel.getTeam(), pixel.getX(), pixel.getY());
@@ -119,12 +142,22 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
 
     private void updateButton(Team team, int x, int y) {
         Button button = this.buttons.get(y).get(x);
-        switch(team) {
-            case Red: button.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.btn_red))); break;
-            case Blue: button.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.btn_blue))); break;
-            case Green: button.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.btn_green))); break;
-            case Yellow: button.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.btn_yellow))); break;
-            default: button.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.btn_none))); break;
+        switch (team) {
+            case Red:
+                button.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.btn_red)));
+                break;
+            case Blue:
+                button.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.btn_blue)));
+                break;
+            case Green:
+                button.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.btn_green)));
+                break;
+            case Yellow:
+                button.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.btn_yellow)));
+                break;
+            default:
+                button.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.btn_none)));
+                break;
         }
     }
 }

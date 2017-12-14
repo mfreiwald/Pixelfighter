@@ -2,7 +2,10 @@ package de.lmu.ifi.pixelfighter.game;
 
 import android.util.Log;
 
+import java.util.ArrayList;
+
 import de.lmu.ifi.pixelfighter.models.Board;
+import de.lmu.ifi.pixelfighter.models.Pixel;
 import de.lmu.ifi.pixelfighter.models.Team;
 
 /**
@@ -15,19 +18,30 @@ public class Rules {
 
     public static boolean validate(final Board board, final Team team, final int x, final int y) {
 
-        Log.d("Rules", "Validate " + team + " at ("+x+","+y+")");
+        Log.d("Rules", "Validate " + team + " at (" + x + "," + y + ")");
         Rules rules = new Rules(board, team, x, y);
 
         Log.d("Rules", "isFree = " + rules.isFree());
-        if(!rules.isFree())
+        if (!rules.isFree())
             return false;
 
         Log.d("Rules", "isAtOwnTeam = " + rules.isAtOwnTeam());
-        if(!rules.isAtOwnTeam())
+        if (!rules.isAtOwnTeam())
             return false;
 
 
         return true;
+    }
+
+    public static ArrayList<Pixel> checkForEnemiesToConvert(Board board, final Team team, final int x, final int y) {
+        Rules rules = new Rules(board, team, x, y);
+
+        ArrayList<Pixel> adjacentPixels = rules.extractSurroundingPixelsFor(x, y);
+        ArrayList<Pixel> adjacentEnemies = rules.extractSurroundingEnemies(adjacentPixels);
+
+        ArrayList<Pixel> updateList = rules.calculateOverwritings(adjacentEnemies);
+
+        return updateList;
     }
 
     private final Board board;
@@ -42,49 +56,126 @@ public class Rules {
         this.y = y;
     }
 
+    private ArrayList<Pixel> extractSurroundingPixelsFor(final int x, final int y) {
+        ArrayList<Pixel> adjacentPixels = new ArrayList<>();
+
+        for (int _x = x - 1; _x <= x + 1; _x++) {
+            for (int _y = y - 1; _y <= y + 1; _y++) {
+                if (_x == x && _y == y)
+                    continue;
+                if (_x < 0 || _x >= board.getWidth())
+                    continue;
+                if (_y < 0 || _y >= board.getHeight())
+                    continue;
+
+                adjacentPixels.add(board.getPixels().get(_x).get(_y));
+
+            }
+        }
+
+        Log.d("RULES", "adj. Pixel amount: " + adjacentPixels.size());
+
+        return adjacentPixels;
+    }
+
+    private ArrayList<Pixel> extractSurroundingEnemies(ArrayList<Pixel> adjacentPixels) {
+        ArrayList<Pixel> adjacentEnemies = new ArrayList<>();
+
+        for (Pixel pixel : adjacentPixels) {
+            Team enemyTeam = pixel.getTeam();
+            if (!enemyTeam.equals(team) && enemyTeam != Team.None) {
+                adjacentEnemies.add(pixel);
+            }
+        }
+
+        Log.d("RULES", "adj. enemies amount:" + adjacentEnemies.size());
+
+        return adjacentEnemies;
+    }
+
+    private ArrayList<Pixel> calculateOverwritings(ArrayList<Pixel> adjacentEnemies) {
+        ArrayList<Pixel> updateList = new ArrayList<>();
+
+        //If there is at least one enemy, check this enemy's surrounding pixels,
+        // to see if there are 3 or more ally pixels -> would turn this pixel into ally
+        if (adjacentEnemies.size() > 0) {
+            for (Pixel enemy : adjacentEnemies) {
+                Team enemyTeamName = enemy.getTeam();
+                ArrayList<Pixel> adjacentAllies = new ArrayList<>();
+
+                for (Pixel surroundingPixel : extractSurroundingPixelsFor(enemy.getX(), enemy.getY())) {
+                    //Allies of the initial pixel coming into checkSurroundingPixels
+                    Team _team = surroundingPixel.getTeam();
+                    if (!_team.equals(enemyTeamName) && _team != Team.None) {
+                        adjacentAllies.add(surroundingPixel);
+//                        Log.d("GAME", "Added ally for x: " + surroundingPixel.x + ", y: " + surroundingPixel.y);
+                    }
+                }
+
+                Log.d("RULES", "Allies amount: " + adjacentAllies.size());
+
+                //Turn this enemy into an ally
+                if (adjacentAllies.size() >= 3 && checkIfAlliesStandTogether(adjacentAllies)) {
+                    // => Hier check, ob diese Allies sich auch gegenseitig berühren und Mauer bilden
+                    enemy.setTeam(team);
+                    updateList.add(enemy);
+//                  Log.d("GAME", "Turned this enemy into ally");
+                }
+            }
+        }
+
+        return updateList;
+    }
+
+    private boolean checkIfAlliesStandTogether(ArrayList<Pixel> adjacentAllies) {
+        
+
+        return true;
+    }
+
     private boolean isFree() {
         return this.board.getPixels().get(x).get(y).getTeam() == Team.None &&
                 this.board.getPixels().get(x).get(y).getPlayerKey().isEmpty();
     }
 
     private boolean isAtOwnTeam() {
-        if(!containsColor())
+        if (!containsColor())
             return true;
         // - - -
         // - x -
         // - - -
 
-
-        for(int _x = this.x-1; _x <= this.x+1; _x++) {
-            for(int _y = this.y-1; _y <= this.y+1; _y++) {
-                if(_x < 0 || _x >= this.board.getWidth())
+        for (int _x = this.x - 1; _x <= this.x + 1; _x++) {
+            for (int _y = this.y - 1; _y <= this.y + 1; _y++) {
+                if (_x < 0 || _x >= this.board.getWidth())
                     continue;
-                if(_y < 0 || _y >= this.board.getHeight())
+                if (_y < 0 || _y >= this.board.getHeight())
                     continue;
 
-                if(!ALLOW_DIAGONAL) {
-                    if(
-                            (_x == this.x-1 && _y == this.y-1) ||
-                            (_x == this.x+1 && _y == this.y-1) ||
-                            (_x == this.x-1 && _y == this.y+1) ||
-                            (_x == this.x+1 && _y == this.y+1)
+                if (!ALLOW_DIAGONAL) {
+                    if (
+                            (_x == this.x - 1 && _y == this.y - 1) ||
+                                    (_x == this.x + 1 && _y == this.y - 1) ||
+                                    (_x == this.x - 1 && _y == this.y + 1) ||
+                                    (_x == this.x + 1 && _y == this.y + 1)
+
                             )
                         continue;
                 }
 
-                Log.d("Rules:isAtOwnTeam", "Check field ("+_x+","+_y+")");
-                if(this.board.getPixels().get(_x).get(_y).getTeam().equals(this.team))
+                if (this.board.getPixels().get(_x).get(_y).getTeam().equals(this.team))
                     return true;
             }
         }
         return false;
     }
 
-    private boolean containsColor()
-    {
-        for(int x=0; x<board.getWidth(); x++) {
-            for(int y=0; y<board.getHeight(); y++) {
-                if(board.getPixels().get(x).get(y).getTeam() == this.team) {
+
+    //Hier sollten noch booleans hin, um das pro Farbe nur jeweils 1 mal am Anfang durchlaufen zu müssen
+    private boolean containsColor() {
+        for (int x = 0; x < board.getWidth(); x++) {
+            for (int y = 0; y < board.getHeight(); y++) {
+                if (board.getPixels().get(x).get(y).getTeam() == this.team) {
                     Log.d("Rules", "ContainsColor True");
                     return true;
                 }
