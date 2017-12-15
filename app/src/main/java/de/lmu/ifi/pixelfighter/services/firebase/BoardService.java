@@ -28,6 +28,8 @@ public class BoardService extends BaseService<Board> {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             Pixel pixel = dataSnapshot.getValue(Pixel.class);
+            if(pixel == null)
+                return;
             board.getPixels().get(pixel.getX()).set(pixel.getY(), pixel);
             if(updateCallback != null)
                 updateCallback.onUpdate(pixel);
