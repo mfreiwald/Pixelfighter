@@ -32,7 +32,7 @@ public abstract class BaseKeyService<Model extends BaseKeyModel> extends BaseSer
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Model m = wrapModel(dataSnapshot);
-                if(m == null) callback.failure("Model is null");
+                if(m == null) callback.failure("Model is null. " + dataSnapshot);
                 else callback.success(m);
             }
 
