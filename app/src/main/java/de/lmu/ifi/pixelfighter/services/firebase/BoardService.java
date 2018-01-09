@@ -128,8 +128,20 @@ public class BoardService extends BaseService<Board> {
         });
     }
 
-    public void runEnemyCheck(final int x, final int y, final ServiceCallback<List<Pixel>> callback) {
+    //Specifically for updating Pixels instead of placing new ones
+    public void changePixel(final int x, final int y, final ServiceCallback<Pixel> callback) {
+        Player player = Singleton.getInstance().getPlayer();
         final Team team = Singleton.getInstance().getTeam();
+        if (player == null || team == null) {
+            callback.failure("Player or Team is null");
+            return;
+        }
+
+        final Pixel newPixel = new Pixel();
+        newPixel.setPlayerKey(player.getKey());
+        newPixel.setTeam(team);
+        newPixel.setX(x);
+        newPixel.setY(y);
 
         dbRef.child("pixels").child(Integer.toString(x)).child(Integer.toString(y)).runTransaction(new Transaction.Handler() {
             @Override
@@ -139,33 +151,70 @@ public class BoardService extends BaseService<Board> {
                     return Transaction.success(mutableData);
                 }
 
-                ArrayList<Pixel> pixelsToUpdate = Rules.checkForEnemiesToConvert(board, team, x, y);
-                Log.d("RULES", "amount of pixels to update: " + pixelsToUpdate.size());
-
-
-                if (!pixelsToUpdate.isEmpty()) {
-                    mutableData.setValue(pixelsToUpdate);
-                    return Transaction.success(mutableData);
-                } else {
-                    return Transaction.abort();
-                }
+                mutableData.setValue(newPixel);
+                return Transaction.success(mutableData);
             }
 
             @Override
             public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
                 if (databaseError == null) {
                     if (b) {
-                        GenericTypeIndicator<List<Pixel>> t = new GenericTypeIndicator<List<Pixel>>() {
-                        };
-                        List<Pixel> updates = dataSnapshot.getValue(t);
-                        callback.success(updates);
+                        Pixel pixel = dataSnapshot.getValue(Pixel.class);
+                        callback.success(pixel);
                     } else {
-                        callback.failure("No valid results for enemy check");
+                        callback.failure("Not valid to set");
                     }
                 } else {
                     callback.failure(databaseError.getMessage());
                 }
             }
         });
+    }
+
+    public ArrayList<Pixel> checkForEnemiesToConvert(final int x, final int y) {
+        final Team team = Singleton.getInstance().getTeam();
+        ArrayList<Pixel> pixelsToUpdate = Rules.checkForEnemiesToConvert(board, team, x, y);
+        Log.d("RULES", "amount of pixels to update: " + pixelsToUpdate.size());
+
+        return pixelsToUpdate;
+
+        //statt in einer neuen Transaction Rules.checkForEnemiesToConvert(board, team, x, y); laufen zu lassen
+        // lieber hier. Dann die entstandene pixelsToUpdate Liste durchlaufen udn für jeden zu verändernden
+        // Pixel die setPixel Methode aufrufen -> jeder "converted enemy" wird wie ein neuer Pixel gesetzt statt eine
+        // Liste mit allen zu übergeben
+        // (bzw. neue setPixel Methode schreiben, damit trotz einer Farbe was verändert)
+
+//        dbRef.child("pixels").child(Integer.toString(x)).child(Integer.toString(y)).runTransaction(new Transaction.Handler() {
+//            @Override
+//            public Transaction.Result doTransaction(MutableData mutableData) {
+//                Pixel currentPixel = mutableData.getValue(Pixel.class);
+//                if (currentPixel == null) {
+//                    return Transaction.success(mutableData);
+//                }
+//
+//                if (!pixelsToUpdate.isEmpty()) {
+//                    mutableData.setValue(pixelsToUpdate);
+//                    return Transaction.success(mutableData);
+//                } else {
+//                    return Transaction.abort();
+//                }
+//            }
+
+//            @Override
+//            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+//                if (databaseError == null) {
+//                    if (b) {
+//                        GenericTypeIndicator<List<Pixel>> t = new GenericTypeIndicator<List<Pixel>>() {
+//                        };
+//                        List<Pixel> updates = dataSnapshot.getValue(t);
+//                        callback.success(updates);
+//                    } else {
+//                        callback.failure("No valid results for enemy check");
+//                    }
+//                } else {
+//                    callback.failure(databaseError.getMessage());
+//                }
+//            }
+//        });
     }
 }

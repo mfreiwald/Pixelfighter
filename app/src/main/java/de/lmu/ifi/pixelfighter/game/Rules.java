@@ -49,7 +49,7 @@ public class Rules {
     private final int x;
     private final int y;
 
-    public Rules(Board board, Team team, int x, int y) {
+    private Rules(Board board, Team team, int x, int y) {
         this.board = board;
         this.team = team;
         this.x = x;

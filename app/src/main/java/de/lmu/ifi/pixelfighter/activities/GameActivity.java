@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.GridLayout;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import de.lmu.ifi.pixelfighter.R;
 import de.lmu.ifi.pixelfighter.models.Board;
@@ -101,26 +100,10 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
                 updateButton(pixel.getTeam(), pixel.getX(), pixel.getY());
 
                 //Die Umgebung auf Gegner überprüfen, die umgefärbt werden müssen
-//                Log.d("GameActivity", "Running enemy check now");
-//                runEnemyCheck(pixel.getX(), pixel.getY());
-            }
-
-            @Override
-            public void failure(String message) {
-                Log.d("GameActivity", message);
-            }
-        });
-
-
-    }
-
-    private void runEnemyCheck(int x, int y) {
-        this.boardService.runEnemyCheck(x, y, new ServiceCallback<List<Pixel>>() {
-            @Override
-            public void success(List<Pixel> updateList) {
-                Log.d("GameActivity", "Successfully ran enemy check. Amount of pixels to update: " + updateList.size());
-                for (Pixel pixel : updateList) {
-                    updateButton(pixel.getTeam(), pixel.getX(), pixel.getY());
+                Log.d("GameActivity", "Running enemy check now");
+                ArrayList<Pixel> pixelsToUpdate = boardService.checkForEnemiesToConvert(pixel.getX(), pixel.getY());
+                for (Pixel newPixel : pixelsToUpdate) {
+                    boardService.changePixel(newPixel.getX(), newPixel.getY(), customCallback);
                 }
             }
 
@@ -130,6 +113,43 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
             }
         });
     }
+
+    private ServiceCallback<Pixel> customCallback = new ServiceCallback<Pixel>() {
+        @Override
+        public void success(Pixel pixel) {
+            Log.d("GameActivity", "Successfully changed pixel " + pixel.toString());
+            updateButton(pixel.getTeam(), pixel.getX(), pixel.getY());
+
+            //Wiederum die Umgebung auf Gegner überprüfen, die umgefärbt werden müssen
+            Log.d("GameActivity", "Running deeper level enemy check now");
+            ArrayList<Pixel> pixelsToUpdate = boardService.checkForEnemiesToConvert(pixel.getX(), pixel.getY());
+            for (Pixel newPixel : pixelsToUpdate) {
+                boardService.changePixel(newPixel.getX(), newPixel.getY(), customCallback);
+            }
+        }
+
+        @Override
+        public void failure(String message) {
+            Log.d("GameActivity", message);
+        }
+    };
+
+//    private void checkForEnemiesToConvert(int x, int y) {
+//        this.boardService.checkForEnemiesToConvert(x, y, new ServiceCallback<List<Pixel>>() {
+//            @Override
+//            public void success(List<Pixel> updateList) {
+//                Log.d("GameActivity", "Successfully ran enemy check. Amount of pixels to update: " + updateList.size());
+//                for (Pixel pixel : updateList) {
+//                    updateButton(pixel.getTeam(), pixel.getX(), pixel.getY());
+//                }
+//            }
+//
+//            @Override
+//            public void failure(String message) {
+//                Log.d("GameActivity", message);
+//            }
+//        });
+//    }
 
     private void updateBoard() {
         for (int x = 0; x < this.boardService.getBoard().getWidth(); x++) {
