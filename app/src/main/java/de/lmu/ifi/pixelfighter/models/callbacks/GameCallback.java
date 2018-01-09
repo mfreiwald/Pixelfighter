@@ -8,4 +8,5 @@ import de.lmu.ifi.pixelfighter.models.Game;
 
 public interface GameCallback extends Callback<Game> {
     void onClosed(); //Parameter with statics?
+    void onModelNotExists();
 }

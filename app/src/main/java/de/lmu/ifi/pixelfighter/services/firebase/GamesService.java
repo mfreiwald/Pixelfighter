@@ -91,7 +91,11 @@ public class GamesService extends BaseKeyService<Game> {
 
             @Override
             public void failure(String message) {
-                callback.onError(message);
+                if(message.contains("Model is null")) {
+                    callback.onModelNotExists();
+                } else {
+                    callback.onError(message);
+                }
             }
         });
     }

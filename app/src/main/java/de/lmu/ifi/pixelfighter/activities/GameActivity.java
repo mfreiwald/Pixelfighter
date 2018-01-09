@@ -18,10 +18,9 @@ import de.lmu.ifi.pixelfighter.R;
 import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.Pixel;
 import de.lmu.ifi.pixelfighter.models.Team;
-import de.lmu.ifi.pixelfighter.services.android.Singleton;
+import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 import de.lmu.ifi.pixelfighter.services.firebase.BoardService;
 import de.lmu.ifi.pixelfighter.services.firebase.GameService;
-import de.lmu.ifi.pixelfighter.services.firebase.GamesService;
 import de.lmu.ifi.pixelfighter.services.firebase.callbacks.ServiceCallback;
 import de.lmu.ifi.pixelfighter.services.firebase.callbacks.UpdateCallback;
 
@@ -37,8 +36,8 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game2);
 
-        this.boardService = new BoardService(Singleton.getInstance().getGame(), this);
-        this.gameService = new GameService(Singleton.getInstance().getGame(), this);
+        this.boardService = new BoardService(Pixelfighter.getInstance().getGame(), this);
+        this.gameService = new GameService(Pixelfighter.getInstance().getGame(), this);
         final Board board = this.boardService.getBoard();
 
 

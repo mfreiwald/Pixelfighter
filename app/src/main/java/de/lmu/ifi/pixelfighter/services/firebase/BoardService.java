@@ -12,7 +12,7 @@ import de.lmu.ifi.pixelfighter.models.Game;
 import de.lmu.ifi.pixelfighter.models.Pixel;
 import de.lmu.ifi.pixelfighter.models.Player;
 import de.lmu.ifi.pixelfighter.models.Team;
-import de.lmu.ifi.pixelfighter.services.android.Singleton;
+import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 import de.lmu.ifi.pixelfighter.services.firebase.callbacks.ServiceCallback;
 import de.lmu.ifi.pixelfighter.services.firebase.callbacks.UpdateCallback;
 
@@ -75,8 +75,8 @@ public class BoardService extends BaseService<Board> {
     public void setPixel(final int x, final int y, final ServiceCallback<Pixel> callback) {
         // get current user & team
         // ToDo: get current user data
-        Player player = Singleton.getInstance().getPlayer();
-        final Team team = Singleton.getInstance().getTeam();
+        Player player = Pixelfighter.getInstance().getPlayer();
+        final Team team = Pixelfighter.getInstance().getTeam();
         if(player == null || team == null) {
             callback.failure("Player or Team is null");
             return;
@@ -111,6 +111,7 @@ public class BoardService extends BaseService<Board> {
                 if(databaseError == null) {
                     if(b) {
                         Pixel pixel = dataSnapshot.getValue(Pixel.class);
+                        board.getPixels().get(x).set(y, pixel);
                         callback.success(pixel);
                     } else {
                         callback.failure("Not valid to set");
