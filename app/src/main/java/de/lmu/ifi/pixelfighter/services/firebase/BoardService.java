@@ -16,6 +16,7 @@ import de.lmu.ifi.pixelfighter.game.Rules;
 import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.Game;
 import de.lmu.ifi.pixelfighter.models.Pixel;
+import de.lmu.ifi.pixelfighter.models.PixelModification;
 import de.lmu.ifi.pixelfighter.models.Player;
 import de.lmu.ifi.pixelfighter.models.Team;
 import de.lmu.ifi.pixelfighter.services.android.Singleton;
@@ -89,6 +90,7 @@ public class BoardService extends BaseService<Board> {
         newPixel.setTeam(team);
         newPixel.setX(x);
         newPixel.setY(y);
+        newPixel.setPixelMod(PixelModification.None);
 
         dbRef.child("pixels").child(Integer.toString(x)).child(Integer.toString(y)).runTransaction(new Transaction.Handler() {
             @Override
@@ -139,6 +141,7 @@ public class BoardService extends BaseService<Board> {
         newPixel.setTeam(team);
         newPixel.setX(x);
         newPixel.setY(y);
+        newPixel.setPixelMod(PixelModification.None);
 
         dbRef.child("pixels").child(Integer.toString(x)).child(Integer.toString(y)).runTransaction(new Transaction.Handler() {
             @Override
