@@ -14,6 +14,9 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.lmu.ifi.pixelfighter.R;
 import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.Pixel;
@@ -32,10 +35,15 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
     private GameService gameService;
     private ArrayList<ArrayList<Button>> buttons;
 
+    @BindView(R.id.bombButton)
+    Button bombButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game2);
+
+        ButterKnife.bind(this);
 
         this.boardService = new BoardService(Singleton.getInstance().getGame(), this);
         this.gameService = new GameService(Singleton.getInstance().getGame(), this);
@@ -44,6 +52,7 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
 
         GridLayout layout = findViewById(R.id.layout);
         layout.setColumnCount(board.getWidth());
+        //Put grid in another layout and then have two layouts, one for extra functions
 
         buttons = new ArrayList<>();
 
@@ -149,22 +158,15 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
         }
     };
 
-//    private void checkForEnemiesToConvert(int x, int y) {
-//        this.boardService.checkForEnemiesToConvert(x, y, new ServiceCallback<List<Pixel>>() {
-//            @Override
-//            public void success(List<Pixel> updateList) {
-//                Log.d("GameActivity", "Successfully ran enemy check. Amount of pixels to update: " + updateList.size());
-//                for (Pixel pixel : updateList) {
-//                    updateButton(pixel.getTeam(), pixel.getX(), pixel.getY());
-//                }
-//            }
-//
-//            @Override
-//            public void failure(String message) {
-//                Log.d("GameActivity", message);
-//            }
-//        });
-//    }
+    @OnClick(R.id.bombButton)
+    public void placeBomb() {
+//        if(bombCharges > 0)
+        if (!boardService.isBombActive()) {
+            boardService.activateBombForNextClick();
+            Log.d("GameService", "Activated bomb for next click");
+        } else
+            boardService.deactivateBombForNextClick();
+    }
 
     private void updateBoard() {
         for (int x = 0; x < this.boardService.getBoard().getWidth(); x++) {

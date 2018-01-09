@@ -4,13 +4,11 @@ import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import de.lmu.ifi.pixelfighter.game.Rules;
 import de.lmu.ifi.pixelfighter.models.Board;
@@ -24,6 +22,8 @@ import de.lmu.ifi.pixelfighter.services.firebase.callbacks.ServiceCallback;
 import de.lmu.ifi.pixelfighter.services.firebase.callbacks.UpdateCallback;
 
 public class BoardService extends BaseService<Board> {
+
+    private boolean isBombActive = false;
 
     private final Board board;
     private final UpdateCallback<Pixel> updateCallback;
@@ -102,7 +102,12 @@ public class BoardService extends BaseService<Board> {
 
                 // ToDo: Run Game Validation
                 // ToDo: Problem, Board ist nicht aktuell !!!
-                if (Rules.validate(board, team, x, y)) {
+                if (isBombActive && Rules.validateForPixelModification(board, team, currentPixel)) {
+                    currentPixel.setPixelMod(PixelModification.Bomb);
+                    mutableData.setValue(currentPixel);
+                    Log.d("BoardService", "Bomb successfully set on: " + currentPixel.getX() + ", " + currentPixel.getY());
+                    return Transaction.success(mutableData);
+                } else if (Rules.validate(board, team, x, y)) {
                     mutableData.setValue(newPixel);
                     return Transaction.success(mutableData);
                 } else {
@@ -173,48 +178,22 @@ public class BoardService extends BaseService<Board> {
 
     public ArrayList<Pixel> checkForEnemiesToConvert(final int x, final int y) {
         final Team team = Singleton.getInstance().getTeam();
+        //Hier check for bomb
         ArrayList<Pixel> pixelsToUpdate = Rules.checkForEnemiesToConvert(board, team, x, y);
         Log.d("RULES", "amount of pixels to update: " + pixelsToUpdate.size());
 
         return pixelsToUpdate;
+    }
 
-        //statt in einer neuen Transaction Rules.checkForEnemiesToConvert(board, team, x, y); laufen zu lassen
-        // lieber hier. Dann die entstandene pixelsToUpdate Liste durchlaufen udn für jeden zu verändernden
-        // Pixel die setPixel Methode aufrufen -> jeder "converted enemy" wird wie ein neuer Pixel gesetzt statt eine
-        // Liste mit allen zu übergeben
-        // (bzw. neue setPixel Methode schreiben, damit trotz einer Farbe was verändert)
+    public void activateBombForNextClick() {
+        isBombActive = true;
+    }
 
-//        dbRef.child("pixels").child(Integer.toString(x)).child(Integer.toString(y)).runTransaction(new Transaction.Handler() {
-//            @Override
-//            public Transaction.Result doTransaction(MutableData mutableData) {
-//                Pixel currentPixel = mutableData.getValue(Pixel.class);
-//                if (currentPixel == null) {
-//                    return Transaction.success(mutableData);
-//                }
-//
-//                if (!pixelsToUpdate.isEmpty()) {
-//                    mutableData.setValue(pixelsToUpdate);
-//                    return Transaction.success(mutableData);
-//                } else {
-//                    return Transaction.abort();
-//                }
-//            }
+    public void deactivateBombForNextClick() {
+        isBombActive = false;
+    }
 
-//            @Override
-//            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-//                if (databaseError == null) {
-//                    if (b) {
-//                        GenericTypeIndicator<List<Pixel>> t = new GenericTypeIndicator<List<Pixel>>() {
-//                        };
-//                        List<Pixel> updates = dataSnapshot.getValue(t);
-//                        callback.success(updates);
-//                    } else {
-//                        callback.failure("No valid results for enemy check");
-//                    }
-//                } else {
-//                    callback.failure(databaseError.getMessage());
-//                }
-//            }
-//        });
+    public boolean isBombActive() {
+        return isBombActive;
     }
 }

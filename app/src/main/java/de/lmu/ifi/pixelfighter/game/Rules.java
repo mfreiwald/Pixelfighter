@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.Pixel;
+import de.lmu.ifi.pixelfighter.models.PixelModification;
 import de.lmu.ifi.pixelfighter.models.Team;
 
 /**
@@ -16,7 +17,8 @@ public class Rules {
 
     private static boolean ALLOW_DIAGONAL = false;
 
-    private static int AMOUNT_OF_NECES_SURR_ENEMIES = 4;
+    private static double AMOUNT_OF_NECES_SURR_ENEMIES = 0.6;
+    //Villt stattdessen in % abhängig von # of surrounding pixels?
 
     public static boolean validate(final Board board, final Team team, final int x, final int y) {
 
@@ -41,10 +43,15 @@ public class Rules {
         ArrayList<Pixel> adjacentPixels = rules.extractSurroundingPixelsFor(x, y);
         ArrayList<Pixel> adjacentEnemies = rules.extractSurroundingEnemies(adjacentPixels);
 
-        ArrayList<Pixel> updateList = rules.calculateOverwritings(adjacentEnemies);
+        ArrayList<Pixel> updateList = rules.calculateOverwritings(adjacentEnemies, adjacentPixels.size());
 
         return updateList;
     }
+
+    public static boolean validateForPixelModification(Board board, final Team team, Pixel currentPixel) {
+        return currentPixel.getTeam().equals(team);
+    }
+
 
     private final Board board;
     private final Team team;
@@ -95,8 +102,9 @@ public class Rules {
         return adjacentEnemies;
     }
 
-    private ArrayList<Pixel> calculateOverwritings(ArrayList<Pixel> adjacentEnemies) {
+    private ArrayList<Pixel> calculateOverwritings(ArrayList<Pixel> adjacentEnemies, int numberOfSurrPixels) {
         ArrayList<Pixel> updateList = new ArrayList<>();
+        int absoluteAmtOfNecPixels = (int) (Math.ceil(numberOfSurrPixels * AMOUNT_OF_NECES_SURR_ENEMIES)); //ceil rundet IMMER auf
 
         //If there is at least one enemy, check this enemy's surrounding pixels,
         // to see if there are 3 or more ally pixels -> would turn this pixel into ally
@@ -110,19 +118,23 @@ public class Rules {
                     Team _team = surroundingPixel.getTeam();
                     if (!_team.equals(enemyTeamName) && _team != Team.None) {
                         adjacentAllies.add(surroundingPixel);
-//                        Log.d("GAME", "Added ally for x: " + surroundingPixel.x + ", y: " + surroundingPixel.y);
                     }
                 }
 
                 Log.d("RULES", "Allies amount: " + adjacentAllies.size());
 
                 //Turn this enemy into an ally
-                if (adjacentAllies.size() >= AMOUNT_OF_NECES_SURR_ENEMIES
+                if (adjacentAllies.size() >= absoluteAmtOfNecPixels
                         && checkIfAlliesStandTogether(adjacentAllies)
                     // => Hier check, ob diese Allies sich auch gegenseitig berühren und Mauer bilden
                         ) {
-                    enemy.setTeam(team);
-                    updateList.add(enemy);
+                    if (enemy.getPixelMod() == PixelModification.None) {
+                        enemy.setTeam(team);
+                        updateList.add(enemy);
+                    } else {
+                        Log.d("RULES", "Found MOD on Pixel, running check");
+                        updateList.addAll(calculateAffectedPixelsByMod(enemy));
+                    }
                 }
             }
         }
@@ -138,6 +150,24 @@ public class Rules {
         }
 
         return true;
+    }
+
+    private ArrayList<Pixel> calculateAffectedPixelsByMod(Pixel pixel) {
+        ArrayList<Pixel> affectedPixels = new ArrayList<>();
+
+        if (pixel.getPixelMod() == PixelModification.Bomb) {
+            Team newTeam = pixel.getTeam();
+            affectedPixels.addAll(extractSurroundingPixelsFor(pixel.getX(), pixel.getY()));
+            pixel.setPixelMod(PixelModification.None); //Reset mod
+            affectedPixels.add(pixel); //Add central pixel too
+
+
+            for (Pixel p : affectedPixels) {
+                p.setTeam(newTeam);
+            }
+        }
+
+        return affectedPixels;
     }
 
     private boolean isFree() {
