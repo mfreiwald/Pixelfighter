@@ -16,6 +16,8 @@ public class Rules {
 
     private static boolean ALLOW_DIAGONAL = false;
 
+    private static int AMOUNT_OF_NECES_SURR_ENEMIES = 4;
+
     public static boolean validate(final Board board, final Team team, final int x, final int y) {
 
         Log.d("Rules", "Validate " + team + " at (" + x + "," + y + ")");
@@ -115,13 +117,12 @@ public class Rules {
                 Log.d("RULES", "Allies amount: " + adjacentAllies.size());
 
                 //Turn this enemy into an ally
-                if (adjacentAllies.size() >= 3
-//                        && checkIfAlliesStandTogether(adjacentAllies)
-                        ) {
+                if (adjacentAllies.size() >= AMOUNT_OF_NECES_SURR_ENEMIES
+                        && checkIfAlliesStandTogether(adjacentAllies)
                     // => Hier check, ob diese Allies sich auch gegenseitig berühren und Mauer bilden
+                        ) {
                     enemy.setTeam(team);
                     updateList.add(enemy);
-//                  Log.d("GAME", "Turned this enemy into ally");
                 }
             }
         }
