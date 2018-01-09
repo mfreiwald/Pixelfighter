@@ -21,7 +21,8 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Name" />
+        android:hint="Name"
+        android:textColor="@color/colorAccent"/>
 
     <Button
         android:id="@+id/btnRegister"

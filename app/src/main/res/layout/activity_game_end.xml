@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="de.lmu.ifi.pixelfighter.activities.GameEndActivity">
+
+    <TextView
+        android:id="@+id/teamWonTextview"
+        style="@style/TitleTheme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Team XY won!"/>
+
+    <TextView
+        android:id="@+id/gameStatsTitle"
+        style="@style/TitleTheme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/teamWonTextview"
+        android:text="Game statistics"/>
+    <TextView
+        android:id="@+id/red"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/btn_red"
+        android:layout_marginBottom="@dimen/space_margin"
+        android:text="Team Red: "
+        android:layout_below="@+id/gameStatsTitle"/>
+    <TextView
+        android:id="@+id/blue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/btn_blue"
+        android:layout_marginBottom="@dimen/space_margin"
+        android:text="Team blue: "
+        android:layout_below="@+id/red"/>
+    <TextView
+        android:id="@+id/green"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/space_margin"
+        android:text="Team Green: "
+        android:background="@color/btn_green"
+        android:layout_below="@+id/blue"/>
+    <TextView
+        android:id="@+id/yellow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/btn_yellow"
+        android:layout_marginBottom="@dimen/space_margin"
+        android:text="Team Yellow: "
+        android:layout_below="@+id/green"/>
+
+    <Button
+        android:id="@+id/btnMainMenu"
+        style="@style/ButtonTheme"
+        android:layout_alignParentBottom="true"
+        android:text="Back to main menu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+
+</RelativeLayout>

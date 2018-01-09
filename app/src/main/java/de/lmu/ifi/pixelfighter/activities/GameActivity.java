@@ -1,8 +1,10 @@
 package de.lmu.ifi.pixelfighter.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -95,8 +97,27 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
     @Override
     public void onGameOver() {
         Toast.makeText(this, "Game is over", Toast.LENGTH_LONG).show();
-        Intent intent = new Intent(this, ChooseTeamActivity.class);
-        startActivity(intent);
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(GameActivity.this);
+        dialogBuilder.setTitle("GAME IS OVER!");
+        //ToDo: Gewinnerteam in message einbinden
+        dialogBuilder.setMessage("The Game is over. Team xy won.");
+        dialogBuilder.setPositiveButton("See statistics", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Intent intent = new Intent(GameActivity.this, GameEndActivity.class);
+                startActivity(intent);
+            }
+        });
+        dialogBuilder.setNegativeButton("Back to Main Menu", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Intent intent = new Intent(GameActivity.this, MenuActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        AlertDialog dialog = dialogBuilder.create();
+        dialog.show();
     }
 
     @Override

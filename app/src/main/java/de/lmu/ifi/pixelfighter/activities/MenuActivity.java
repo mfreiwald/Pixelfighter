@@ -87,4 +87,10 @@ public class MenuActivity extends AppCompatActivity {
         }
     }
 
+    @OnClick(R.id.btnGameEnd)
+    public void onClickGameEnd() {
+        Intent intentStats = new Intent(MenuActivity.this, GameEndActivity.class);
+        startActivity(intentStats);
+    }
+
 }

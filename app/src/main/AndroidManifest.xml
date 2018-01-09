@@ -21,7 +21,8 @@
         <activity android:name=".activities.GameDescActivity" />
         <activity android:name=".activities.MenuActivity" />
         <activity android:name=".activities.ChooseTeamActivity" />
-        <activity android:name=".activities.GameActivity"></activity>
+        <activity android:name=".activities.GameActivity" />
+        <activity android:name=".activities.GameEndActivity"></activity>
     </application>
 
 </manifest>
