@@ -10,6 +10,7 @@ public class Pixel {
     private String playerKey;
     private int x;
     private int y;
+    private PixelModification pixelMod;
 
     public Pixel() {
     }
@@ -19,6 +20,7 @@ public class Pixel {
         this.y = y;
         this.team = Team.None;
         this.playerKey = "";
+        this.pixelMod = PixelModification.None;
     }
 
     public Team getTeam() {
@@ -53,6 +55,14 @@ public class Pixel {
         this.y = y;
     }
 
+    public PixelModification getPixelMod() {
+        return pixelMod;
+    }
+
+    public void setPixelMod(PixelModification pixelMod) {
+        this.pixelMod = pixelMod;
+    }
+
     @Override
     public String toString() {
         return "Pixel{" +
@@ -60,6 +70,7 @@ public class Pixel {
                 ", playerKey='" + playerKey + '\'' +
                 ", x=" + x +
                 ", y=" + y +
+                ", PixelMod=" + pixelMod +
                 '}';
     }
 }
