@@ -17,9 +17,13 @@ import de.lmu.ifi.pixelfighter.models.Pixel;
 import de.lmu.ifi.pixelfighter.models.PixelModification;
 import de.lmu.ifi.pixelfighter.models.Player;
 import de.lmu.ifi.pixelfighter.models.Team;
-import de.lmu.ifi.pixelfighter.services.android.Singleton;
+import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 import de.lmu.ifi.pixelfighter.services.firebase.callbacks.ServiceCallback;
 import de.lmu.ifi.pixelfighter.services.firebase.callbacks.UpdateCallback;
+
+/**
+ * Created by michael on 28.11.17.
+ */
 
 public class BoardService extends BaseService<Board> {
 
@@ -78,8 +82,8 @@ public class BoardService extends BaseService<Board> {
     public void setPixel(final int x, final int y, final ServiceCallback<Pixel> callback) {
         // get current user & team
         // ToDo: get current user data
-        Player player = Singleton.getInstance().getPlayer();
-        final Team team = Singleton.getInstance().getTeam();
+        Player player = Pixelfighter.getInstance().getPlayer();
+        final Team team = Pixelfighter.getInstance().getTeam();
         if (player == null || team == null) {
             callback.failure("Player or Team is null");
             return;
@@ -134,8 +138,8 @@ public class BoardService extends BaseService<Board> {
     //Specifically for updating Pixels instead of placing new ones
     public void changePixel(final int x, final int y,
                             final ServiceCallback<Pixel> callback) {
-        Player player = Singleton.getInstance().getPlayer();
-        final Team team = Singleton.getInstance().getTeam();
+        Player player = Pixelfighter.getInstance().getPlayer();
+        final Team team = Pixelfighter.getInstance().getTeam();
         if (player == null || team == null) {
             callback.failure("Player or Team is null");
             return;
@@ -177,8 +181,7 @@ public class BoardService extends BaseService<Board> {
     }
 
     public ArrayList<Pixel> checkForEnemiesToConvert(final int x, final int y) {
-        final Team team = Singleton.getInstance().getTeam();
-        //Hier check for bomb
+        final Team team = Pixelfighter.getInstance().getTeam();
         ArrayList<Pixel> pixelsToUpdate = Rules.checkForEnemiesToConvert(board, team, x, y);
         Log.d("RULES", "amount of pixels to update: " + pixelsToUpdate.size());
 

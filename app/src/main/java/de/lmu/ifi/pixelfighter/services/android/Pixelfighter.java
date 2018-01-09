@@ -3,24 +3,29 @@ package de.lmu.ifi.pixelfighter.services.android;
 import de.lmu.ifi.pixelfighter.models.Game;
 import de.lmu.ifi.pixelfighter.models.Player;
 import de.lmu.ifi.pixelfighter.models.Team;
+import de.lmu.ifi.pixelfighter.models.callbacks.Callback;
+import de.lmu.ifi.pixelfighter.services.firebase.AuthenticationService;
+import de.lmu.ifi.pixelfighter.services.firebase.GameService;
 
 /**
  * Created by michael on 11.12.17.
  */
 
-public class Singleton {
+public class Pixelfighter {
 
-    private static Singleton INSTANCE = new Singleton();
+    private static Pixelfighter INSTANCE = new Pixelfighter();
 
-    public static Singleton getInstance() {
+    public static Pixelfighter getInstance() {
         return INSTANCE;
     }
 
-    private Game game;
+
+
     private Player player;
+    private Game game;
     private Team team;
 
-    private Singleton() {
+    private Pixelfighter() {
 
     }
 
@@ -47,4 +52,6 @@ public class Singleton {
     public void setTeam(Team team) {
         this.team = team;
     }
+
+
 }

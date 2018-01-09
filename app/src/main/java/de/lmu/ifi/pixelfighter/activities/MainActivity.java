@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -15,7 +16,7 @@ import de.lmu.ifi.pixelfighter.R;
 import de.lmu.ifi.pixelfighter.models.Player;
 import de.lmu.ifi.pixelfighter.models.callbacks.Callback;
 import de.lmu.ifi.pixelfighter.services.android.Settings;
-import de.lmu.ifi.pixelfighter.services.android.Singleton;
+import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 import de.lmu.ifi.pixelfighter.services.firebase.AuthenticationService;
 
 public class MainActivity extends AppCompatActivity {
@@ -41,11 +42,21 @@ public class MainActivity extends AppCompatActivity {
         String key = settings.getPlayerKey();
         if(key == null || key.isEmpty()) {
             Log.d("MainActivity", "Please register");
+            showRegister();
         } else {
-            usernameTextView.setVisibility(View.GONE);
-            btnRegister.setVisibility(View.GONE);
+            showLogin();
             login(key);
         }
+    }
+
+    private void showRegister() {
+        usernameTextView.setVisibility(View.VISIBLE);
+        btnRegister.setVisibility(View.VISIBLE);
+    }
+
+    private void showLogin() {
+        usernameTextView.setVisibility(View.GONE);
+        btnRegister.setVisibility(View.GONE);
     }
 
 
@@ -84,14 +95,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onError(String message) {
                 Log.d("Toast", "Error: " + message);
+                Toast.makeText(MainActivity.this, "Login failed. Please register with Username", Toast.LENGTH_LONG).show();
                 settings.setPlayerKey("");
+                showRegister();
                 register();
             }
         });
     }
 
     private void step1(final Player player) {
-        Singleton.getInstance().setPlayer(player);
+        Pixelfighter.getInstance().setPlayer(player);
+        new Settings().setPlayerKey(player.getKey());
         Intent intent = new Intent(this, MenuActivity.class);
         startActivity(intent);
     }

@@ -17,7 +17,7 @@ public class Rules {
 
     private static boolean ALLOW_DIAGONAL = false;
 
-    private static double AMOUNT_OF_NECES_SURR_ENEMIES = 0.6;
+    private static double AMOUNT_OF_NECES_SURR_ENEMIES = 0.5;
     //Villt stattdessen in % abhängig von # of surrounding pixels?
 
     public static boolean validate(final Board board, final Team team, final int x, final int y) {
