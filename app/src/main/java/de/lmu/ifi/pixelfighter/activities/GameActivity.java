@@ -10,6 +10,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import butterknife.OnClick;
 import de.lmu.ifi.pixelfighter.R;
 import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.Pixel;
+import de.lmu.ifi.pixelfighter.models.PixelModification;
 import de.lmu.ifi.pixelfighter.models.Team;
 import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 import de.lmu.ifi.pixelfighter.services.firebase.BoardService;
@@ -36,6 +38,9 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
 
     @BindView(R.id.bombButton)
     Button bombButton;
+    @BindView(R.id.bombCountView)
+    TextView bombCounterView;
+    private int bombCharges = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +48,8 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
         setContentView(R.layout.activity_game2);
 
         ButterKnife.bind(this);
+        bombCounterView.setText("x" + bombCharges);
+
         this.boardService = new BoardService(Pixelfighter.getInstance().getGame(), this);
         this.gameService = new GameService(Pixelfighter.getInstance().getGame(), this);
         final Board board = this.boardService.getBoard();
@@ -50,7 +57,6 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
 
         GridLayout layout = findViewById(R.id.layout);
         layout.setColumnCount(board.getWidth());
-        //Put grid in another layout and then have two layouts, one for extra functions
 
         buttons = new ArrayList<>();
 
@@ -96,7 +102,7 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
     @Override
     public void onUpdate(Pixel pixel) {
         Log.d("GameActivity", "Pixel Update " + pixel);
-        updateButton(pixel.getTeam(), pixel.getX(), pixel.getY());
+        updateButton(pixel);
     }
 
     @Override
@@ -119,13 +125,14 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
             @Override
             public void success(Pixel pixel) {
                 Log.d("GameActivity", "Successfully set pixel " + pixel.toString());
-                updateButton(pixel.getTeam(), pixel.getX(), pixel.getY());
+                updateButton(pixel);
 
                 //Die Umgebung auf Gegner überprüfen, die umgefärbt werden müssen
                 Log.d("GameActivity", "Running enemy check now");
                 ArrayList<Pixel> pixelsToUpdate = boardService.checkForEnemiesToConvert(pixel.getX(), pixel.getY());
                 for (Pixel newPixel : pixelsToUpdate) {
-                    boardService.changePixel(newPixel.getX(), newPixel.getY(), customCallback);
+                    Log.d("GameActivity", "updating Pixel: " + pixel);
+                    boardService.changePixel(newPixel, customCallback);
                 }
             }
 
@@ -140,13 +147,14 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
         @Override
         public void success(Pixel pixel) {
             Log.d("GameActivity", "Successfully changed pixel " + pixel.toString());
-            updateButton(pixel.getTeam(), pixel.getX(), pixel.getY());
+            updateButton(pixel);
 
             //Wiederum die Umgebung auf Gegner überprüfen, die umgefärbt werden müssen
             Log.d("GameActivity", "Running deeper level enemy check now");
             ArrayList<Pixel> pixelsToUpdate = boardService.checkForEnemiesToConvert(pixel.getX(), pixel.getY());
             for (Pixel newPixel : pixelsToUpdate) {
-                boardService.changePixel(newPixel.getX(), newPixel.getY(), customCallback);
+                Log.d("GameActivity", "(deeper level) updating Pixel: " + pixel);
+                boardService.changePixel(newPixel, customCallback);
             }
         }
 
@@ -158,12 +166,17 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
 
     @OnClick(R.id.bombButton)
     public void placeBomb() {
-//        if(bombCharges > 0)
-        if (!boardService.isBombActive()) {
-            boardService.activateBombForNextClick();
-            Log.d("GameService", "Activated bomb for next click");
-        } else
-            boardService.deactivateBombForNextClick();
+        if (bombCharges > 0) {
+            if (!boardService.isBombActive()) {
+                boardService.activateBombForNextClick();
+                bombCharges--;
+                Log.d("GameService", "Activated bomb for next click");
+            } else {
+                boardService.deactivateBombForNextClick();
+                bombCharges++;
+            }
+        }
+        bombCounterView.setText("x" + bombCharges);
     }
 
     private void updateBoard() {
@@ -171,13 +184,15 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
             for (int y = 0; y < this.boardService.getBoard().getHeight(); y++) {
                 Pixel pixel = this.boardService.getBoard().getPixels().get(x).get(y);
                 Log.d("GameActivity", "Pixel: " + pixel);
-                updateButton(pixel.getTeam(), pixel.getX(), pixel.getY());
+                updateButton(pixel);
             }
         }
     }
 
-    private void updateButton(Team team, int x, int y) {
-        Button button = this.buttons.get(y).get(x);
+    private void updateButton(Pixel pixel) {
+        Team team = pixel.getTeam();
+        Team playerTeam = Pixelfighter.getInstance().getTeam();
+        Button button = this.buttons.get(pixel.getY()).get(pixel.getX());
         switch (team) {
             case Red:
                 button.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.btn_red)));
@@ -194,6 +209,10 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
             default:
                 button.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.btn_none)));
                 break;
+        }
+
+        if(pixel.getPixelMod()!= PixelModification.None && team.equals(playerTeam)) {
+            button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_bomb, 0, 0, 0);
         }
     }
 }

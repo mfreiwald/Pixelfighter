@@ -17,8 +17,7 @@ public class Rules {
 
     private static boolean ALLOW_DIAGONAL = false;
 
-    private static double AMOUNT_OF_NECES_SURR_ENEMIES = 0.5;
-    //Villt stattdessen in % abhängig von # of surrounding pixels?
+    private static double PERCNTGE_OF_NECES_SURR_ENEMIES = 0.5;
 
     public static boolean validate(final Board board, final Team team, final int x, final int y) {
 
@@ -104,7 +103,8 @@ public class Rules {
 
     private ArrayList<Pixel> calculateOverwritings(ArrayList<Pixel> adjacentEnemies, int numberOfSurrPixels) {
         ArrayList<Pixel> updateList = new ArrayList<>();
-        int absoluteAmtOfNecPixels = (int) (Math.ceil(numberOfSurrPixels * AMOUNT_OF_NECES_SURR_ENEMIES)); //ceil rundet IMMER auf
+        int absoluteAmtOfNecPixels = (int) (Math.ceil(numberOfSurrPixels * PERCNTGE_OF_NECES_SURR_ENEMIES)); //ceil rundet IMMER auf
+        Log.d("RULES", "Neccs. surrd. enemies to convert: " + absoluteAmtOfNecPixels);
 
         //If there is at least one enemy, check this enemy's surrounding pixels,
         // to see if there are 3 or more ally pixels -> would turn this pixel into ally
@@ -139,6 +139,7 @@ public class Rules {
             }
         }
 
+        Log.d("RULES", "updateList: " + updateList.toString());
         return updateList;
     }
 
@@ -159,12 +160,14 @@ public class Rules {
             Team newTeam = pixel.getTeam();
             affectedPixels.addAll(extractSurroundingPixelsFor(pixel.getX(), pixel.getY()));
             pixel.setPixelMod(PixelModification.None); //Reset mod
-            affectedPixels.add(pixel); //Add central pixel too
-
 
             for (Pixel p : affectedPixels) {
                 p.setTeam(newTeam);
             }
+
+            affectedPixels.add(pixel); //Add central pixel too
+
+            Log.d("RULES", affectedPixels.size() + " Pixels affected by Mod: Bomb. Coloring into Team: " + newTeam);
         }
 
         return affectedPixels;

@@ -136,7 +136,7 @@ public class BoardService extends BaseService<Board> {
     }
 
     //Specifically for updating Pixels instead of placing new ones
-    public void changePixel(final int x, final int y,
+    public void changePixel(final Pixel newPixel,
                             final ServiceCallback<Pixel> callback) {
         Player player = Pixelfighter.getInstance().getPlayer();
         final Team team = Pixelfighter.getInstance().getTeam();
@@ -145,14 +145,7 @@ public class BoardService extends BaseService<Board> {
             return;
         }
 
-        final Pixel newPixel = new Pixel();
-        newPixel.setPlayerKey(player.getKey());
-        newPixel.setTeam(team);
-        newPixel.setX(x);
-        newPixel.setY(y);
-        newPixel.setPixelMod(PixelModification.None);
-
-        dbRef.child("pixels").child(Integer.toString(x)).child(Integer.toString(y)).runTransaction(new Transaction.Handler() {
+        dbRef.child("pixels").child(Integer.toString(newPixel.getX())).child(Integer.toString(newPixel.getY())).runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
                 Pixel currentPixel = mutableData.getValue(Pixel.class);
@@ -183,7 +176,7 @@ public class BoardService extends BaseService<Board> {
     public ArrayList<Pixel> checkForEnemiesToConvert(final int x, final int y) {
         final Team team = Pixelfighter.getInstance().getTeam();
         ArrayList<Pixel> pixelsToUpdate = Rules.checkForEnemiesToConvert(board, team, x, y);
-        Log.d("RULES", "amount of pixels to update: " + pixelsToUpdate.size());
+        Log.d("BOARDSERVICE", "amount of pixels to update: " + pixelsToUpdate.size());
 
         return pixelsToUpdate;
     }

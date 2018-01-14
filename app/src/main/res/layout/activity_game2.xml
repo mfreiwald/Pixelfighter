@@ -26,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:background="@color/background"
-        android:columnCount="4"
+        android:columnCount="10"
         android:layout_weight="2">
 
         <Button
@@ -35,23 +35,20 @@
             android:layout_height="40dp"
             android:layout_column="2"
             android:text="Bomb"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            />
+
+        <TextView
+            android:id="@+id/bombCountView"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_column="3"
+            android:layout_marginStart="10dp"
+            android:text="x1"
+            android:textSize="16sp"
+            android:textColor="@color/colorAccent"
+            />
 
     </GridLayout>
-
-    <!--<RelativeLayout-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:gravity="bottom">-->
-
-    <!--<Button-->
-    <!--android:id="@+id/bombButton"-->
-    <!--android:layout_width="60dp"-->
-    <!--android:layout_height="40dp"-->
-    <!--android:layout_centerHorizontal="true"-->
-    <!--android:text="Bomb"-->
-    <!--android:textSize="12sp" />-->
-
-    <!--</RelativeLayout>-->
 
 </LinearLayout>
