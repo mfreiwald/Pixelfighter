@@ -48,12 +48,14 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
         setContentView(R.layout.activity_game2);
 
         ButterKnife.bind(this);
-        bombCounterView.setText("x" + bombCharges);
+        updateBombView(0);
 
         this.boardService = new BoardService(Pixelfighter.getInstance().getGame(), this);
         this.gameService = new GameService(Pixelfighter.getInstance().getGame(), this);
         final Board board = this.boardService.getBoard();
 
+        //Muss nur bei creation of new game sein
+        this.boardService.distributeBombsAsLoot();
 
         GridLayout layout = findViewById(R.id.layout);
         layout.setColumnCount(board.getWidth());
@@ -127,6 +129,9 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
                 Log.d("GameActivity", "Successfully set pixel " + pixel.toString());
                 updateButton(pixel);
 
+                if (pixel.getPixelMod().equals(PixelModification.Bomb))
+                    updateBombView(1);
+
                 //Die Umgebung auf Gegner überprüfen, die umgefärbt werden müssen
                 Log.d("GameActivity", "Running enemy check now");
                 ArrayList<Pixel> pixelsToUpdate = boardService.checkForEnemiesToConvert(pixel.getX(), pixel.getY());
@@ -169,13 +174,19 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
         if (bombCharges > 0) {
             if (!boardService.isBombActive()) {
                 boardService.activateBombForNextClick();
-                bombCharges--;
+                updateBombView(-1);
                 Log.d("GameService", "Activated bomb for next click");
             } else {
                 boardService.deactivateBombForNextClick();
-                bombCharges++;
+                updateBombView(1);
             }
         }
+    }
+
+    private void updateBombView(int amount) {
+        bombCharges += amount;
+        if (bombCharges < 0) bombCharges = 0;
+
         bombCounterView.setText("x" + bombCharges);
     }
 
@@ -211,8 +222,10 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
                 break;
         }
 
-        if(pixel.getPixelMod()!= PixelModification.None && team.equals(playerTeam)) {
+        if (pixel.getPixelMod() != PixelModification.None && team.equals(playerTeam)) {
             button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_bomb, 0, 0, 0);
+        } else if (pixel.getPixelMod() != PixelModification.None && team.equals(Team.None)) {
+            button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_bomb_transparent, 0, 0, 0);
         }
     }
 }
