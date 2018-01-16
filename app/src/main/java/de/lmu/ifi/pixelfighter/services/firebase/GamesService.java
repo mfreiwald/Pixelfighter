@@ -70,9 +70,10 @@ public class GamesService extends BaseKeyService<Game> {
 
     }
 
+    final static int DEFAULT_SIZE = 20;
     // ToDo: Sollte vom Server gelöst weden
     private void createNewGame(ServiceCallback<Game> callback) {
-        Board board = new Board(4,10);
+        Board board = new Board(DEFAULT_SIZE,DEFAULT_SIZE);
         Game game = new Game(board);
         Log.d("GamesService", "Add Game " + game.toString());
         add(game, callback);

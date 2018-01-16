@@ -1,5 +1,9 @@
 package de.lmu.ifi.pixelfighter.services.android;
 
+import android.graphics.Color;
+
+import de.lmu.ifi.pixelfighter.DefaultApp;
+import de.lmu.ifi.pixelfighter.R;
 import de.lmu.ifi.pixelfighter.models.Game;
 import de.lmu.ifi.pixelfighter.models.Player;
 import de.lmu.ifi.pixelfighter.models.Team;
@@ -53,5 +57,33 @@ public class Pixelfighter {
         this.team = team;
     }
 
+    public static int getTeamColor(Team team) {
+        boolean useDark = false;
+        if(useDark) {
+            switch(team) {
+                case Red: return DefaultApp.getAppContext().getColor(R.color.btn_red_dark);
+                case Blue: return DefaultApp.getAppContext().getColor(R.color.btn_blue_dark);
+                case Yellow: return DefaultApp.getAppContext().getColor(R.color.btn_yellow_dark);
+                case Green: return DefaultApp.getAppContext().getColor(R.color.btn_green_dark);
+                default: return DefaultApp.getAppContext().getColor(R.color.btn_none_dark);
+            }
+        } else {
+            switch(team) {
+                case Red: return DefaultApp.getAppContext().getColor(R.color.btn_red);
+                case Blue: return DefaultApp.getAppContext().getColor(R.color.btn_blue);
+                case Yellow: return DefaultApp.getAppContext().getColor(R.color.btn_yellow);
+                case Green: return DefaultApp.getAppContext().getColor(R.color.btn_green);
+                default: return DefaultApp.getAppContext().getColor(R.color.btn_none);
+            }
+        }
+    }
+
+    public int getMyTeamColor() {
+        Team team = getTeam();
+        if(team == null) {
+            return Color.WHITE;
+        }
+        return getTeamColor(team);
+    }
 
 }

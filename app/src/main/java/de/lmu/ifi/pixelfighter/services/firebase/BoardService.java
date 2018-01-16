@@ -37,6 +37,7 @@ public class BoardService extends BaseService<Board> {
             Pixel pixel = dataSnapshot.getValue(Pixel.class);
             if (pixel == null)
                 return;
+            Log.d("BoardService", "Pixel update " + pixel.toString());
             board.getPixels().get(pixel.getX()).set(pixel.getY(), pixel);
             if (updateCallback != null)
                 updateCallback.onUpdate(pixel);
