@@ -8,10 +8,16 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
+import java.util.Map;
 
+import de.lmu.ifi.pixelfighter.game.Rules;
 import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.Game;
+import de.lmu.ifi.pixelfighter.models.PixelModification;
+import de.lmu.ifi.pixelfighter.models.GamePlayer;
 import de.lmu.ifi.pixelfighter.models.Player;
 import de.lmu.ifi.pixelfighter.models.Team;
 import de.lmu.ifi.pixelfighter.models.callbacks.Callback;
@@ -25,8 +31,9 @@ import de.lmu.ifi.pixelfighter.services.firebase.callbacks.ServiceCallback;
 public class GamesService extends BaseKeyService<Game> {
 
     private static GamesService INSTANCE;
+
     public static GamesService getInstance() {
-        if(INSTANCE == null)
+        if (INSTANCE == null)
             INSTANCE = new GamesService();
         return INSTANCE;
     }
@@ -48,15 +55,15 @@ public class GamesService extends BaseKeyService<Game> {
 
                 // ToDo: Besseren Suchalgorithmus
                 boolean found = false;
-                for(Game game : games) {
+                for (Game game : games) {
                     Log.d("Games", "Game with Key " + game.getKey());
-                    if(game.isActive()) {
+                    if (game.isActive()) {
                         callback.success(game);
                         found = true;
                         break;
                     }
                 }
-                if(!found) {
+                if (!found) {
                     //callback.failure("No active game found!");
                     createNewGame(callback);
                 }
@@ -70,20 +77,35 @@ public class GamesService extends BaseKeyService<Game> {
 
     }
 
-    final static int DEFAULT_SIZE = 20;
     // ToDo: Sollte vom Server gelöst weden
     private void createNewGame(ServiceCallback<Game> callback) {
-        Board board = new Board(DEFAULT_SIZE,DEFAULT_SIZE);
+        Board board = new Board(Rules.X_DEFAULT_SIZE, Rules.Y_DEFAULT_SIZE);
+        distributeBombsAsLoot(board);
         Game game = new Game(board);
         Log.d("GamesService", "Add Game " + game.toString());
         add(game, callback);
+    }
+
+    private void distributeBombsAsLoot(Board board) {
+        Random random = new Random();
+        int max = 100;
+        int min = 0;
+
+        for (int x = 0; x < board.getWidth(); x++) {
+            for (int y = 0; y < board.getHeight(); y++) {
+                double probability = ((double) random.nextInt(max + 1 - min) + min) / 100.0;
+                if (probability <= Rules.BOMB_PLCMNT_PROB) {
+                    board.getPixels().get(x).get(y).setPixelMod(PixelModification.Bomb);
+                }
+            }
+        }
     }
 
     public void loadGame(String key, final GameCallback callback) {
         findSingle(key, new ServiceCallback<Game>() {
             @Override
             public void success(Game game) {
-                if(game.isActive()) {
+                if (game.isActive()) {
                     callback.onLoaded(game);
                 } else {
                     callback.onClosed();
@@ -92,7 +114,7 @@ public class GamesService extends BaseKeyService<Game> {
 
             @Override
             public void failure(String message) {
-                if(message.contains("Model is null")) {
+                if (message.contains("Model is null")) {
                     callback.onModelNotExists();
                 } else {
                     callback.onError(message);
@@ -120,21 +142,23 @@ public class GamesService extends BaseKeyService<Game> {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
                 Game game = mutableData.getValue(Game.class);
-                if(game == null) {
+                if (game == null) {
                     return Transaction.success(mutableData);
                 }
-                List teams = game.getPlayers().get(team.name());
+                Map teams = game.getPlayers().get(team.name());
                 if(teams == null) {
-                    game.getPlayers().put(team.name(), new ArrayList<String>());
+                    game.getPlayers().put(team.name(), new HashMap<String, GamePlayer>());
                 }
-                game.getPlayers().get(team.name()).add(player.getKey());
+                GamePlayer gamePlayer = new GamePlayer();
+                gamePlayer.setPlayerKey(player.getKey());
+                game.getPlayers().get(team.name()).put(player.getKey(), gamePlayer);
                 mutableData.setValue(game);
                 return Transaction.success(mutableData);
             }
 
             @Override
             public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-                if(databaseError == null) {
+                if (databaseError == null) {
                     Game game = wrapModel(dataSnapshot); //dataSnapshot.getValue(Game.class);
                     callback.onLoaded(game);
                 } else {

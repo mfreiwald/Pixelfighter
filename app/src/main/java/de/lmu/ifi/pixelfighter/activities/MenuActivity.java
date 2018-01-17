@@ -13,6 +13,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.lmu.ifi.pixelfighter.R;
 import de.lmu.ifi.pixelfighter.models.Game;
+import de.lmu.ifi.pixelfighter.models.GamePlayer;
 import de.lmu.ifi.pixelfighter.models.Team;
 import de.lmu.ifi.pixelfighter.models.callbacks.GameCallback;
 import de.lmu.ifi.pixelfighter.services.android.Settings;
@@ -72,12 +73,13 @@ public class MenuActivity extends AppCompatActivity {
                 public void onLoaded(Game game) {
                     Log.d("Toast", "You loaded Game " + game.getKey());
 
-                    for(Map.Entry<String, List<String>> teams : game.getPlayers().entrySet()) {
-                        if(teams.getValue().contains(Pixelfighter.getInstance().getPlayer().getKey())) {
-                            Pixelfighter.getInstance().setTeam(Team.valueOf(teams.getKey()));
+                    for(Map.Entry<String, Map<String, GamePlayer>> team : game.getPlayers().entrySet()) {
+                        if(team.getValue().containsKey(Pixelfighter.getInstance().getPlayer().getKey())) {
+                            Pixelfighter.getInstance().setTeam(Team.valueOf(team.getKey()));
                             break;
                         }
                     }
+
 
                     StartActivityHelper.startGameActivity(MenuActivity.this, game);
 

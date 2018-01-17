@@ -22,6 +22,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.lmu.ifi.pixelfighter.R;
 import de.lmu.ifi.pixelfighter.models.Board;
+import de.lmu.ifi.pixelfighter.models.GamePlayer;
 import de.lmu.ifi.pixelfighter.models.Pixel;
 import de.lmu.ifi.pixelfighter.models.PixelModification;
 import de.lmu.ifi.pixelfighter.models.Team;
@@ -53,11 +54,8 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
         updateBombView(0);
 
         this.boardService = new BoardService(Pixelfighter.getInstance().getGame(), this);
-        this.gameService = new GameService(Pixelfighter.getInstance().getGame(), this);
+        this.gameService = new GameService(Pixelfighter.getInstance().getGame(), Pixelfighter.getInstance().getPlayer().getKey(), this);
         final Board board = this.boardService.getBoard();
-
-        //Muss nur bei creation of new game sein
-        this.boardService.distributeBombsAsLoot();
 
         GridLayout layout = findViewById(R.id.layout);
         layout.setColumnCount(board.getWidth());
@@ -141,6 +139,11 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
 
         AlertDialog dialog = dialogBuilder.create();
         dialog.show();
+    }
+
+    @Override
+    public void onGamePlayerChanged(GamePlayer gamePlayer) {
+
     }
 
     @Override

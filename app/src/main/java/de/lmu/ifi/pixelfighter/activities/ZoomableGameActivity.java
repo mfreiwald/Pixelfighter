@@ -19,7 +19,9 @@ import de.lmu.ifi.pixelfighter.R;
 import de.lmu.ifi.pixelfighter.activities.game.GameView;
 import de.lmu.ifi.pixelfighter.activities.game.PendingClick;
 import de.lmu.ifi.pixelfighter.models.Board;
+import de.lmu.ifi.pixelfighter.models.GamePlayer;
 import de.lmu.ifi.pixelfighter.models.Pixel;
+import de.lmu.ifi.pixelfighter.models.PixelModification;
 import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 import de.lmu.ifi.pixelfighter.services.android.Settings;
 import de.lmu.ifi.pixelfighter.services.firebase.BoardService;
@@ -52,11 +54,15 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
         setContentView(R.layout.activity_zoomable_game);
 
         ButterKnife.bind(this);
-        bombCounterView.setText("x" + bombCharges);
+
+        updateBombView(0);
 
 
         this.boardService = new BoardService(Pixelfighter.getInstance().getGame(), this);
-        this.gameService = new GameService(Pixelfighter.getInstance().getGame(), this);
+        this.gameService = new GameService(
+                Pixelfighter.getInstance().getGame(),
+                Pixelfighter.getInstance().getPlayer().getKey(),
+                this);
         final Board board = this.boardService.getBoard();
         this.gameView = findViewById(R.id.gameView);
         this.gameView.setBoard(board);
@@ -108,7 +114,15 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
     }
 
     @Override
+    public void onGamePlayerChanged(GamePlayer gamePlayer) {
+        int amount = gamePlayer.getBombAmount();
+        updateBombView(amount);
+
+    }
+
+    @Override
     public void onClick(int x, int y) {
+        
         final PendingClick click = new PendingClick(x, y);
         this.gameView.addPendingClick(click);
         this.boardService.setPixel(x, y, new ServiceCallback<Pixel>() {
@@ -117,6 +131,9 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
                 Log.d("GameActivity", "Successfully set pixel " + pixel.toString());
                 // remove from pending
                 gameView.removePendingClick(click);
+
+                if (pixel.getPixelMod().equals(PixelModification.Bomb))
+                    updateBombView(1);
 
                 //Die Umgebung auf Gegner überprüfen, die umgefärbt werden müssen
                 Log.d("GameActivity", "Running enemy check now");
@@ -171,4 +188,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
         bombCounterView.setText("x" + bombCharges);
     }
 
+    private void updateBombView(int amount) {
+        bombCounterView.setText(amount + " Bombs");
+    }
 }
