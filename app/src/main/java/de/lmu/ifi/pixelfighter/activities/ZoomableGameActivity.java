@@ -22,6 +22,7 @@ import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.GamePlayer;
 import de.lmu.ifi.pixelfighter.models.Pixel;
 import de.lmu.ifi.pixelfighter.models.PixelModification;
+import de.lmu.ifi.pixelfighter.services.android.LightSensor;
 import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 import de.lmu.ifi.pixelfighter.services.firebase.BoardService;
 import de.lmu.ifi.pixelfighter.services.firebase.GameService;
@@ -41,6 +42,8 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
 
     private GameView gameView;
 
+    private LightSensor lightSensor;
+
     @BindView(R.id.bombButton)
     Button bombButton;
     @BindView(R.id.bombCountView)
@@ -56,6 +59,8 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
 
         updateBombView(0);
 
+
+        this.lightSensor = new LightSensor();
 
         this.boardService = new BoardService(Pixelfighter.getInstance().getGame(), this);
         this.gameService = new GameService(
@@ -83,6 +88,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
         this.boardService.register();
         this.gameService.register();
         this.gameView.resume();
+        this.lightSensor.onResume();
     }
 
     @Override
@@ -91,6 +97,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
         this.boardService.unregister();
         this.gameService.unregister();
         this.gameView.pause();
+        this.lightSensor.onPause();
     }
 
     @Override
@@ -114,7 +121,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
 
     @Override
     public void onClick(int x, int y) {
-        
+
         final PendingClick click = new PendingClick(x, y);
         this.gameView.addPendingClick(click);
         this.boardService.setPixel(x, y, new ServiceCallback<Pixel>() {
