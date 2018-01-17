@@ -55,9 +55,6 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
         this.gameService = new GameService(Pixelfighter.getInstance().getGame(), Pixelfighter.getInstance().getPlayer().getKey(), this);
         final Board board = this.boardService.getBoard();
 
-        //Muss nur bei creation of new game sein
-        this.boardService.distributeBombsAsLoot();
-
         GridLayout layout = findViewById(R.id.layout);
         layout.setColumnCount(board.getWidth());
 
