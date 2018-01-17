@@ -1,5 +1,8 @@
 package de.lmu.ifi.pixelfighter.models;
 
+import android.icu.text.LocaleDisplayNames;
+import android.util.Log;
+
 import java.util.ArrayList;
 
 /**
@@ -9,41 +12,41 @@ import java.util.ArrayList;
 public class Statistics {
 
     Board board;
-    String teams;
-    ArrayList<ArrayList<Pixel>> pixels;
+    ArrayList<Pixel> pixels;
 
 
-    public Statistics(ArrayList<String> team) {
-        this.teams = teams;
+    public Statistics(ArrayList<Pixel> pixels) {
+        this.pixels = pixels;
     }
 
-    public int[] getStats(ArrayList<String> teams) {
+    public int[] getStats(ArrayList<Pixel> pixels) {
         int none = 0; //index 0
         int red = 0; //index 1
         int blue = 0; //index 2
         int green = 0; //index 3
         int yellow = 0; //index 4
-        int [] stats = {1,1,1,1,1};
+        int [] stats = new int[5];
 
-        for (int i=0; i<teams.size(); i++) {
-            switch (teams.get(i)) {
-                case "None":
+        for (int i=0; i<pixels.size(); i++) {
+            Log.d("Statistics", pixels.get(i).getTeam().toString());
+            switch (pixels.get(i).getTeam()) {
+                case None:
                     none = none + 1;
                     stats[0] = none;
                     break;
-                case "Red":
+                case Red:
                     red = red +1;
                     stats[1] = red;
                     break;
-                case "Blue":
+                case Blue:
                     blue++;
                     stats[2] = blue;
                     break;
-                case "Green":
+                case Green:
                     green++;
                     stats[3] = green;
                     break;
-                case "Yellow":
+                case Yellow:
                     yellow++;
                     stats[4] = yellow;
                     break;
