@@ -1,6 +1,7 @@
 package de.lmu.ifi.pixelfighter.activities;
 
 import android.content.Intent;
+import android.nfc.Tag;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,6 +26,8 @@ import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 
 public class GameEndActivity extends AppCompatActivity {
 
+    final String TAG = "GameEndActivity";
+
     TextView teamWon;
     TextView blueText;
     TextView redText;
@@ -42,7 +45,7 @@ public class GameEndActivity extends AppCompatActivity {
 
     Board board;
     ArrayList<ArrayList<Pixel>> pixels;
-    int[] stats;
+    int[] stats = new int[5];
     DatabaseReference dbRootRef;
     ArrayList <String> teams;
 
@@ -53,36 +56,25 @@ public class GameEndActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_end);
 
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
-        String key = intent.getStringExtra("gamekey");
+        board = Pixelfighter.getInstance().getGame().getBoard();
 
-        dbRootRef = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference ref = dbRootRef.child("games").child(key).child("board").child("pixels");
+        teams = new ArrayList<>();
+        statistics = new Statistics(teams);
 
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    teams = new ArrayList<>();
-                    teams.add(snapshot.child("team").getValue().toString());
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-
-        stats = statistics.getStats(teams);
 
         teamWon = (TextView) findViewById(R.id.teamWonTextview);
         blueText = (TextView) findViewById(R.id.blue);
         redText = (TextView) findViewById(R.id.red);
         greenText = (TextView) findViewById(R.id.green);
         yellowText = (TextView) findViewById(R.id.yellow);
+
+        Intent intent = getIntent();
+        String key = intent.getStringExtra("gamekey");
+        Log.d(TAG, key);
+
+        getTeams(key);
+
+        stats = statistics.getStats(teams);
 
         stats[0] = 0;
         red = stats[1];
@@ -111,6 +103,33 @@ public class GameEndActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intentDesc = new Intent(GameEndActivity.this, MenuActivity.class);
                 startActivity(intentDesc);
+
+            }
+        });
+
+    }
+
+    public void getTeams(String key){
+        dbRootRef = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference ref = dbRootRef.child("games").child(key).child("board").child("pixels");
+
+
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    for(int i = 0; i<board.getHeight(); i++) {
+                        for (int j = 0; j<board.getWidth(); j++) {
+                            teams.add(snapshot.child(Integer.toString(i)).child(Integer.toString(j)).child("team").getValue().toString());
+
+                        }
+                    }
+                    Log.d("DEBUG Teams", teams.toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });
