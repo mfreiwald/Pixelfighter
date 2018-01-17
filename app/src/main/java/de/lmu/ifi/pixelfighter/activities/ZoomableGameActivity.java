@@ -127,7 +127,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
 
                 //Die Umgebung auf Gegner überprüfen, die umgefärbt werden müssen
                 Log.d(TAG, "Running enemy check now");
-                ArrayList<Pixel> pixelsToUpdate = boardService.checkForEnemiesToConvert(pixel.getX(), pixel.getY());
+                ArrayList<Pixel> pixelsToUpdate = boardService.checkForEnemiesToConvert(gameService, pixel.getX(), pixel.getY());
                 for (Pixel newPixel : pixelsToUpdate) {
                     Log.d(TAG, "updating Pixel: " + pixel);
                     boardService.updatePixel(newPixel, customCallback);
@@ -150,7 +150,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
 
             //Wiederum die Umgebung auf Gegner überprüfen, die umgefärbt werden müssen
             Log.d(TAG, "Running deeper level enemy check now");
-            ArrayList<Pixel> pixelsToUpdate = boardService.checkForEnemiesToConvert(pixel.getX(), pixel.getY());
+            ArrayList<Pixel> pixelsToUpdate = boardService.checkForEnemiesToConvert(gameService, pixel.getX(), pixel.getY());
             for (Pixel newPixel : pixelsToUpdate) {
                 Log.d(TAG, "(deeper level) updating Pixel: " + pixel);
                 boardService.updatePixel(newPixel, customCallback);

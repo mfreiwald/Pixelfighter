@@ -76,6 +76,7 @@ public class OnboardingActivity extends AppCompatActivity implements ViewPager.O
 
         ButterKnife.bind(this);
 
+
 //        Toolbar toolbar = findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -92,9 +93,9 @@ public class OnboardingActivity extends AppCompatActivity implements ViewPager.O
         mViewPager.setCurrentItem(page);
         updateIndicators(page);
 
-        int color1 = ContextCompat.getColor(this, R.color.btn_red);
-        int color2 = ContextCompat.getColor(this, R.color.btn_green);
-        int color3 = ContextCompat.getColor(this, R.color.btn_yellow);
+        int color1 = ContextCompat.getColor(this, R.color.onboarding_screen_bg_1);
+        int color2 = ContextCompat.getColor(this, R.color.onboarding_screen_bg_2);
+        int color3 = ContextCompat.getColor(this, R.color.onboarding_screen_bg_3);
         colorList = new int[]{color1, color2, color3};
     }
 
@@ -174,6 +175,8 @@ public class OnboardingActivity extends AppCompatActivity implements ViewPager.O
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
+        ImageView img;
+
         public PlaceholderFragment() {
         }
 
@@ -195,6 +198,9 @@ public class OnboardingActivity extends AppCompatActivity implements ViewPager.O
             View rootView = inflater.inflate(R.layout.fragment_onboarding, container, false);
             TextView textView = rootView.findViewById(R.id.section_label);
             textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+
+            img = rootView.findViewById(R.id.section_image);
+            img.setImageResource(R.drawable.onboarding_testimage);
 
             return rootView;
         }

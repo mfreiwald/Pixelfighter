@@ -183,9 +183,15 @@ public class BoardService extends BaseService<Board> {
         });
     }
 
-    public ArrayList<Pixel> checkForEnemiesToConvert(final int x, final int y) {
+    public ArrayList<Pixel> checkForEnemiesToConvert(GameService gameService, final int x, final int y) {
         final Team team = Pixelfighter.getInstance().getTeam();
         ArrayList<Pixel> pixelsToUpdate = Rules.checkForEnemiesToConvert(board, team, x, y);
+        //Check if there are any loot-bombs to collect in the affected area
+        for (Pixel p : pixelsToUpdate) {
+            Rules.checkForLootModification(gameService, board, p);
+            if (p.getPixelMod().equals(PixelModification.Bomb))
+                p.setPixelMod(PixelModification.None);
+        }
         Log.d("BOARDSERVICE", "amount of pixels to update: " + pixelsToUpdate.size());
 
         return pixelsToUpdate;
