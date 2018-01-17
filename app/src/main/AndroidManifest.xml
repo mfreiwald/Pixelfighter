@@ -22,6 +22,15 @@
         <activity android:name=".activities.MenuActivity" />
         <activity android:name=".activities.ChooseTeamActivity" />
         <activity android:name=".activities.ZoomableGameActivity" />
+        <activity
+            android:name=".activities.OnboardingActivity"
+            android:label="@string/title_activity_onboarding"
+            android:parentActivityName=".activities.MenuActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="de.lmu.ifi.pixelfighter.activities.MenuActivity" />
+        </activity>
     </application>
 
 </manifest>
