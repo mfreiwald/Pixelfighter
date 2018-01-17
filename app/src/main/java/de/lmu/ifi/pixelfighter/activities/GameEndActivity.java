@@ -3,9 +3,16 @@ package de.lmu.ifi.pixelfighter.activities;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -13,7 +20,8 @@ import de.lmu.ifi.pixelfighter.R;
 import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.Pixel;
 import de.lmu.ifi.pixelfighter.models.Statistics;
-import de.lmu.ifi.pixelfighter.services.android.Singleton;
+import de.lmu.ifi.pixelfighter.models.Team;
+import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 
 public class GameEndActivity extends AppCompatActivity {
 
@@ -35,6 +43,10 @@ public class GameEndActivity extends AppCompatActivity {
     Board board;
     ArrayList<ArrayList<Pixel>> pixels;
     int[] stats;
+    DatabaseReference dbRootRef;
+    ArrayList <String> teams;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,13 +55,28 @@ public class GameEndActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-        board = Singleton.getInstance().getGame().getBoard();
+        String key = intent.getStringExtra("gamekey");
 
-        if (extras!=null) {
-            extras.getSerializable("board");
-        }
+        dbRootRef = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference ref = dbRootRef.child("games").child(key).child("board").child("pixels");
 
-        stats = statistics.getStats(board);
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    teams = new ArrayList<>();
+                    teams.add(snapshot.child("team").getValue().toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+        stats = statistics.getStats(teams);
 
         teamWon = (TextView) findViewById(R.id.teamWonTextview);
         blueText = (TextView) findViewById(R.id.blue);

@@ -111,16 +111,17 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
 
     @Override
     public void onGameOver() {
-       Toast toast=  Toast.makeText(GameActivity.this, "The game is over!",
+
+        Log.d("DEBUG Game over", "onGameOvercalled");
+       /*Toast toast=  Toast.makeText(GameActivity.this, "The game is over!",
                 Toast.LENGTH_LONG);
        toast.show();
 
         Intent intent = new Intent(GameActivity.this, GameEndActivity.class);
         intent.putExtra("board", boardService.getBoard().getPixels());
-        startActivity(intent);
-       /* AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(GameActivity.this);
+        startActivity(intent);*/
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(GameActivity.this);
         dialogBuilder.setTitle("GAME IS OVER!");
-        //ToDo: Gewinnerteam in message einbinden
         dialogBuilder.setMessage("The Game is over.");
         dialogBuilder.setPositiveButton("See statistics", new DialogInterface.OnClickListener() {
             @Override
@@ -130,16 +131,16 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
                 startActivity(intent);
             }
         });
-        dialogBuilder.setNegativeButton("Back to Main Menu", new DialogInterface.OnClickListener() {
+        /*dialogBuilder.setNegativeButton("Back to Main Menu", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 Intent intent = new Intent(GameActivity.this, MenuActivity.class);
                 startActivity(intent);
             }
-        });
+        });*/
 
         AlertDialog dialog = dialogBuilder.create();
-        dialog.show();*/
+        dialog.show();
     }
 
     @Override
