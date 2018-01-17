@@ -38,11 +38,12 @@
         app:layout_constraintTop_toBottomOf="@id/zoomLayout"
         >
 
-        <Button
-            android:id="@+id/bombButton"
-            android:layout_width="60dp"
-            android:layout_height="40dp"
-            android:text="Bomb"
+        <ToggleButton
+            android:id="@+id/bombToggle"
+            android:layout_width="70dp"
+            android:layout_height="45dp"
+            android:textOn="Cancel"
+            android:textOff="Bomb"
             android:textSize="12sp"
             />
 

@@ -125,6 +125,10 @@ public class GameService {
         updateGamePlayer();
     }
 
+    public int getBombCount() {
+        return this.gamePlayer.getBombAmount();
+    }
+
     private void updateGamePlayer() {
         DatabaseReference ref = dbRef.child("players").child(this.team.name()).child(this.playerKey);
         ref.setValue(this.gamePlayer, new DatabaseReference.CompletionListener() {

@@ -177,6 +177,10 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
                     Drawable d = getResources().getDrawable(R.drawable.ic_bomb, null);
                     d.setBounds((int)Math.ceil(mRect.left), (int)Math.ceil(mRect.top), (int)Math.floor(mRect.right), (int)Math.floor(mRect.bottom));
                     d.draw(canvas);
+                } else if(pixel.getPixelMod() == PixelModification.Bomb && team.equals(Team.None)) {
+                    Drawable d = getResources().getDrawable(R.drawable.ic_bomb_transparent, null);
+                    d.setBounds((int)Math.ceil(mRect.left), (int)Math.ceil(mRect.top), (int)Math.floor(mRect.right), (int)Math.floor(mRect.bottom));
+                    d.draw(canvas);
                 }
             }
         }
