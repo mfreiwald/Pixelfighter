@@ -6,17 +6,13 @@
     android:layout_height="match_parent"
     tools:context="de.lmu.ifi.pixelfighter.activities.MenuActivity"
     android:background="@color/colorAccent"
-    android:theme="@style/AppTheme.AppBarOverlay"
     android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/main"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="30sp"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/top_margin" />
+        style="@style/TitleTheme"
+        android:text="@string/main" />
 
     <ImageView
         android:id="@+id/imageView"
@@ -25,26 +21,33 @@
         app:srcCompat="@drawable/logo"
         android:layout_gravity="center" />
 
-    <Button android:id="@+id/button_game"
+    <Button
+        android:id="@+id/button_game"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/buttonGame"
-        android:layout_marginTop="@dimen/space_margin"/>
+        style="@style/ButtonTheme"
+        android:text="@string/buttonGame" />
 
     <Button
         android:id="@+id/button_desc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/buttonDesc"
-        android:layout_marginTop="@dimen/space_margin"
-        android:layout_gravity="center"/>
+        style="@style/ButtonTheme"
+        android:text="@string/buttonDesc" />
 
     <Button
         android:id="@+id/button_stats"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        style="@style/ButtonTheme"
         android:text="@string/buttonStats"
-        android:layout_marginTop="@dimen/space_margin"
         />
+
+    <Button
+        android:id="@+id/btnGameEnd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/ButtonTheme"
+        android:text="To GameEndActivity"/>
 </LinearLayout>
 

@@ -23,6 +23,7 @@ import de.lmu.ifi.pixelfighter.models.GamePlayer;
 import de.lmu.ifi.pixelfighter.models.Pixel;
 import de.lmu.ifi.pixelfighter.services.android.LightSensor;
 import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
+import de.lmu.ifi.pixelfighter.services.android.Settings;
 import de.lmu.ifi.pixelfighter.services.firebase.BoardService;
 import de.lmu.ifi.pixelfighter.services.firebase.GameService;
 import de.lmu.ifi.pixelfighter.services.firebase.callbacks.ServiceCallback;
@@ -103,8 +104,15 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
 
     @Override
     public void onGameOver() {
+        Log.d("DEBUG Game over", "onGameOvercalled");
+
         Toast.makeText(this, "Game is over", Toast.LENGTH_LONG).show();
-        Intent intent = new Intent(this, ChooseTeamActivity.class);
+        Intent intent = new Intent(ZoomableGameActivity.this, GameEndActivity.class);
+        intent.putExtra("board", boardService.getBoard().getPixels());
+        Settings settings = new Settings();
+        String key = settings.getActiveGameKey();
+        intent.putExtra("gamekey",key);
+        Log.d("D/gameOver: ", key);
         startActivity(intent);
     }
 
