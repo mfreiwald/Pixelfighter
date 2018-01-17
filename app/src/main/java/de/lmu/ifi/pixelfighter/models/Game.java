@@ -17,16 +17,16 @@ import java.util.Map;
 public class Game extends BaseKeyModel {
 
     private Board board = new Board();
-    private Map<String, List<String>> players = new HashMap<>();
+    private Map<String, Map<String, GamePlayer>> players = new HashMap<>();
     private boolean isActive = true;
     private String startTime;
     private String endTime;
 
     public Game() {
-        this.players.put(Team.Blue.name(), new ArrayList<String>());
-        this.players.put(Team.Green.name(), new ArrayList<String>());
-        this.players.put(Team.Red.name(), new ArrayList<String>());
-        this.players.put(Team.Yellow.name(), new ArrayList<String>());
+        this.players.put(Team.Blue.name(), new HashMap<String, GamePlayer>());
+        this.players.put(Team.Green.name(), new HashMap<String, GamePlayer>());
+        this.players.put(Team.Red.name(), new HashMap<String, GamePlayer>());
+        this.players.put(Team.Yellow.name(), new HashMap<String, GamePlayer>());
     }
 
     public Game(Board board) {
@@ -42,11 +42,11 @@ public class Game extends BaseKeyModel {
         this.board = board;
     }
 
-    public Map<String, List<String>> getPlayers() {
+    public Map<String, Map<String, GamePlayer>> getPlayers() {
         return players;
     }
 
-    public void setPlayers(Map<String, List<String>> players) {
+    public void setPlayers(Map<String, Map<String, GamePlayer>> players) {
         this.players = players;
     }
 

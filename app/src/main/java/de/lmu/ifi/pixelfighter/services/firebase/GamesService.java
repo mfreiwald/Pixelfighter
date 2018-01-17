@@ -8,10 +8,13 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.Game;
+import de.lmu.ifi.pixelfighter.models.GamePlayer;
 import de.lmu.ifi.pixelfighter.models.Player;
 import de.lmu.ifi.pixelfighter.models.Team;
 import de.lmu.ifi.pixelfighter.models.callbacks.Callback;
@@ -123,11 +126,13 @@ public class GamesService extends BaseKeyService<Game> {
                 if(game == null) {
                     return Transaction.success(mutableData);
                 }
-                List teams = game.getPlayers().get(team.name());
+                Map teams = game.getPlayers().get(team.name());
                 if(teams == null) {
-                    game.getPlayers().put(team.name(), new ArrayList<String>());
+                    game.getPlayers().put(team.name(), new HashMap<String, GamePlayer>());
                 }
-                game.getPlayers().get(team.name()).add(player.getKey());
+                GamePlayer gamePlayer = new GamePlayer();
+                gamePlayer.setPlayerKey(player.getKey());
+                game.getPlayers().get(team.name()).put(player.getKey(), gamePlayer);
                 mutableData.setValue(game);
                 return Transaction.success(mutableData);
             }
