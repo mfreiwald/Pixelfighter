@@ -29,6 +29,8 @@ public class Pixelfighter {
     private Game game;
     private Team team;
 
+    private boolean useDark = false;
+
     private Pixelfighter() {
 
     }
@@ -57,8 +59,15 @@ public class Pixelfighter {
         this.team = team;
     }
 
-    public static int getTeamColor(Team team) {
-        boolean useDark = false;
+    public boolean isUseDark() {
+        return useDark;
+    }
+
+    public void setUseDark(boolean useDark) {
+        this.useDark = useDark;
+    }
+
+    public int getTeamColor(Team team) {
         if(useDark) {
             switch(team) {
                 case Red: return DefaultApp.getAppContext().getColor(R.color.btn_red_dark);

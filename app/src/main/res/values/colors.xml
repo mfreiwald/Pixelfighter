@@ -5,6 +5,10 @@
     <color name="colorAccent">#ffffff</color>
     <color name="background">#2b2b2b</color>
 
+    <color name="game_background">#FFFFFF</color>
+    <color name="game_background_dark">#000000</color>
+
+
     <color name="btn_none">#f2f2f2</color>
     <color name="btn_none_dark">#d0d0d0</color>
 

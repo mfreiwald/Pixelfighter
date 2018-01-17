@@ -114,7 +114,13 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
 
 
     private void updateFrame(Canvas canvas) {
-        canvas.drawColor(Color.WHITE);
+
+        if(Pixelfighter.getInstance().isUseDark()) {
+            canvas.drawColor(getContext().getColor(R.color.game_background_dark));
+        } else {
+            canvas.drawColor(getContext().getColor(R.color.game_background));
+        }
+
         if (board == null) return;
 
         float boxSize = calculateBoxSize();
@@ -141,7 +147,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
                 RectF mRect = new RectF(left, top, right, bottom);
                 mFillPaint.setStyle(Paint.Style.FILL);
 
-                int color = Pixelfighter.getTeamColor(team);
+                int color = Pixelfighter.getInstance().getTeamColor(team);
 
                 ListIterator<PendingClick> iterator = pendingClicks.listIterator();
                 while(iterator.hasNext()){
