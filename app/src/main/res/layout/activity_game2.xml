@@ -1,11 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/outer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
+    android:weightSum="2"
+    tools:context="de.lmu.ifi.pixelfighter.activities.GameActivity">
+
+    <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:columnCount="7"
         android:background="@color/background"
-        tools:context="de.lmu.ifi.pixelfighter.activities.GameActivity"
-        android:id="@+id/layout">
-</GridLayout>
+        android:columnCount="7"
+        android:layout_weight="2">
+
+    </GridLayout>
+
+    <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/background"
+        android:columnCount="10"
+        android:layout_weight="2">
+
+        <Button
+            android:id="@+id/bombButton"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_column="2"
+            android:text="Bomb"
+            android:textSize="12sp"
+            />
+
+        <TextView
+            android:id="@+id/bombCountView"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_column="3"
+            android:layout_marginStart="10dp"
+            android:text="x1"
+            android:textSize="16sp"
+            android:textColor="@color/colorAccent"
+            />
+
+    </GridLayout>
+
+</LinearLayout>

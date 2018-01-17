@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.List;
 import java.util.Map;
@@ -15,8 +16,9 @@ import de.lmu.ifi.pixelfighter.models.Game;
 import de.lmu.ifi.pixelfighter.models.Team;
 import de.lmu.ifi.pixelfighter.models.callbacks.GameCallback;
 import de.lmu.ifi.pixelfighter.services.android.Settings;
-import de.lmu.ifi.pixelfighter.services.android.Singleton;
+import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 import de.lmu.ifi.pixelfighter.services.firebase.GamesService;
+import de.lmu.ifi.pixelfighter.utils.StartActivityHelper;
 
 public class MenuActivity extends AppCompatActivity {
 
@@ -61,26 +63,29 @@ public class MenuActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onLoaded(Game game) {
-                    Log.d("Toast", "You loaded Game " + game.getKey());
-                    Singleton.getInstance().setGame(game);
-
-                    for(Map.Entry<String, List<String>> teams : game.getPlayers().entrySet()) {
-                        if(teams.getValue().contains(Singleton.getInstance().getPlayer().getKey())) {
-                            Singleton.getInstance().setTeam(Team.valueOf(teams.getKey()));
-                            break;
-                        }
-                    }
-
-
-
-                    Intent intent = new Intent(MenuActivity.this, GameActivity.class);
+                public void onModelNotExists() {
+                    Intent intent = new Intent(MenuActivity.this, ChooseTeamActivity.class);
                     startActivity(intent);
                 }
 
                 @Override
+                public void onLoaded(Game game) {
+                    Log.d("Toast", "You loaded Game " + game.getKey());
+
+                    for(Map.Entry<String, List<String>> teams : game.getPlayers().entrySet()) {
+                        if(teams.getValue().contains(Pixelfighter.getInstance().getPlayer().getKey())) {
+                            Pixelfighter.getInstance().setTeam(Team.valueOf(teams.getKey()));
+                            break;
+                        }
+                    }
+
+                    StartActivityHelper.startGameActivity(MenuActivity.this, game);
+
+                }
+
+                @Override
                 public void onError(String message) {
-                    Log.d("Toast", "Error: " + message);
+                    Toast.makeText(MenuActivity.this, "Error: " + message, Toast.LENGTH_LONG).show();
 
                 }
             });
