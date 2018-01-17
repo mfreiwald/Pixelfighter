@@ -1,6 +1,7 @@
 package de.lmu.ifi.pixelfighter.activities.game;
 
 import android.content.Context;
+import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -11,7 +12,7 @@ import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
 /**
- * Created by michael on 09.01.18.
+ * Created by arch on 1/16/17.
  */
 
 public class ZoomableSurfaceView extends SurfaceView {
@@ -68,6 +69,10 @@ public class ZoomableSurfaceView extends SurfaceView {
 
     }
 
+    public void setMaxScale(float maxScale) {
+        this.maxScale = maxScale;
+    }
+
     private class MyTouchListeners implements View.OnTouchListener {
 
         float dX, dY;
@@ -103,28 +108,31 @@ public class ZoomableSurfaceView extends SurfaceView {
                     }
                     break;
                 default:
-                    return true;
+                    return false;
             }
-            return true;
+            return false;
         }
     }
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            Log.e("onGlobalLayout: ", scale + " " + width + " " + height);
+            Log.d("onGlobalLayout: ", scale + " " + width + " " + height);
             scale *= detector.getScaleFactor();
             scale = Math.max(minScale, Math.min(scale, maxScale));
 
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     (int) (width * scale), (int) (height * scale));
             ZoomableSurfaceView.this.setLayoutParams(params);
+
+            Log.d("Move to ", detector.getFocusX() + ", " + detector.getFocusY());
             checkDimension(ZoomableSurfaceView.this);
             return true;
         }
     }
 
     private void checkDimension(View vi) {
+
         if (vi.getX() > left) {
             vi.animate()
                     .x(left)

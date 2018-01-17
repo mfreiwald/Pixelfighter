@@ -28,8 +28,9 @@ import de.lmu.ifi.pixelfighter.services.firebase.callbacks.ServiceCallback;
 public class GamesService extends BaseKeyService<Game> {
 
     private static GamesService INSTANCE;
+
     public static GamesService getInstance() {
-        if(INSTANCE == null)
+        if (INSTANCE == null)
             INSTANCE = new GamesService();
         return INSTANCE;
     }
@@ -51,15 +52,15 @@ public class GamesService extends BaseKeyService<Game> {
 
                 // ToDo: Besseren Suchalgorithmus
                 boolean found = false;
-                for(Game game : games) {
+                for (Game game : games) {
                     Log.d("Games", "Game with Key " + game.getKey());
-                    if(game.isActive()) {
+                    if (game.isActive()) {
                         callback.success(game);
                         found = true;
                         break;
                     }
                 }
-                if(!found) {
+                if (!found) {
                     //callback.failure("No active game found!");
                     createNewGame(callback);
                 }
@@ -73,9 +74,11 @@ public class GamesService extends BaseKeyService<Game> {
 
     }
 
+    final static int DEFAULT_SIZE = 20;
+
     // ToDo: Sollte vom Server gelöst weden
     private void createNewGame(ServiceCallback<Game> callback) {
-        Board board = new Board(4,10);
+        Board board = new Board(DEFAULT_SIZE, DEFAULT_SIZE);
         distributeBombsAsLoot(board);
         Game game = new Game(board);
         Log.d("GamesService", "Add Game " + game.toString());
@@ -101,7 +104,7 @@ public class GamesService extends BaseKeyService<Game> {
         findSingle(key, new ServiceCallback<Game>() {
             @Override
             public void success(Game game) {
-                if(game.isActive()) {
+                if (game.isActive()) {
                     callback.onLoaded(game);
                 } else {
                     callback.onClosed();
@@ -110,7 +113,7 @@ public class GamesService extends BaseKeyService<Game> {
 
             @Override
             public void failure(String message) {
-                if(message.contains("Model is null")) {
+                if (message.contains("Model is null")) {
                     callback.onModelNotExists();
                 } else {
                     callback.onError(message);
@@ -138,11 +141,11 @@ public class GamesService extends BaseKeyService<Game> {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
                 Game game = mutableData.getValue(Game.class);
-                if(game == null) {
+                if (game == null) {
                     return Transaction.success(mutableData);
                 }
                 List teams = game.getPlayers().get(team.name());
-                if(teams == null) {
+                if (teams == null) {
                     game.getPlayers().put(team.name(), new ArrayList<String>());
                 }
                 game.getPlayers().get(team.name()).add(player.getKey());
@@ -152,7 +155,7 @@ public class GamesService extends BaseKeyService<Game> {
 
             @Override
             public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-                if(databaseError == null) {
+                if (databaseError == null) {
                     Game game = wrapModel(dataSnapshot); //dataSnapshot.getValue(Game.class);
                     callback.onLoaded(game);
                 } else {

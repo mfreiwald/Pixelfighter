@@ -15,6 +15,7 @@ import de.lmu.ifi.pixelfighter.models.callbacks.Callback;
 import de.lmu.ifi.pixelfighter.services.android.Settings;
 import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 import de.lmu.ifi.pixelfighter.services.firebase.GamesService;
+import de.lmu.ifi.pixelfighter.utils.StartActivityHelper;
 
 public class ChooseTeamActivity extends AppCompatActivity {
 
@@ -44,11 +45,7 @@ public class ChooseTeamActivity extends AppCompatActivity {
             @Override
             public void onLoaded(Game game) {
                 Log.d("Toast", "Your are playing now on Game " + game.getKey());
-                Settings settings = new Settings();
-                settings.setActiveGameKey(game.getKey());
-                Pixelfighter.getInstance().setGame(game);
-                Intent intent = new Intent(ChooseTeamActivity.this, GameActivity.class);
-                startActivity(intent);
+                StartActivityHelper.startGameActivity(ChooseTeamActivity.this, game);
             }
 
             @Override
