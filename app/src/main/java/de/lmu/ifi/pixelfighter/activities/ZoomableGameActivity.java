@@ -15,13 +15,13 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
-import butterknife.OnClick;
 import de.lmu.ifi.pixelfighter.R;
 import de.lmu.ifi.pixelfighter.activities.game.GameView;
 import de.lmu.ifi.pixelfighter.activities.game.PendingClick;
 import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.GamePlayer;
 import de.lmu.ifi.pixelfighter.models.Pixel;
+import de.lmu.ifi.pixelfighter.services.android.LightSensor;
 import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 import de.lmu.ifi.pixelfighter.services.firebase.BoardService;
 import de.lmu.ifi.pixelfighter.services.firebase.GameService;
@@ -46,12 +46,16 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
     @BindView(R.id.bombCountView)
     TextView bombCounterView;
 
+    private LightSensor lightSensor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_zoomable_game);
 
         ButterKnife.bind(this);
+
+        this.lightSensor = new LightSensor();
 
         this.boardService = new BoardService(Pixelfighter.getInstance().getGame(), bombToggle, this);
         this.gameService = new GameService(
@@ -80,6 +84,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
         this.boardService.register();
         this.gameService.register();
         this.gameView.resume();
+        this.lightSensor.onResume();
     }
 
     @Override
@@ -88,6 +93,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
         this.boardService.unregister();
         this.gameService.unregister();
         this.gameView.pause();
+        this.lightSensor.onPause();
     }
 
     @Override
@@ -172,7 +178,6 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
         }
     }
 
-    
 
     private void updateBombView() {
         bombCounterView.setText("x" + gameService.getBombCount());
