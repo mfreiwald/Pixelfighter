@@ -96,15 +96,22 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
 
     @Override
     public void onGameOver() {
-        Toast.makeText(this, "Game is over", Toast.LENGTH_LONG).show();
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(GameActivity.this);
+       Toast toast=  Toast.makeText(GameActivity.this, "The game is over!",
+                Toast.LENGTH_LONG);
+       toast.show();
+
+        Intent intent = new Intent(GameActivity.this, GameEndActivity.class);
+        intent.putExtra("board", boardService.getBoard().getPixels());
+        startActivity(intent);
+       /* AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(GameActivity.this);
         dialogBuilder.setTitle("GAME IS OVER!");
         //ToDo: Gewinnerteam in message einbinden
-        dialogBuilder.setMessage("The Game is over. Team xy won.");
+        dialogBuilder.setMessage("The Game is over.");
         dialogBuilder.setPositiveButton("See statistics", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 Intent intent = new Intent(GameActivity.this, GameEndActivity.class);
+                intent.putExtra("board", boardService.getBoard().getPixels());
                 startActivity(intent);
             }
         });
@@ -117,7 +124,7 @@ public class GameActivity extends AppCompatActivity implements UpdateCallback<Pi
         });
 
         AlertDialog dialog = dialogBuilder.create();
-        dialog.show();
+        dialog.show();*/
     }
 
     @Override

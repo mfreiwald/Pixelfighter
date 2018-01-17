@@ -7,8 +7,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import de.lmu.ifi.pixelfighter.R;
 import de.lmu.ifi.pixelfighter.models.Board;
+import de.lmu.ifi.pixelfighter.models.Pixel;
 import de.lmu.ifi.pixelfighter.models.Statistics;
 import de.lmu.ifi.pixelfighter.services.android.Singleton;
 
@@ -30,6 +33,7 @@ public class GameEndActivity extends AppCompatActivity {
 
 
     Board board;
+    ArrayList<ArrayList<Pixel>> pixels;
     int[] stats;
 
     @Override
@@ -37,7 +41,14 @@ public class GameEndActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_end);
 
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
         board = Singleton.getInstance().getGame().getBoard();
+
+        if (extras!=null) {
+            extras.getSerializable("board");
+        }
+
         stats = statistics.getStats(board);
 
         teamWon = (TextView) findViewById(R.id.teamWonTextview);

@@ -1,10 +1,12 @@
 package de.lmu.ifi.pixelfighter.models;
 
+import java.io.Serializable;
+
 /**
  * Created by michael on 23.11.17.
  */
 
-public class Pixel {
+public class Pixel implements Serializable{
 
     private Team team;
     private String playerKey;
