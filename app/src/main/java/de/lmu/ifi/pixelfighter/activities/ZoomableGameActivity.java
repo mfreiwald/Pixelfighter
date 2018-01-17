@@ -114,6 +114,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
 
     @Override
     public void onClick(int x, int y) {
+        
         final PendingClick click = new PendingClick(x, y);
         this.gameView.addPendingClick(click);
         this.boardService.setPixel(x, y, new ServiceCallback<Pixel>() {
