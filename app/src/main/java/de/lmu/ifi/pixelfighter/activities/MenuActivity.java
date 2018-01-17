@@ -32,7 +32,7 @@ public class MenuActivity extends AppCompatActivity {
 
     @OnClick(R.id.button_desc)
     public void onClickDescription() {
-        Intent intentDesc = new Intent(MenuActivity.this, GameDescActivity.class);
+        Intent intentDesc = new Intent(MenuActivity.this, OnboardingActivity.class);
         startActivity(intentDesc);
     }
 

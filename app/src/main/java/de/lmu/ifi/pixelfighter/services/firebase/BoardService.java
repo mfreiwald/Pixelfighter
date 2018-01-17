@@ -1,6 +1,9 @@
 package de.lmu.ifi.pixelfighter.services.firebase;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.ToggleButton;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,6 +32,7 @@ import de.lmu.ifi.pixelfighter.services.firebase.callbacks.UpdateCallback;
 public class BoardService extends BaseService<Board> {
 
     private boolean isBombActive = false;
+    private ToggleButton bombToggle;
 
     private final Board board;
     private final UpdateCallback<Pixel> updateCallback;
@@ -50,10 +54,11 @@ public class BoardService extends BaseService<Board> {
         }
     };
 
-    public BoardService(Game game, UpdateCallback<Pixel> updateCallback) {
+    public BoardService(Game game, ToggleButton bombToggle, UpdateCallback<Pixel> updateCallback) {
         super("games/" + game.getKey() + "/board");
         this.board = game.getBoard();
         this.updateCallback = updateCallback;
+        this.bombToggle = bombToggle;
     }
 
     @Override
@@ -81,7 +86,7 @@ public class BoardService extends BaseService<Board> {
         }
     }
 
-    public void setPixel(final int x, final int y, final ServiceCallback<Pixel> callback) {
+    public void setPixel(final int x, final int y, final GameService gameService, final ServiceCallback<Pixel> callback) {
         // get current user & team
         // ToDo: get current user data
         Player player = Pixelfighter.getInstance().getPlayer();
@@ -110,12 +115,13 @@ public class BoardService extends BaseService<Board> {
                 // ToDo: Problem, Board ist nicht aktuell !!!
                 if (isBombActive && Rules.validateForPixelModification(team, currentPixel)) {
                     currentPixel.setPixelMod(PixelModification.Bomb);
+                    bombPlaced(gameService);
                     mutableData.setValue(currentPixel);
                     Log.d("BoardService", "Bomb successfully set on: " + currentPixel.getX() + ", " + currentPixel.getY());
                     return Transaction.success(mutableData);
                 } else if (Rules.validate(board, team, x, y)) {
                     Log.d("BoardService", "running checkForLootModification");
-                    newPixel.setPixelMod(Rules.checkForLootModification(board, currentPixel));
+                    Rules.checkForLootModification(gameService, board, currentPixel);
                     mutableData.setValue(newPixel);
                     return Transaction.success(mutableData);
                 } else {
@@ -140,7 +146,7 @@ public class BoardService extends BaseService<Board> {
     }
 
     //Specifically for updating Pixels instead of placing new ones
-    public void changePixel(final Pixel newPixel,
+    public void updatePixel(final Pixel newPixel,
                             final ServiceCallback<Pixel> callback) {
         Player player = Pixelfighter.getInstance().getPlayer();
         final Team team = Pixelfighter.getInstance().getTeam();
@@ -177,9 +183,15 @@ public class BoardService extends BaseService<Board> {
         });
     }
 
-    public ArrayList<Pixel> checkForEnemiesToConvert(final int x, final int y) {
+    public ArrayList<Pixel> checkForEnemiesToConvert(GameService gameService, final int x, final int y) {
         final Team team = Pixelfighter.getInstance().getTeam();
         ArrayList<Pixel> pixelsToUpdate = Rules.checkForEnemiesToConvert(board, team, x, y);
+        //Check if there are any loot-bombs to collect in the affected area
+        for (Pixel p : pixelsToUpdate) {
+            Rules.checkForLootModification(gameService, board, p);
+            if (p.getPixelMod().equals(PixelModification.Bomb))
+                p.setPixelMod(PixelModification.None);
+        }
         Log.d("BOARDSERVICE", "amount of pixels to update: " + pixelsToUpdate.size());
 
         return pixelsToUpdate;
@@ -195,5 +207,17 @@ public class BoardService extends BaseService<Board> {
 
     public boolean isBombActive() {
         return isBombActive;
+    }
+
+    private void bombPlaced(GameService gameService) {
+        gameService.placedBomb();
+        deactivateBombForNextClick();
+
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                bombToggle.setChecked(false);
+            }
+        });
     }
 }

@@ -8,6 +8,7 @@ import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.Pixel;
 import de.lmu.ifi.pixelfighter.models.PixelModification;
 import de.lmu.ifi.pixelfighter.models.Team;
+import de.lmu.ifi.pixelfighter.services.firebase.GameService;
 
 /**
  * Created by michael on 11.12.17.
@@ -23,7 +24,7 @@ public class Rules {
 
     private final static double PERCNTGE_OF_NECES_SURR_ENEMIES = 0.5;
 
-    public final static double BOMB_PLCMNT_PROB = 0.1;
+    public final static double BOMB_PLCMNT_PROB = 0.04;
 
     public static boolean validate(final Board board, final Team team, final int x, final int y) {
 
@@ -58,13 +59,12 @@ public class Rules {
         return currentPixel.getTeam().equals(team);
     }
 
-    public static PixelModification checkForLootModification(Board board, Pixel currentPixel) {
+    public static void checkForLootModification(GameService gameService, Board board, Pixel currentPixel) {
         if (board.getPixels().get(currentPixel.getX()).get(currentPixel.getY()).getPixelMod().equals(PixelModification.Bomb)) {
             Log.d("RULES", "empty Pixel had bomb");
-            return PixelModification.Bomb;
+            gameService.foundBomb();
         } else {
             Log.d("RULES", "empty Pixel had no Mod");
-            return PixelModification.None;
         }
     }
 
@@ -143,7 +143,6 @@ public class Rules {
                 //Turn this enemy into an ally
                 if (adjacentAllies.size() >= absoluteAmtOfNecPixels
                         && checkIfAlliesStandTogether(adjacentAllies)
-                    // => Hier check, ob diese Allies sich auch gegenseitig berühren und Mauer bilden
                         ) {
                     if (enemy.getPixelMod() == PixelModification.None) {
                         enemy.setTeam(team);
@@ -160,6 +159,7 @@ public class Rules {
         return updateList;
     }
 
+    //check, ob diese Allies sich auch gegenseitig berühren und Mauer bilden
     private boolean checkIfAlliesStandTogether(ArrayList<Pixel> adjacentAllies) {
 
         for (Pixel ally : adjacentAllies) {

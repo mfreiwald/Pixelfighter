@@ -27,4 +27,11 @@
     <color name="btn_blue">#0000cc</color>
     <color name="btn_blue_pending">#aaaacc</color>
     <color name="btn_blue_dark">#0000aa</color>
+
+    <color name="onboarding_btn">#434346</color>
+    <color name="status_bar_color_onbrd">#96484849</color>
+
+    <color name="onboarding_screen_bg_1">#df8541</color>
+    <color name="onboarding_screen_bg_2">#dfb241</color>
+    <color name="onboarding_screen_bg_3">#68ac31</color>
 </resources>
