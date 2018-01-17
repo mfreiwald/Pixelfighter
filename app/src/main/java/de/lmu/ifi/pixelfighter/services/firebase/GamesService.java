@@ -9,9 +9,12 @@ import com.google.firebase.database.Transaction;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
+import de.lmu.ifi.pixelfighter.game.Rules;
 import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.Game;
+import de.lmu.ifi.pixelfighter.models.PixelModification;
 import de.lmu.ifi.pixelfighter.models.Player;
 import de.lmu.ifi.pixelfighter.models.Team;
 import de.lmu.ifi.pixelfighter.models.callbacks.Callback;
@@ -73,9 +76,25 @@ public class GamesService extends BaseKeyService<Game> {
     // ToDo: Sollte vom Server gelöst weden
     private void createNewGame(ServiceCallback<Game> callback) {
         Board board = new Board(4,10);
+        distributeBombsAsLoot(board);
         Game game = new Game(board);
         Log.d("GamesService", "Add Game " + game.toString());
         add(game, callback);
+    }
+
+    private void distributeBombsAsLoot(Board board) {
+        Random random = new Random();
+        int max = 100;
+        int min = 0;
+
+        for (int x = 0; x < board.getWidth(); x++) {
+            for (int y = 0; y < board.getHeight(); y++) {
+                double probability = ((double) random.nextInt(max + 1 - min) + min) / 100.0;
+                if (probability <= Rules.BOMB_PLCMNT_PROB) {
+                    board.getPixels().get(x).get(y).setPixelMod(PixelModification.Bomb);
+                }
+            }
+        }
     }
 
     public void loadGame(String key, final GameCallback callback) {
