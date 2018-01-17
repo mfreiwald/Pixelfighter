@@ -42,12 +42,5 @@
         style="@style/ButtonTheme"
         android:text="@string/buttonStats"
         />
-
-    <Button
-        android:id="@+id/btnGameEnd"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/ButtonTheme"
-        android:text="To GameEndActivity"/>
 </LinearLayout>
 

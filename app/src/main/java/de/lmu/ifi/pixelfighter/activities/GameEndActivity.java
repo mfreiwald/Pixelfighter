@@ -37,9 +37,6 @@ public class GameEndActivity extends AppCompatActivity {
 
 
     Board board;
-    int[] stats = new int[5];
-    DatabaseReference dbRootRef;
-    //ArrayList<Pixel> pixelList = new ArrayList<>();
     ArrayList<ArrayList<Pixel>> pixelDoublelist;
 
     @Override
@@ -48,12 +45,7 @@ public class GameEndActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game_end);
 
         board = Pixelfighter.getInstance().getGame().getBoard();
-        Intent intent = getIntent();
-        String key = intent.getStringExtra("gamekey");
-        //pixelList = getPixellist(key);
-        //Log.d(TAG, pixelList.toString());
-        getPixellist(key);
-        Log.d(TAG, pixelDoublelist.toString());
+        init();
 
         teamWon = (TextView) findViewById(R.id.teamWonTextview);
         blueText = (TextView) findViewById(R.id.blue);
@@ -61,12 +53,6 @@ public class GameEndActivity extends AppCompatActivity {
         greenText = (TextView) findViewById(R.id.green);
         yellowText = (TextView) findViewById(R.id.yellow);
 
-
-
-        //getPixellist(key);
-        //getStats(pixelDoublelist);
-
-        //teamWon.setText(setWinner(index));
 
         teamWon.setText(winner);
         String redStr = " Team Red filled " + String.valueOf(red) + " pixel(s). ";
@@ -79,10 +65,7 @@ public class GameEndActivity extends AppCompatActivity {
         greenText.setText(greenStr);
         yellowText.setText(yellowStr);
 
-
-
         btnMain = (Button) findViewById(R.id.btnMainMenu);
-
         btnMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -94,20 +77,21 @@ public class GameEndActivity extends AppCompatActivity {
     }
 
     public void init() {
+        Intent intent = getIntent();
+        String key = intent.getStringExtra("gamekey");
+        getPixellist(key);
+        getStats(pixelDoublelist);
+        getHighest();
+        setWinner(index);
 
     }
 
     public void getPixellist(String key){
-
         pixelDoublelist = this.board.getPixels();
         Log.d(TAG + "Board", pixelDoublelist.toString());
-
-        getStats(pixelDoublelist);
-
     }
 
     public void getStats(ArrayList<ArrayList<Pixel>> pixels) {
-
         try {
             for (int i=0; i<pixels.size(); i++) {
                 for (int j= 0; j<pixels.size(); j++) {
@@ -130,8 +114,6 @@ public class GameEndActivity extends AppCompatActivity {
                     }
                 }
             }
-            Log.d("Teams: ", Integer.toString(red) + Integer.toString(blue) + Integer.toString(green) + Integer.toString(yellow));
-            getHighest();
 
         } catch (RuntimeException r) {
             System.out.print(r);
@@ -143,19 +125,17 @@ public class GameEndActivity extends AppCompatActivity {
     private void getHighest() {
         int []stats = {0,red, blue, green, yellow};
         //gibt den Index des Teams zurück, welches die meisten Pixel gefüllt hat, NICHT die Anzahl der meisten Pixel
-        int wonIndex = 0;
         int highest = 0;
 
         for(int i=0;i<stats.length;i++){
             if(stats[i]>highest){
                 highest=stats[i];
-                wonIndex = i;
+                index = i;
             }
         }
-        setWinner(wonIndex);
     }
 
-    private String setWinner(int winIndex){
+    private void setWinner(int winIndex){
         winner = "The winner is...";
         switch (winIndex) {
             case 0:
@@ -174,6 +154,5 @@ public class GameEndActivity extends AppCompatActivity {
                 winner = "The winner is YELLOW!";
                 break;
         }
-        return winner;
     }
 }
