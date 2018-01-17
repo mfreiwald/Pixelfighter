@@ -9,6 +9,7 @@ import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import de.lmu.ifi.pixelfighter.game.Rules;
 import de.lmu.ifi.pixelfighter.models.Board;
@@ -107,12 +108,14 @@ public class BoardService extends BaseService<Board> {
 
                 // ToDo: Run Game Validation
                 // ToDo: Problem, Board ist nicht aktuell !!!
-                if (isBombActive && Rules.validateForPixelModification(board, team, currentPixel)) {
+                if (isBombActive && Rules.validateForPixelModification(team, currentPixel)) {
                     currentPixel.setPixelMod(PixelModification.Bomb);
                     mutableData.setValue(currentPixel);
                     Log.d("BoardService", "Bomb successfully set on: " + currentPixel.getX() + ", " + currentPixel.getY());
                     return Transaction.success(mutableData);
                 } else if (Rules.validate(board, team, x, y)) {
+                    Log.d("BoardService", "running checkForLootModification");
+                    newPixel.setPixelMod(Rules.checkForLootModification(board, currentPixel));
                     mutableData.setValue(newPixel);
                     return Transaction.success(mutableData);
                 } else {
@@ -192,5 +195,20 @@ public class BoardService extends BaseService<Board> {
 
     public boolean isBombActive() {
         return isBombActive;
+    }
+
+    public void distributeBombsAsLoot() {
+        Random random = new Random();
+        int max = 100;
+        int min = 0;
+
+        for (int x = 0; x < board.getWidth(); x++) {
+            for (int y = 0; y < board.getHeight(); y++) {
+                double probability = ((double) random.nextInt(max + 1 - min) + min) / 100.0;
+                if (probability <= Rules.BOMB_PLCMNT_PROB) {
+                    board.getPixels().get(x).get(y).setPixelMod(PixelModification.Bomb);
+                }
+            }
+        }
     }
 }

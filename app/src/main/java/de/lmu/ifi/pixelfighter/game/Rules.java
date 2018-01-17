@@ -17,7 +17,9 @@ public class Rules {
 
     private static boolean ALLOW_DIAGONAL = false;
 
-    private static double PERCNTGE_OF_NECES_SURR_ENEMIES = 0.5;
+    private final static double PERCNTGE_OF_NECES_SURR_ENEMIES = 0.5;
+
+    public final static double BOMB_PLCMNT_PROB = 0.1;
 
     public static boolean validate(final Board board, final Team team, final int x, final int y) {
 
@@ -47,8 +49,19 @@ public class Rules {
         return updateList;
     }
 
-    public static boolean validateForPixelModification(Board board, final Team team, Pixel currentPixel) {
+    //Bombe darf nur auf eigener Farbe platziert werden
+    public static boolean validateForPixelModification(final Team team, Pixel currentPixel) {
         return currentPixel.getTeam().equals(team);
+    }
+
+    public static PixelModification checkForLootModification(Board board, Pixel currentPixel) {
+        if (board.getPixels().get(currentPixel.getX()).get(currentPixel.getY()).getPixelMod().equals(PixelModification.Bomb)) {
+            Log.d("RULES", "empty Pixel had bomb");
+            return PixelModification.Bomb;
+        } else {
+            Log.d("RULES", "empty Pixel had no Mod");
+            return PixelModification.None;
+        }
     }
 
 
