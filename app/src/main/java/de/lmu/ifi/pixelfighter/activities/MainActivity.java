@@ -1,33 +1,18 @@
 package de.lmu.ifi.pixelfighter.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.UUID;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import de.lmu.ifi.pixelfighter.R;
-import de.lmu.ifi.pixelfighter.models.Player;
 import de.lmu.ifi.pixelfighter.models.UserData;
-import de.lmu.ifi.pixelfighter.models.callbacks.Callback;
-import de.lmu.ifi.pixelfighter.services.android.Settings;
 import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
-import de.lmu.ifi.pixelfighter.services.firebase.AuthenticationService;
 import de.lmu.ifi.pixelfighter.services.firebase.Database;
 import de.lmu.ifi.pixelfighter.services.firebase.GenericReference;
 import de.lmu.ifi.pixelfighter.utils.StartActivityHelper;

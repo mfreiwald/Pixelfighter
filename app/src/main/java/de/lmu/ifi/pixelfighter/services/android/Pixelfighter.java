@@ -8,9 +8,6 @@ import de.lmu.ifi.pixelfighter.models.Game;
 import de.lmu.ifi.pixelfighter.models.Player;
 import de.lmu.ifi.pixelfighter.models.Team;
 import de.lmu.ifi.pixelfighter.models.UserData;
-import de.lmu.ifi.pixelfighter.models.callbacks.Callback;
-import de.lmu.ifi.pixelfighter.services.firebase.AuthenticationService;
-import de.lmu.ifi.pixelfighter.services.firebase.GameService;
 
 /**
  * Created by michael on 11.12.17.

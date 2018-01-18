@@ -3,7 +3,6 @@ package de.lmu.ifi.pixelfighter.utils;
 import android.app.Activity;
 import android.content.Intent;
 
-import de.lmu.ifi.pixelfighter.activities.ChooseTeamActivity;
 import de.lmu.ifi.pixelfighter.activities.MenuActivity;
 import de.lmu.ifi.pixelfighter.activities.RegisterActivity;
 import de.lmu.ifi.pixelfighter.activities.ZoomableGameActivity;
