@@ -7,6 +7,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by michael on 18.01.18.
  */
@@ -20,19 +23,35 @@ public abstract class GenericReference<CLS> {
 
     public abstract CLS wrap(DataSnapshot dataSnapshot);
 
+    private Map<ValueListener, ValueEventListener> listeners = new HashMap<>();
+
+    public void addListener(@NonNull final ValueListener<CLS> listener) {
+        if(listener == null) throw new IllegalArgumentException("ValueListener is null");
+        ValueEventListener valueEventListener = generateValueEventListener(listener);
+        listeners.put(listener, valueEventListener);
+        reference.addValueEventListener(valueEventListener);
+    }
+
+    public void removeListener(@NonNull final ValueListener<CLS> listener) {
+        if(listener == null) throw new IllegalArgumentException("ValueListener is null");
+        reference.removeEventListener(listeners.remove(listener));
+    }
+
     public void addSingleListener(@NonNull final ValueListener<CLS> listener) {
         if(listener == null) throw new IllegalArgumentException("ValueListener is null");
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+        reference.addListenerForSingleValueEvent(generateValueEventListener(listener));
+    }
+
+    private ValueEventListener generateValueEventListener(final ValueListener<CLS> listener) {
+        return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
                 final CLS object = wrap(dataSnapshot);
                 if (object == null) {
                     listener.onError(Error.Null);
                 } else {
                     listener.onData(object);
                 }
-
             }
 
             @Override
@@ -41,7 +60,7 @@ public abstract class GenericReference<CLS> {
                 e.databaseError = databaseError;
                 listener.onError(e);
             }
-        });
+        };
     }
 
     public void setValue(@NonNull final CLS value) {

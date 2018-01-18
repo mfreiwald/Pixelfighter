@@ -24,7 +24,9 @@ import de.lmu.ifi.pixelfighter.services.android.LightSensor;
 import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 import de.lmu.ifi.pixelfighter.services.android.Settings;
 import de.lmu.ifi.pixelfighter.services.firebase.BoardService;
+import de.lmu.ifi.pixelfighter.services.firebase.Database;
 import de.lmu.ifi.pixelfighter.services.firebase.GameService;
+import de.lmu.ifi.pixelfighter.services.firebase.GenericReference;
 import de.lmu.ifi.pixelfighter.services.firebase.callbacks.ServiceCallback;
 import de.lmu.ifi.pixelfighter.services.firebase.callbacks.UpdateCallback;
 
@@ -78,22 +80,38 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
         updateBombView();
     }
 
+    private GenericReference.ValueListener<Board> boardListener = new GenericReference.ValueListener<Board>() {
+        @Override
+        public void onData(Board board) {
+            gameView.setBoard(board);
+        }
+
+        @Override
+        public void onError(GenericReference.Error error) {
+
+        }
+    };
+
     @Override
     protected void onResume() {
         super.onResume();
-        this.boardService.register();
+        //this.boardService.register();
         this.gameService.register();
         this.gameView.resume();
         this.lightSensor.onResume();
+
+        Database.Game(Pixelfighter.getInstance().getGame().getKey()).Board().addListener(boardListener);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        this.boardService.unregister();
+        //this.boardService.unregister();
         this.gameService.unregister();
         this.gameView.pause();
         this.lightSensor.onPause();
+
+        Database.Game(Pixelfighter.getInstance().getGame().getKey()).Board().removeListener(boardListener);
     }
 
     @Override
