@@ -12,7 +12,6 @@ import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import de.lmu.ifi.pixelfighter.game.Rules;
 import de.lmu.ifi.pixelfighter.models.Board;

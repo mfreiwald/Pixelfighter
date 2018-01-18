@@ -31,7 +31,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.lmu.ifi.pixelfighter.activities.MenuActivity" />
         </activity>
-        <activity android:name=".activities.GameEndActivity"/>
+        <activity android:name=".activities.GameEndActivity" />
+        <activity android:name=".activities.RegisterActivity"></activity>
     </application>
 
 </manifest>

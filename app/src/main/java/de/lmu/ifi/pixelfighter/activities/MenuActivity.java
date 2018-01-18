@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.util.List;
 import java.util.Map;
 
 import butterknife.ButterKnife;
@@ -15,9 +14,10 @@ import de.lmu.ifi.pixelfighter.R;
 import de.lmu.ifi.pixelfighter.models.Game;
 import de.lmu.ifi.pixelfighter.models.GamePlayer;
 import de.lmu.ifi.pixelfighter.models.Team;
+import de.lmu.ifi.pixelfighter.models.UserData;
 import de.lmu.ifi.pixelfighter.models.callbacks.GameCallback;
-import de.lmu.ifi.pixelfighter.services.android.Settings;
 import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
+import de.lmu.ifi.pixelfighter.services.android.Settings;
 import de.lmu.ifi.pixelfighter.services.firebase.GamesService;
 import de.lmu.ifi.pixelfighter.utils.StartActivityHelper;
 
@@ -45,8 +45,10 @@ public class MenuActivity extends AppCompatActivity {
     @OnClick(R.id.button_game)
     public void onClickGame() {
 
-        Settings settings = new Settings();
-        String gameKey = settings.getActiveGameKey();
+
+        UserData userData = Pixelfighter.getInstance().getUserData();
+        String gameKey = userData.getGameKey();
+
         if(gameKey == null || gameKey.isEmpty()) {
             // ToDo: choose team!
 
@@ -81,7 +83,7 @@ public class MenuActivity extends AppCompatActivity {
                     }
 
 
-                    StartActivityHelper.startGameActivity(MenuActivity.this, game);
+                    StartActivityHelper.start(MenuActivity.this).gameActivity(game);
 
                 }
 
