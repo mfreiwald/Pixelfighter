@@ -22,7 +22,6 @@ import de.lmu.ifi.pixelfighter.models.GamePlayer;
 import de.lmu.ifi.pixelfighter.models.Pixel;
 import de.lmu.ifi.pixelfighter.services.android.LightSensor;
 import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
-import de.lmu.ifi.pixelfighter.services.android.Settings;
 import de.lmu.ifi.pixelfighter.services.firebase.BoardService;
 import de.lmu.ifi.pixelfighter.services.firebase.Database;
 import de.lmu.ifi.pixelfighter.services.firebase.GameService;
@@ -37,6 +36,8 @@ import de.lmu.ifi.pixelfighter.services.firebase.callbacks.UpdateCallback;
 public class ZoomableGameActivity extends AppCompatActivity implements UpdateCallback<Pixel>, GameService.Callback, GameView.OnClickListener {
 
     private static final String TAG = "ZoomableGameActivity";
+
+    private String gameKey;
 
     private BoardService boardService;
     private GameService gameService;
@@ -59,10 +60,12 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
 
         this.lightSensor = new LightSensor();
 
+        this.gameKey = Pixelfighter.getInstance().getGame().getKey();
+
         this.boardService = new BoardService(Pixelfighter.getInstance().getGame(), bombToggle, this);
         this.gameService = new GameService(
                 Pixelfighter.getInstance().getGame(),
-                Pixelfighter.getInstance().getPlayer().getKey(),
+                Pixelfighter.getInstance().getUserData().getUid(),
                 this);
         final Board board = this.boardService.getBoard();
         this.gameView = findViewById(R.id.gameView);
@@ -126,8 +129,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
         Toast.makeText(this, "Game is over", Toast.LENGTH_LONG).show();
         Intent intent = new Intent(ZoomableGameActivity.this, GameEndActivity.class);
         intent.putExtra("board", boardService.getBoard().getPixels());
-        Settings settings = new Settings();
-        String key = settings.getActiveGameKey();
+        String key = Pixelfighter.getInstance().getUserData().getGameKey();
         intent.putExtra("gamekey",key);
         Log.d("D/gameOver: ", key);
         startActivity(intent);
@@ -143,6 +145,9 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
 
         final PendingClick click = new PendingClick(x, y);
         this.gameView.addPendingClick(click);
+
+
+
         this.boardService.setPixel(x, y, gameService, new ServiceCallback<Pixel>() {
             @Override
             public void success(Pixel pixel) {

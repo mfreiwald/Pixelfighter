@@ -17,7 +17,6 @@ import de.lmu.ifi.pixelfighter.models.Team;
 import de.lmu.ifi.pixelfighter.models.UserData;
 import de.lmu.ifi.pixelfighter.models.callbacks.GameCallback;
 import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
-import de.lmu.ifi.pixelfighter.services.android.Settings;
 import de.lmu.ifi.pixelfighter.services.firebase.GamesService;
 import de.lmu.ifi.pixelfighter.utils.StartActivityHelper;
 
@@ -76,7 +75,7 @@ public class MenuActivity extends AppCompatActivity {
                     Log.d("Toast", "You loaded Game " + game.getKey());
 
                     for(Map.Entry<String, Map<String, GamePlayer>> team : game.getPlayers().entrySet()) {
-                        if(team.getValue().containsKey(Pixelfighter.getInstance().getPlayer().getKey())) {
+                        if(team.getValue().containsKey(Pixelfighter.getInstance().getUserData().getUid())) {
                             Pixelfighter.getInstance().setTeam(Team.valueOf(team.getKey()));
                             break;
                         }

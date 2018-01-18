@@ -17,7 +17,6 @@ import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.Game;
 import de.lmu.ifi.pixelfighter.models.GamePlayer;
 import de.lmu.ifi.pixelfighter.models.PixelModification;
-import de.lmu.ifi.pixelfighter.models.Player;
 import de.lmu.ifi.pixelfighter.models.Team;
 import de.lmu.ifi.pixelfighter.models.callbacks.Callback;
 import de.lmu.ifi.pixelfighter.models.callbacks.GameCallback;
@@ -136,7 +135,7 @@ public class GamesService extends BaseKeyService<Game> {
         });
     }
 
-    public void joinGame(Game game, final Player player, final Team team, final Callback<Game> callback) {
+    public void joinGame(Game game, final String uid, final Team team, final Callback<Game> callback) {
         this.dbRef.child(game.getKey()).runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
@@ -149,8 +148,8 @@ public class GamesService extends BaseKeyService<Game> {
                     game.getPlayers().put(team.name(), new HashMap<String, GamePlayer>());
                 }
                 GamePlayer gamePlayer = new GamePlayer();
-                gamePlayer.setPlayerKey(player.getKey());
-                game.getPlayers().get(team.name()).put(player.getKey(), gamePlayer);
+                gamePlayer.setPlayerKey(uid);
+                game.getPlayers().get(team.name()).put(uid, gamePlayer);
                 mutableData.setValue(game);
                 return Transaction.success(mutableData);
             }
@@ -167,11 +166,11 @@ public class GamesService extends BaseKeyService<Game> {
         });
     }
 
-    public void searchAndJoinGame(final Player player, final Team team, final Callback<Game> callback) {
+    public void searchAndJoinGame(final String uid, final Team team, final Callback<Game> callback) {
         searchGame(new Callback<Game>() {
             @Override
             public void onLoaded(Game game) {
-                joinGame(game, player, team, callback);
+                joinGame(game, uid, team, callback);
             }
 
             @Override

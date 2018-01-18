@@ -7,8 +7,9 @@ import de.lmu.ifi.pixelfighter.activities.MenuActivity;
 import de.lmu.ifi.pixelfighter.activities.RegisterActivity;
 import de.lmu.ifi.pixelfighter.activities.ZoomableGameActivity;
 import de.lmu.ifi.pixelfighter.models.Game;
+import de.lmu.ifi.pixelfighter.models.UserData;
 import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
-import de.lmu.ifi.pixelfighter.services.android.Settings;
+import de.lmu.ifi.pixelfighter.services.firebase.Database;
 
 /**
  * Created by michael on 16.01.18.
@@ -41,8 +42,10 @@ public class StartActivityHelper {
 
     public void gameActivity(Game game) {
         if(game == null) return;
-        Settings settings = new Settings();
-        settings.setActiveGameKey(game.getKey());
+        UserData userData = Pixelfighter.getInstance().getUserData();
+        userData.setGameKey(game.getKey());
+        Database.UserData(userData.getUid()).setValue(userData);
+
         Pixelfighter.getInstance().setGame(game);
         startActivity(ZoomableGameActivity.class);
     }

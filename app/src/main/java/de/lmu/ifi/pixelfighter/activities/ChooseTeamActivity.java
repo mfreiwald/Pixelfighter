@@ -39,7 +39,7 @@ public class ChooseTeamActivity extends AppCompatActivity {
 
         Pixelfighter.getInstance().setTeam(selectedTeam);
 
-        GamesService.getInstance().searchAndJoinGame(Pixelfighter.getInstance().getPlayer(), selectedTeam, new Callback<Game>() {
+        GamesService.getInstance().searchAndJoinGame(Pixelfighter.getInstance().getUserData().getUid(), selectedTeam, new Callback<Game>() {
             @Override
             public void onLoaded(Game game) {
                 Log.d("Toast", "Your are playing now on Game " + game.getKey());

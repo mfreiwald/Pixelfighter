@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
@@ -22,6 +24,7 @@ public abstract class GenericReference<CLS> {
     }
 
     public abstract CLS wrap(DataSnapshot dataSnapshot);
+    public abstract CLS wrap(MutableData mutableData);
 
     private Map<ValueListener, ValueEventListener> listeners = new HashMap<>();
 
@@ -67,7 +70,7 @@ public abstract class GenericReference<CLS> {
         reference.setValue(value);
     }
 
-    public void setValue(final CLS value, @NonNull final CompletionListener<CLS> completionListener) {
+    public void setValue(final CLS value, @NonNull final CompletionListener completionListener) {
         if(completionListener == null) throw new IllegalArgumentException("CompletionListener is null");
         reference.setValue(value, new DatabaseReference.CompletionListener() {
             @Override
@@ -77,8 +80,22 @@ public abstract class GenericReference<CLS> {
         });
     }
 
+    public void runTransaction(final Handler handler) {
+        reference.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                return handler.doTransaction(wrap(mutableData));
+            }
 
-    public interface CompletionListener<CLS> {
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                handler.onComplete(wrap(dataSnapshot));
+            }
+        });
+    }
+
+
+    public interface CompletionListener {
         void onComplete();
     }
 
@@ -86,6 +103,12 @@ public abstract class GenericReference<CLS> {
         void onData(CLS object);
         void onError(Error error);
     }
+
+    public interface Handler<CLS> {
+        Transaction.Result doTransaction(CLS mutable);
+        void onComplete(CLS object);
+    }
+
 
     public enum Error {
         Database,
