@@ -34,4 +34,7 @@
     <color name="onboarding_screen_bg_1">#df8541</color>
     <color name="onboarding_screen_bg_2">#dfb241</color>
     <color name="onboarding_screen_bg_3">#68ac31</color>
+
+    <color name="onboarding_title_color">#ffffff</color>
+    <color name="onboarding_text_color">#efeded</color>
 </resources>
