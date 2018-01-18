@@ -81,7 +81,7 @@ public class MenuActivity extends AppCompatActivity {
                     }
 
 
-                    StartActivityHelper.startGameActivity(MenuActivity.this, game);
+                    StartActivityHelper.start(MenuActivity.this).gameActivity(game);
 
                 }
 

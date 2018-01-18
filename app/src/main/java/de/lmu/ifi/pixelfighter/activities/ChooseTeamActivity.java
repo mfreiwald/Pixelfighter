@@ -45,7 +45,7 @@ public class ChooseTeamActivity extends AppCompatActivity {
             @Override
             public void onLoaded(Game game) {
                 Log.d("Toast", "Your are playing now on Game " + game.getKey());
-                StartActivityHelper.startGameActivity(ChooseTeamActivity.this, game);
+                StartActivityHelper.start(ChooseTeamActivity.this).gameActivity(game);
             }
 
             @Override

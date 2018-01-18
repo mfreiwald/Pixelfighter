@@ -7,6 +7,7 @@ import de.lmu.ifi.pixelfighter.R;
 import de.lmu.ifi.pixelfighter.models.Game;
 import de.lmu.ifi.pixelfighter.models.Player;
 import de.lmu.ifi.pixelfighter.models.Team;
+import de.lmu.ifi.pixelfighter.models.UserData;
 import de.lmu.ifi.pixelfighter.models.callbacks.Callback;
 import de.lmu.ifi.pixelfighter.services.firebase.AuthenticationService;
 import de.lmu.ifi.pixelfighter.services.firebase.GameService;
@@ -28,6 +29,8 @@ public class Pixelfighter {
     private Player player;
     private Game game;
     private Team team;
+
+    private UserData userData;
 
     private boolean useDark = false;
 
@@ -95,4 +98,11 @@ public class Pixelfighter {
         return getTeamColor(team);
     }
 
+    public void setUserData(UserData userData) {
+        this.userData = userData;
+    }
+
+    public UserData getUserData() {
+        return userData;
+    }
 }
