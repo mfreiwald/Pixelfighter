@@ -5,6 +5,7 @@ package de.lmu.ifi.pixelfighter.models;
  */
 
 public class UserData {
+    public static Class clazz = UserData.class;
 
     private String uid;
     private String username;

@@ -16,15 +16,14 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.lmu.ifi.pixelfighter.R;
 import de.lmu.ifi.pixelfighter.models.UserData;
+import de.lmu.ifi.pixelfighter.services.firebase.Database;
+import de.lmu.ifi.pixelfighter.services.firebase.GenericReference;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -77,9 +76,9 @@ public class RegisterActivity extends AppCompatActivity {
                 user.updateProfile(profileUpdates);
 
                 UserData userData = new UserData(user.getUid(), username);
-                FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).setValue(userData, new DatabaseReference.CompletionListener() {
+                Database.UserData(user.getUid()).setValue(userData, new GenericReference.CompletionListener<UserData>() {
                     @Override
-                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    public void onComplete() {
                         Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                         startActivity(intent);
                     }

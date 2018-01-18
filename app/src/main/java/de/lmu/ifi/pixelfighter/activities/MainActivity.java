@@ -28,6 +28,8 @@ import de.lmu.ifi.pixelfighter.models.callbacks.Callback;
 import de.lmu.ifi.pixelfighter.services.android.Settings;
 import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 import de.lmu.ifi.pixelfighter.services.firebase.AuthenticationService;
+import de.lmu.ifi.pixelfighter.services.firebase.Database;
+import de.lmu.ifi.pixelfighter.services.firebase.GenericReference;
 import de.lmu.ifi.pixelfighter.utils.StartActivityHelper;
 
 public class MainActivity extends AppCompatActivity {
@@ -50,15 +52,14 @@ public class MainActivity extends AppCompatActivity {
             StartActivityHelper.start(this).registerActivity();
             return;
         }
-        // else load Settings for user from Firebase
+        // else load Settings for user from Database
         else {
-            FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            Database.UserData(user.getUid()).addSingleListener(new GenericReference.ValueListener<UserData>() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    UserData userData = dataSnapshot.getValue(UserData.class);
+                public void onData(UserData userData) {
                     if(userData == null) {
                         userData = new UserData(user.getUid(), UUID.randomUUID().toString());
-                        FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).setValue(userData);
+                        Database.UserData(user.getUid()).setValue(userData);
                     }
                     Pixelfighter.getInstance().setUserData(userData);
                     Log.d("UserData", userData.toString());
@@ -66,8 +67,8 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
-
+                public void onError(GenericReference.Error error) {
+                    Log.e("MainActivity", "Fetch UserData Error: " + error.toString());
                 }
             });
         }
