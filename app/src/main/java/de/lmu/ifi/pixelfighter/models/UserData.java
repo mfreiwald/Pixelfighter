@@ -1,5 +1,7 @@
 package de.lmu.ifi.pixelfighter.models;
 
+import de.lmu.ifi.pixelfighter.services.firebase.Database;
+
 /**
  * Created by michael on 18.01.18.
  */
@@ -11,8 +13,7 @@ public class UserData {
     private String username;
     private String gameKey;
 
-    public UserData() {
-    }
+    public UserData() {}
 
     public UserData(String uid, String username) {
         this.uid = uid;

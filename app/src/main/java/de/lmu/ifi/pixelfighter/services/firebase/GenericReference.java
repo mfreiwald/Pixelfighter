@@ -12,7 +12,7 @@ import com.google.firebase.database.ValueEventListener;
  */
 
 public abstract class GenericReference<CLS> {
-    private final DatabaseReference reference;
+    public final DatabaseReference reference;
 
     public GenericReference(DatabaseReference reference) {
         this.reference = reference;
