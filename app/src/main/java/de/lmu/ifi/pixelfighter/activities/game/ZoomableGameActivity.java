@@ -177,6 +177,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
 
 
 
+
         new BoardHandling(gameSettings).placePixel(
                 gameSettings.getBoard(),
                 x, y,
@@ -188,6 +189,9 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
                     public void success(Pixel pixel) {
                         gameView.removePendingClick(click);
 
+                        if(currentModification == PixelModification.Bomb) {
+                            gameService.placedBomb();
+                        }
                     }
 
                     @Override
