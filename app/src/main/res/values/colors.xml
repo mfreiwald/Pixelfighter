@@ -32,7 +32,7 @@
     <color name="status_bar_color_onbrd">#96484849</color>
 
     <color name="onboarding_screen_bg_1">#df8541</color>
-    <color name="onboarding_screen_bg_2">#dfb241</color>
+    <color name="onboarding_screen_bg_2">#a3b628</color>
     <color name="onboarding_screen_bg_3">#68ac31</color>
 
     <color name="onboarding_title_color">#ffffff</color>
