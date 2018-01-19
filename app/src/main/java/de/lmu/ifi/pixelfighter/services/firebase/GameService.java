@@ -1,25 +1,17 @@
 package de.lmu.ifi.pixelfighter.services.firebase;
 
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.nio.channels.CompletionHandler;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import de.lmu.ifi.pixelfighter.models.Game;
 import de.lmu.ifi.pixelfighter.models.GamePlayer;
-import de.lmu.ifi.pixelfighter.models.Pixel;
-import de.lmu.ifi.pixelfighter.models.Player;
 import de.lmu.ifi.pixelfighter.models.Team;
-import de.lmu.ifi.pixelfighter.services.firebase.callbacks.ServiceCallback;
-import de.lmu.ifi.pixelfighter.services.firebase.callbacks.UpdateCallback;
 
 /**
  * Created by michael on 14.12.17.

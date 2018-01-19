@@ -14,4 +14,15 @@
 
     <string name="onboarding_btn_skip">Skip</string>
     <string name="onboarding_btn_finish">Finish</string>
+
+    <string name="onboarding1_title">The Rules Are Simple</string>
+    <string name="onboarding2_title">Fight \'Til The End</string>
+    <string name="onboarding3_title">Collect Loot</string>
+
+    <string name="onboarding1_text">Your team tries to
+        color every pixel in your color, while the enemy teams try to do the same.</string>
+    <string name="onboarding2_text">You can recolor enemy pixels by
+        surrounding it with 4 or more pixels of your own pixels!</string>
+    <string name="onboarding3_text">The grey bombs on the empty fields can be collected.
+        Place a hidden bomb on your own pixels to recolor unsuspecting enemies.</string>
 </resources>

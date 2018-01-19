@@ -177,6 +177,10 @@ public class OnboardingActivity extends AppCompatActivity implements ViewPager.O
 
         ImageView img;
 
+        int[] onboarding_imgs = new int[]{R.drawable.onboarding1, R.drawable.onboarding2, R.drawable.onboarding3};
+        int[] onboarding_titles = new int[]{R.string.onboarding1_title, R.string.onboarding2_title, R.string.onboarding3_title};
+        int[] onboarding_txts = new int[]{R.string.onboarding1_text, R.string.onboarding2_text, R.string.onboarding3_text};
+
         public PlaceholderFragment() {
         }
 
@@ -196,11 +200,15 @@ public class OnboardingActivity extends AppCompatActivity implements ViewPager.O
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_onboarding, container, false);
-            TextView textView = rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+
+            TextView textView_title = rootView.findViewById(R.id.section_title);
+            textView_title.setText(getString(onboarding_titles[getArguments().getInt(ARG_SECTION_NUMBER) - 1]));
+
+            TextView textView_text = rootView.findViewById(R.id.section_label);
+            textView_text.setText(getString(onboarding_txts[getArguments().getInt(ARG_SECTION_NUMBER) - 1]));
 
             img = rootView.findViewById(R.id.section_image);
-            img.setImageResource(R.drawable.onboarding_testimage);
+            img.setBackgroundResource(onboarding_imgs[getArguments().getInt(ARG_SECTION_NUMBER) - 1]);
 
             return rootView;
         }

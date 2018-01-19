@@ -12,14 +12,12 @@ import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import de.lmu.ifi.pixelfighter.game.Rules;
 import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.Game;
 import de.lmu.ifi.pixelfighter.models.Pixel;
 import de.lmu.ifi.pixelfighter.models.PixelModification;
-import de.lmu.ifi.pixelfighter.models.Player;
 import de.lmu.ifi.pixelfighter.models.Team;
 import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 import de.lmu.ifi.pixelfighter.services.firebase.callbacks.ServiceCallback;
@@ -89,15 +87,14 @@ public class BoardService extends BaseService<Board> {
     public void setPixel(final int x, final int y, final GameService gameService, final ServiceCallback<Pixel> callback) {
         // get current user & team
         // ToDo: get current user data
-        Player player = Pixelfighter.getInstance().getPlayer();
         final Team team = Pixelfighter.getInstance().getTeam();
-        if (player == null || team == null) {
-            callback.failure("Player or Team is null");
+        if (team == null) {
+            callback.failure("Team is null");
             return;
         }
 
         final Pixel newPixel = new Pixel();
-        newPixel.setPlayerKey(player.getKey());
+        newPixel.setPlayerKey(Pixelfighter.getInstance().getUserData().getUid());
         newPixel.setTeam(team);
         newPixel.setX(x);
         newPixel.setY(y);
@@ -148,10 +145,9 @@ public class BoardService extends BaseService<Board> {
     //Specifically for updating Pixels instead of placing new ones
     public void updatePixel(final Pixel newPixel,
                             final ServiceCallback<Pixel> callback) {
-        Player player = Pixelfighter.getInstance().getPlayer();
         final Team team = Pixelfighter.getInstance().getTeam();
-        if (player == null || team == null) {
-            callback.failure("Player or Team is null");
+        if (team == null) {
+            callback.failure("Team is null");
             return;
         }
 

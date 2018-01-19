@@ -1,10 +1,9 @@
-package de.lmu.ifi.pixelfighter.activities;
+package de.lmu.ifi.pixelfighter.activities.game;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,16 +15,18 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import de.lmu.ifi.pixelfighter.R;
-import de.lmu.ifi.pixelfighter.activities.game.GameView;
-import de.lmu.ifi.pixelfighter.activities.game.PendingClick;
+import de.lmu.ifi.pixelfighter.activities.GameEndActivity;
 import de.lmu.ifi.pixelfighter.models.Board;
+import de.lmu.ifi.pixelfighter.models.Game;
 import de.lmu.ifi.pixelfighter.models.GamePlayer;
 import de.lmu.ifi.pixelfighter.models.Pixel;
+import de.lmu.ifi.pixelfighter.models.PixelModification;
 import de.lmu.ifi.pixelfighter.services.android.LightSensor;
 import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
-import de.lmu.ifi.pixelfighter.services.android.Settings;
-import de.lmu.ifi.pixelfighter.services.firebase.BoardService;
+import de.lmu.ifi.pixelfighter.services.firebase.BoardHandling;
+import de.lmu.ifi.pixelfighter.services.firebase.Database;
 import de.lmu.ifi.pixelfighter.services.firebase.GameService;
+import de.lmu.ifi.pixelfighter.services.firebase.GenericReference;
 import de.lmu.ifi.pixelfighter.services.firebase.callbacks.ServiceCallback;
 import de.lmu.ifi.pixelfighter.services.firebase.callbacks.UpdateCallback;
 
@@ -37,11 +38,13 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
 
     private static final String TAG = "ZoomableGameActivity";
 
-    private BoardService boardService;
-    private GameService gameService;
+    GameSettings gameSettings;
 
-    private GameView gameView;
+    //private BoardService boardService;
+    //private GameService gameService;
 
+    @BindView(R.id.gameView)
+    GameView gameView;
     @BindView(R.id.bombToggle)
     ToggleButton bombToggle;
     @BindView(R.id.bombCountView)
@@ -56,45 +59,72 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
 
         ButterKnife.bind(this);
 
+
+
+        // Get GameKey from Intent
+        this.gameSettings = new GameSettings(getIntent().getExtras().getString("gameKey"));
+
+        // Load Game
+        Database.Game(this.gameSettings.getGameKey()).Game().addSingleListener(new GenericReference.ValueListener<Game>() {
+            @Override
+            public void onData(Game object) {
+                gameSettings.setBoard(object.getBoard());
+            }
+
+            @Override
+            public void onError(GenericReference.Error error) {
+
+            }
+        });
+
         this.lightSensor = new LightSensor();
 
-        this.boardService = new BoardService(Pixelfighter.getInstance().getGame(), bombToggle, this);
+
+        //this.boardService = new BoardService(Pixelfighter.getInstance().getGame(), bombToggle, this);
+        /*
         this.gameService = new GameService(
                 Pixelfighter.getInstance().getGame(),
-                Pixelfighter.getInstance().getPlayer().getKey(),
+                Pixelfighter.getInstance().getUserData().getUid(),
                 this);
-        final Board board = this.boardService.getBoard();
-        this.gameView = findViewById(R.id.gameView);
-        this.gameView.setBoard(board);
+                */
         this.gameView.setOnClickListener(this);
+        this.gameView.setGameSettings(gameSettings);
 
-        // bei 20 Pixel
-        // Scale=5 => 4 Pixel
-        // => Pixels / Scale = #Pixel
-        // Scale = #PixelsWidth/maxPixel
-
-        float scale = board.getWidth() / 7.0f;
-        this.gameView.setMaxScale(scale);
-
-        updateBombView();
+        //updateBombView();
     }
+
+    private GenericReference.ValueListener<Board> boardListener = new GenericReference.ValueListener<Board>() {
+        @Override
+        public void onData(Board board) {
+            gameSettings.setBoard(board);
+        }
+
+        @Override
+        public void onError(GenericReference.Error error) {
+
+        }
+    };
 
     @Override
     protected void onResume() {
         super.onResume();
-        this.boardService.register();
-        this.gameService.register();
+        //this.boardService.register();
+        //this.gameService.register();
         this.gameView.resume();
         this.lightSensor.onResume();
+
+        Database.Game(gameSettings.gameKey).Board().addListener(boardListener);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        this.boardService.unregister();
-        this.gameService.unregister();
+        //this.boardService.unregister();
+        //this.gameService.unregister();
         this.gameView.pause();
         this.lightSensor.onPause();
+
+        Database.Game(gameSettings.gameKey).Board().removeListener(boardListener);
     }
 
     @Override
@@ -108,9 +138,8 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
 
         Toast.makeText(this, "Game is over", Toast.LENGTH_LONG).show();
         Intent intent = new Intent(ZoomableGameActivity.this, GameEndActivity.class);
-        intent.putExtra("board", boardService.getBoard().getPixels());
-        Settings settings = new Settings();
-        String key = settings.getActiveGameKey();
+        intent.putExtra("board", gameSettings.getBoard().getPixels());
+        String key = Pixelfighter.getInstance().getUserData().getGameKey();
         intent.putExtra("gamekey",key);
         Log.d("D/gameOver: ", key);
         startActivity(intent);
@@ -118,7 +147,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
 
     @Override
     public void onGamePlayerChanged(GamePlayer gamePlayer) {
-        updateBombView();
+        //updateBombView();
     }
 
     @Override
@@ -126,6 +155,29 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
 
         final PendingClick click = new PendingClick(x, y);
         this.gameView.addPendingClick(click);
+
+
+        new BoardHandling(gameSettings).placePixel(
+                gameSettings.getBoard(),
+                x, y,
+                Pixelfighter.getInstance().getUserData().getUid(),
+                Pixelfighter.getInstance().getTeam(),
+                PixelModification.None,
+                new ServiceCallback<Pixel>() {
+                    @Override
+                    public void success(Pixel pixel) {
+                        gameView.removePendingClick(click);
+
+                    }
+
+                    @Override
+                    public void failure(String message) {
+                        gameView.removePendingClick(click);
+
+                    }
+                });
+
+/*
         this.boardService.setPixel(x, y, gameService, new ServiceCallback<Pixel>() {
             @Override
             public void success(Pixel pixel) {
@@ -149,8 +201,9 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
                 gameView.removePendingClick(click);
             }
         });
+ */
     }
-
+/*
     private ServiceCallback<Pixel> customCallback = new ServiceCallback<Pixel>() {
         @Override
         public void success(Pixel pixel) {
@@ -170,7 +223,8 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
             Log.d(TAG, message);
         }
     };
-
+*/
+/*
     @OnCheckedChanged(R.id.bombToggle)
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (isChecked) { //on
@@ -185,9 +239,31 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
             boardService.deactivateBombForNextClick();
         }
     }
-
-
+*/
+/*
     private void updateBombView() {
         bombCounterView.setText("x" + gameService.getBombCount());
+    }
+*/
+
+    public static class GameSettings {
+        private final String gameKey;
+        private Board board;
+
+        public GameSettings(String gameKey) {
+            this.gameKey = gameKey;
+        }
+
+        public String getGameKey() {
+            return gameKey;
+        }
+
+        public Board getBoard() {
+            return board;
+        }
+
+        private void setBoard(Board board) {
+            this.board = board;
+        }
     }
 }

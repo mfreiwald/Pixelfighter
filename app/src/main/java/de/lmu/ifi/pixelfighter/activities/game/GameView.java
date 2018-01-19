@@ -6,13 +6,10 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.View;
 
 import java.util.ListIterator;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -32,7 +29,6 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
 
     private static final int OFFSET = 10;
 
-    private Board board;
     private OnClickListener onClickListener;
 
     private SurfaceHolder surfaceHolder;
@@ -45,6 +41,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
     public long ACTUAL_FPS = 0;
 
     private CopyOnWriteArrayList<PendingClick> pendingClicks = new CopyOnWriteArrayList<>();
+    private ZoomableGameActivity.GameSettings gameSettings;
 
     public GameView(Context context) {
         super(context);
@@ -63,10 +60,6 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
 
     private void init() {
         surfaceHolder = getHolder();
-    }
-
-    public void setBoard(Board board) {
-        this.board = board;
     }
 
     public void setOnClickListener(OnClickListener onClickListener) {
@@ -121,25 +114,31 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
             canvas.drawColor(getContext().getColor(R.color.game_background));
         }
 
-        if (board == null) return;
+        if(gameSettings == null) return;
+        if (gameSettings.getBoard() == null) return;
 
         float boxSize = calculateBoxSize();
 
-
+        // bei 20 Pixel
+        // Scale=5 => 4 Pixel
+        // => Pixels / Scale = #Pixel
+        // Scale = #PixelsWidth/maxPixel
+        float scale = gameSettings.getBoard().getWidth() / 7.0f;
+        this.setMaxScale(scale);
 
         float offsetX = calculateOffsetX();
         float offsetY = calculateOffsetY();
 
 
-        for (int x = 0; x < this.board.getWidth(); x++) {
-            for (int y = 0; y < this.board.getHeight(); y++) {
+        for (int x = 0; x < this.gameSettings.getBoard().getWidth(); x++) {
+            for (int y = 0; y < this.gameSettings.getBoard().getHeight(); y++) {
 
                 float left = OFFSET + offsetX + x * boxSize;
                 float top = OFFSET + offsetY + y * boxSize;
                 float right = left + boxSize;
                 float bottom = top + boxSize;
 
-                Pixel pixel = this.board.getPixels().get(x).get(y);
+                Pixel pixel = this.gameSettings.getBoard().getPixels().get(x).get(y);
                 Team team = pixel.getTeam();
 
                 Paint mFillPaint = new Paint();
@@ -190,16 +189,16 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
     private float calculateBoxSize() {
         return (
                 Math.min(
-                        (this.getHeight()-OFFSET*2) / new Float(this.board.getHeight()),
-                        (this.getWidth()-OFFSET*2) / new Float(this.board.getWidth())));
+                        (this.getHeight()-OFFSET*2) / new Float(this.gameSettings.getBoard().getHeight()),
+                        (this.getWidth()-OFFSET*2) / new Float(this.gameSettings.getBoard().getWidth())));
     }
 
     private float calculateOffsetX() {
-        return (this.getWidth()-this.board.getWidth()*calculateBoxSize()-OFFSET*2)/2.0f;
+        return (this.getWidth()-this.gameSettings.getBoard().getWidth()*calculateBoxSize()-OFFSET*2)/2.0f;
     }
 
     private float calculateOffsetY() {
-        return (this.getHeight()-this.board.getHeight()*calculateBoxSize()-OFFSET*2)/2.0f;
+        return (this.getHeight()-this.gameSettings.getBoard().getHeight()*calculateBoxSize()-OFFSET*2)/2.0f;
     }
 
     public void pause() {
@@ -255,15 +254,15 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
         int pX = getCoordinateX(x);
         int pY = getCoordinateY(y);
         Log.d("GameView", "Click at (" + pX + ", " + pY + ")");
-        if (pX < 0 || pX >= this.board.getWidth()) return;
-        if (pY < 0 || pY >= this.board.getHeight()) return;
+        if (pX < 0 || pX >= this.gameSettings.getBoard().getWidth()) return;
+        if (pY < 0 || pY >= this.gameSettings.getBoard().getHeight()) return;
 
         if (onClickListener == null) return;
         onClickListener.onClick(pX, pY);
     }
 
     private int getCoordinateX(float x) {
-        return (int) ((x-calculateOffsetX()-OFFSET) / new Float(calculateBoxSize()));
+        return (int) ((x - calculateOffsetX() - OFFSET) / new Float(calculateBoxSize()));
     }
     private int getCoordinateY(float x) {
         return (int) ((x-calculateOffsetY()-OFFSET) / new Float(calculateBoxSize()));
@@ -275,6 +274,10 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
 
     public void removePendingClick(PendingClick click) {
         this.pendingClicks.remove(click);
+    }
+
+    public void setGameSettings(ZoomableGameActivity.GameSettings gameSettings) {
+        this.gameSettings = gameSettings;
     }
 
     public interface OnClickListener {

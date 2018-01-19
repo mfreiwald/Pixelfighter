@@ -1,6 +1,5 @@
 package de.lmu.ifi.pixelfighter.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -12,7 +11,6 @@ import de.lmu.ifi.pixelfighter.game.RandomTeam;
 import de.lmu.ifi.pixelfighter.models.Game;
 import de.lmu.ifi.pixelfighter.models.Team;
 import de.lmu.ifi.pixelfighter.models.callbacks.Callback;
-import de.lmu.ifi.pixelfighter.services.android.Settings;
 import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 import de.lmu.ifi.pixelfighter.services.firebase.GamesService;
 import de.lmu.ifi.pixelfighter.utils.StartActivityHelper;
@@ -41,11 +39,11 @@ public class ChooseTeamActivity extends AppCompatActivity {
 
         Pixelfighter.getInstance().setTeam(selectedTeam);
 
-        GamesService.getInstance().searchAndJoinGame(Pixelfighter.getInstance().getPlayer(), selectedTeam, new Callback<Game>() {
+        GamesService.getInstance().searchAndJoinGame(Pixelfighter.getInstance().getUserData().getUid(), selectedTeam, new Callback<Game>() {
             @Override
             public void onLoaded(Game game) {
                 Log.d("Toast", "Your are playing now on Game " + game.getKey());
-                StartActivityHelper.startGameActivity(ChooseTeamActivity.this, game);
+                StartActivityHelper.start(ChooseTeamActivity.this).gameActivity(game.getKey());
             }
 
             @Override

@@ -74,7 +74,7 @@ public class Rules {
     private final int x;
     private final int y;
 
-    private Rules(Board board, Team team, int x, int y) {
+    public Rules(Board board, Team team, int x, int y) {
         this.board = board;
         this.team = team;
         this.x = x;
@@ -190,12 +190,12 @@ public class Rules {
         return affectedPixels;
     }
 
-    private boolean isFree() {
+    public boolean isFree() {
         return this.board.getPixels().get(x).get(y).getTeam() == Team.None &&
                 this.board.getPixels().get(x).get(y).getPlayerKey().isEmpty();
     }
 
-    private boolean isAtOwnTeam() {
+    public boolean isAtOwnTeam() {
         if (!containsColor())
             return true;
         // - - -
