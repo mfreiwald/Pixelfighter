@@ -192,6 +192,9 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
 
                         if(currentModification == PixelModification.Bomb) {
                             gameService.placedBomb();
+                            if(gameService.getBombCount() <= 0) {
+                                currentModification = PixelModification.None;
+                            }
                         }
                     }
 
@@ -253,7 +256,15 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
     @OnCheckedChanged(R.id.bombToggle)
     public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
         if(gameService == null) return;
-
+        if(gameService.getBombCount() <= 0) {
+            currentModification = PixelModification.None;
+            bombToggle.post(new Runnable() {
+                @Override
+                public void run() {
+                    bombToggle.setChecked(false);
+                }
+            });
+        }
         if(isChecked) {
             currentModification = PixelModification.Bomb;
         } else {

@@ -80,9 +80,7 @@ public class BoardHandling {
 
                 // Check if replaced Pixel has a Bomb
                 if(mutable.getPixelMod() == PixelModification.Bomb) {
-                    executeBombFrom(x, y);
-                    mutable.setTeam(Team.None);
-                    mutable.setPlayerKey("");
+                    executeBombFrom(x, y, mutable.getTeam());
                     mutable.setPixelMod(PixelModification.None);
                     return mutable;
                 } else { // Simple replacing
@@ -105,10 +103,10 @@ public class BoardHandling {
         });
     }
 
-    public void executeBombFrom(final int x, final int y) {
+    public void executeBombFrom(final int x, final int y, Team team) {
         // Get all neighboars
         for(Pixel pixel : getNeighbour(x, y)) {
-            overridePixel(pixel.getX(), pixel.getY(), Team.None, "", PixelModification.None, null);
+            overridePixel(pixel.getX(), pixel.getY(), team, "", PixelModification.None, null);
         }
     }
 
