@@ -25,7 +25,7 @@ public class BoardHandling {
         this.gameSettings = gameSettings;
     }
 
-    public void placePixel(final Board board, final int x, final int y, final String uid, final Team team, final PixelModification modification, final ServiceCallback<Pixel> callback) {
+    public void placePixel(final GameService gameService, final Board board, final int x, final int y, final String uid, final Team team, final PixelModification modification, final ServiceCallback<Pixel> callback) {
         Database.Game(gameKey).Pixel(x, y).runTransaction(new GenericReference.Handler<Pixel>() {
             @Override
             public Pixel doTransaction(Pixel mutable) {
@@ -38,11 +38,7 @@ public class BoardHandling {
                 // need current board
                 if (!rules.isAtOwnTeam()) return null;
 
-                // Check if Pixel was modificated
-                if (mutable.getPixelMod() != PixelModification.None) {
-                    // do something with the modification
-                    // exp. earn it
-                }
+                Rules.checkForLootModification(gameService ,board, mutable);
 
                 // Check if we can replace a neighbour
                 for(Pixel pixel : Rules.checkForEnemiesToConvert(gameSettings.getBoard(), team, x, y)) {

@@ -112,7 +112,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
 
 
 
-        //updateBombView();
+        updateBombView();
     }
 
     private GenericReference.ValueListener<Board> boardListener = new GenericReference.ValueListener<Board>() {
@@ -164,7 +164,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
 
     @Override
     public void onGamePlayerChanged(GamePlayer gamePlayer) {
-        //updateBombView();
+        updateBombView();
     }
 
     @Override
@@ -176,6 +176,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
 
 
         new BoardHandling(gameSettings).placePixel(
+                gameService,
                 gameSettings.getBoard(),
                 x, y,
                 gameSettings.getUid(),
