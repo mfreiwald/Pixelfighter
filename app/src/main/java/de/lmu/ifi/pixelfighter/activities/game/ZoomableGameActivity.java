@@ -3,6 +3,8 @@ package de.lmu.ifi.pixelfighter.activities.game;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.CompoundButton;
@@ -38,7 +40,7 @@ import de.lmu.ifi.pixelfighter.services.firebase.callbacks.UpdateCallback;
  * Created by michael on 09.01.18.
  */
 
-public class ZoomableGameActivity extends AppCompatActivity implements UpdateCallback<Pixel>, GameService.Callback, GameView.OnClickListener {
+public class ZoomableGameActivity extends AppCompatActivity implements GameService.Callback, GameView.OnClickListener {
 
     private static final String TAG = "ZoomableGameActivity";
 
@@ -47,7 +49,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
     GenericReference<Board> boardReference;
 
     //private BoardService boardService;
-    //private GameService gameService;
+    private GameService gameService;
 
     @BindView(R.id.gameView)
     GameView gameView;
@@ -57,6 +59,8 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
     TextView bombCounterView;
 
     private LightSensor lightSensor;
+
+    private PixelModification currentModification = PixelModification.None;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +90,12 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
                 gameView.setGameSettings(gameSettings);
                 Log.d("GameSettings", gameSettings.toString());
                 gameView.setOnClickListener(ZoomableGameActivity.this);
+
+                gameService = new GameService(
+                        object,
+                        gameSettings.getUid(),
+                        ZoomableGameActivity.this);
+
             }
 
             @Override
@@ -98,12 +108,9 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
 
 
         //this.boardService = new BoardService(Pixelfighter.getInstance().getGame(), bombToggle, this);
-        /*
-        this.gameService = new GameService(
-                Pixelfighter.getInstance().getGame(),
-                Pixelfighter.getInstance().getUserData().getUid(),
-                this);
-                */
+
+
+
 
         //updateBombView();
     }
@@ -124,7 +131,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
     protected void onResume() {
         super.onResume();
         //this.boardService.register();
-        //this.gameService.register();
+        if(gameService != null) this.gameService.register();
         this.gameView.resume();
         this.lightSensor.onResume();
 
@@ -135,16 +142,11 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
     protected void onPause() {
         super.onPause();
         //this.boardService.unregister();
-        //this.gameService.unregister();
+        if(gameService != null) this.gameService.unregister();
         this.gameView.pause();
         this.lightSensor.onPause();
 
         boardReference.removeListener(boardListener);
-    }
-
-    @Override
-    public void onUpdate(Pixel pixel) {
-
     }
 
     @Override
@@ -172,12 +174,13 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
         this.gameView.addPendingClick(click);
 
 
+
         new BoardHandling(gameSettings).placePixel(
                 gameSettings.getBoard(),
                 x, y,
                 gameSettings.getUid(),
                 gameSettings.getTeam(),
-                PixelModification.Bomb,
+                currentModification,
                 new ServiceCallback<Pixel>() {
                     @Override
                     public void success(Pixel pixel) {
@@ -239,27 +242,23 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
         }
     };
 */
-/*
+
     @OnCheckedChanged(R.id.bombToggle)
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if (isChecked) { //on
-            if (gameService.getBombCount() > 0) {
-                if (!boardService.isBombActive()) {
-                    boardService.activateBombForNextClick();
-                }
-            } else {
-                bombToggle.setChecked(false);
-            }
-        } else { //off
-            boardService.deactivateBombForNextClick();
+    public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
+        if(gameService == null) return;
+
+        if(isChecked) {
+            currentModification = PixelModification.Bomb;
+        } else {
+            currentModification = PixelModification.None;
         }
     }
-*/
-/*
+
     private void updateBombView() {
+        if(gameService == null) return;
         bombCounterView.setText("x" + gameService.getBombCount());
     }
-*/
+
 
     public static class GameSettings {
         private final String gameKey;
