@@ -157,7 +157,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
         this.gameView.addPendingClick(click);
 
 
-        new BoardHandling(gameSettings.gameKey).placePixel(
+        new BoardHandling(gameSettings).placePixel(
                 gameSettings.getBoard(),
                 x, y,
                 Pixelfighter.getInstance().getUserData().getUid(),
@@ -246,7 +246,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
     }
 */
 
-    protected static class GameSettings {
+    public static class GameSettings {
         private final String gameKey;
         private Board board;
 
