@@ -8,27 +8,47 @@
     android:orientation="vertical">
 
 
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="@string/stats"
-    android:textSize="30sp"
-    android:layout_gravity="center"
-    android:layout_marginTop="@dimen/top_margin" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/stats"
+        android:textSize="30sp"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/top_margin" />
 
-<ImageView
-    android:id="@+id/imageView"
-    android:layout_width="@dimen/img_width"
-    android:layout_height="@dimen/img_height"
-    app:srcCompat="@drawable/logo"
-    android:layout_gravity="center" />
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="@dimen/img_width"
+        android:layout_height="@dimen/img_height"
+        app:srcCompat="@drawable/logo"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/gamesTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_margin"
+        android:layout_marginTop="@dimen/space_margin"
+        android:textSize="20sp"
+        android:text="Played Games: 7"/>
+
+    <TextView
+        android:id="@+id/statsScore"
+        android:text="Score: "
+        android:layout_marginStart="@dimen/space_margin"
+        android:layout_marginTop="@dimen/space_margin"
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 
-<Button
-    android:id="@+id/button_reset"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="@string/buttonReset" />
+    <Button
+        android:id="@+id/button_reset"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_margin"
+        android:layout_marginTop="@dimen/space_margin"
+        android:text="@string/buttonReset" />
 
 
 </LinearLayout>
