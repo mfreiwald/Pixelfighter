@@ -76,7 +76,7 @@ public class RegisterActivity extends AppCompatActivity {
                 user.updateProfile(profileUpdates);
 
                 UserData userData = new UserData(user.getUid(), username);
-                Database.UserData(user.getUid()).setValue(userData, new GenericReference.CompletionListener<UserData>() {
+                Database.UserData(user.getUid()).setValue(userData, new GenericReference.CompletionListener() {
                     @Override
                     public void onComplete() {
                         Intent intent = new Intent(RegisterActivity.this, MainActivity.class);

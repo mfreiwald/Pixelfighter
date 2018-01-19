@@ -14,6 +14,8 @@ import de.lmu.ifi.pixelfighter.R;
 import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.Pixel;
 import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
+import de.lmu.ifi.pixelfighter.services.firebase.Database;
+import de.lmu.ifi.pixelfighter.services.firebase.GenericReference;
 
 public class GameEndActivity extends AppCompatActivity {
 
@@ -42,36 +44,48 @@ public class GameEndActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_end);
 
-        board = Pixelfighter.getInstance().getGame().getBoard();
-        init();
-
-        teamWon = (TextView) findViewById(R.id.teamWonTextview);
-        blueText = (TextView) findViewById(R.id.blue);
-        redText = (TextView) findViewById(R.id.red);
-        greenText = (TextView) findViewById(R.id.green);
-        yellowText = (TextView) findViewById(R.id.yellow);
-
-
-        teamWon.setText(winner);
-        String redStr = " Team Red filled " + String.valueOf(red) + " pixel(s). ";
-        String blueStr = " Team Blue filled " + String.valueOf(blue) + " pixel(s). ";
-        String greenStr = " Team Green filled " + String.valueOf(green) + " pixel(s). ";
-        String yellowStr = " Team Yellow filled " + String.valueOf(yellow) + " pixel(s). ";
-
-        redText.setText(redStr);
-        blueText.setText(blueStr);
-        greenText.setText(greenStr);
-        yellowText.setText(yellowStr);
-
-        btnMain = (Button) findViewById(R.id.btnMainMenu);
-        btnMain.setOnClickListener(new View.OnClickListener() {
+        Database.Game(Pixelfighter.getInstance().getUserData().getGameKey()).Board().addSingleListener(new GenericReference.ValueListener<Board>() {
             @Override
-            public void onClick(View view) {
-                Intent intentDesc = new Intent(GameEndActivity.this, MenuActivity.class);
-                startActivity(intentDesc);
+            public void onData(Board object) {
+                board = object;
+
+                init();
+
+                teamWon = (TextView) findViewById(R.id.teamWonTextview);
+                blueText = (TextView) findViewById(R.id.blue);
+                redText = (TextView) findViewById(R.id.red);
+                greenText = (TextView) findViewById(R.id.green);
+                yellowText = (TextView) findViewById(R.id.yellow);
+
+
+                teamWon.setText(winner);
+                String redStr = " Team Red filled " + String.valueOf(red) + " pixel(s). ";
+                String blueStr = " Team Blue filled " + String.valueOf(blue) + " pixel(s). ";
+                String greenStr = " Team Green filled " + String.valueOf(green) + " pixel(s). ";
+                String yellowStr = " Team Yellow filled " + String.valueOf(yellow) + " pixel(s). ";
+
+                redText.setText(redStr);
+                blueText.setText(blueStr);
+                greenText.setText(greenStr);
+                yellowText.setText(yellowStr);
+
+                btnMain = (Button) findViewById(R.id.btnMainMenu);
+                btnMain.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intentDesc = new Intent(GameEndActivity.this, MenuActivity.class);
+                        startActivity(intentDesc);
+
+                    }
+                });
+            }
+
+            @Override
+            public void onError(GenericReference.Error error) {
 
             }
         });
+
     }
 
     public void init() {

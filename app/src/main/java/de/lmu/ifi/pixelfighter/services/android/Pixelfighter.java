@@ -22,7 +22,6 @@ public class Pixelfighter {
 
 
 
-    private Game game;
     private Team team;
 
     private UserData userData;
@@ -31,14 +30,6 @@ public class Pixelfighter {
 
     private Pixelfighter() {
 
-    }
-
-    public Game getGame() {
-        return game;
-    }
-
-    public void setGame(Game game) {
-        this.game = game;
     }
 
     public Team getTeam() {

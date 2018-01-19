@@ -82,7 +82,7 @@ public class MenuActivity extends AppCompatActivity {
                     }
 
 
-                    StartActivityHelper.start(MenuActivity.this).gameActivity(game);
+                    StartActivityHelper.start(MenuActivity.this).gameActivity(game.getKey());
 
                 }
 

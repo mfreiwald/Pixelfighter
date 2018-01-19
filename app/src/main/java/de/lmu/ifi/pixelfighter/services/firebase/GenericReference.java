@@ -80,16 +80,22 @@ public abstract class GenericReference<CLS> {
         });
     }
 
-    public void runTransaction(final Handler handler) {
+    public void runTransaction(final Handler<CLS> handler) {
         reference.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
-                return handler.doTransaction(wrap(mutableData));
+                CLS result = handler.doTransaction(wrap(mutableData));
+                if(result == null) {
+                    return Transaction.abort();
+                } else {
+                    mutableData.setValue(result);
+                    return Transaction.success(mutableData);
+                }
             }
 
             @Override
             public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-                handler.onComplete(wrap(dataSnapshot));
+                handler.onComplete(b, wrap(dataSnapshot));
             }
         });
     }
@@ -105,9 +111,11 @@ public abstract class GenericReference<CLS> {
     }
 
     public interface Handler<CLS> {
-        Transaction.Result doTransaction(CLS mutable);
-        void onComplete(CLS object);
+        CLS doTransaction(CLS mutable);
+        void onComplete(boolean changed, CLS object);
     }
+
+
 
 
     public enum Error {
