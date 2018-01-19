@@ -73,15 +73,6 @@ public class MenuActivity extends AppCompatActivity {
                 @Override
                 public void onLoaded(Game game) {
                     Log.d("Toast", "You loaded Game " + game.getKey());
-
-                    for(Map.Entry<String, Map<String, GamePlayer>> team : game.getPlayers().entrySet()) {
-                        if(team.getValue().containsKey(Pixelfighter.getInstance().getUserData().getUid())) {
-                            Pixelfighter.getInstance().setTeam(Team.valueOf(team.getKey()));
-                            break;
-                        }
-                    }
-
-
                     StartActivityHelper.start(MenuActivity.this).gameActivity(game.getKey());
 
                 }
