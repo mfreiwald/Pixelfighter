@@ -93,8 +93,10 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
 
                 gameService = new GameService(
                         object,
+                        gameSettings.getGameKey(),
                         gameSettings.getUid(),
                         ZoomableGameActivity.this);
+                gameService.register();
 
             }
 
