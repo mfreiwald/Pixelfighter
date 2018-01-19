@@ -14,11 +14,12 @@ import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 public class PendingClick {
     private int x;
     private int y;
-    private int color = getTeamPendingColor();
+    private int color;
 
-    public PendingClick(int x, int y) {
+    public PendingClick(int x, int y, Team team) {
         this.x = x;
         this.y = y;
+        this.color = getTeamPendingColor(team);
     }
 
     public int getX() {
@@ -33,8 +34,7 @@ public class PendingClick {
         return color;
     }
 
-    static int getTeamPendingColor() {
-        Team team = Pixelfighter.getInstance().getTeam();
+    static int getTeamPendingColor(Team team) {
         if(team == null) {
             return Color.BLACK;
         }

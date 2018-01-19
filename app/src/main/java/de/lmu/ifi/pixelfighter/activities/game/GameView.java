@@ -171,7 +171,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
                 canvas.drawRect(mRect, mFillPaint);
                 canvas.drawRect(mRect, mStrokePaint);
 
-                Team playerTeam = Pixelfighter.getInstance().getTeam();
+                Team playerTeam = this.gameSettings.getTeam();
                 if(pixel.getPixelMod() == PixelModification.Bomb && team.equals(playerTeam)) {
                     Drawable d = getResources().getDrawable(R.drawable.ic_bomb, null);
                     d.setBounds((int)Math.ceil(mRect.left), (int)Math.ceil(mRect.top), (int)Math.floor(mRect.right), (int)Math.floor(mRect.bottom));
@@ -187,6 +187,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
     }
 
     private float calculateBoxSize() {
+        if(gameSettings == null) return 1.0f;
         return (
                 Math.min(
                         (this.getHeight()-OFFSET*2) / new Float(this.gameSettings.getBoard().getHeight()),
@@ -194,10 +195,12 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
     }
 
     private float calculateOffsetX() {
+        if(gameSettings == null) return 1.0f;
         return (this.getWidth()-this.gameSettings.getBoard().getWidth()*calculateBoxSize()-OFFSET*2)/2.0f;
     }
 
     private float calculateOffsetY() {
+        if(gameSettings == null) return 1.0f;
         return (this.getHeight()-this.gameSettings.getBoard().getHeight()*calculateBoxSize()-OFFSET*2)/2.0f;
     }
 
@@ -227,7 +230,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
             case MotionEvent.ACTION_DOWN:
                 startX = event.getX();
                 startY = event.getY();
-                downEventClick = new PendingClick(getCoordinateX(startX), getCoordinateY(startY));
+                downEventClick = new PendingClick(getCoordinateX(startX), getCoordinateY(startY), gameSettings.getTeam());
                 pendingClicks.add(downEventClick);
                 break;
             case MotionEvent.ACTION_UP:
@@ -250,6 +253,8 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
     }
 
     private void click(float x, float y) {
+        if(this.gameSettings == null) return;
+
         float boxSize = calculateBoxSize();
         int pX = getCoordinateX(x);
         int pY = getCoordinateY(y);
@@ -277,6 +282,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
     }
 
     public void setGameSettings(ZoomableGameActivity.GameSettings gameSettings) {
+        if(gameSettings == null) return;
         this.gameSettings = gameSettings;
     }
 

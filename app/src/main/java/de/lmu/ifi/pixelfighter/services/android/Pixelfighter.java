@@ -20,24 +20,12 @@ public class Pixelfighter {
         return INSTANCE;
     }
 
-
-
-    private Team team;
-
     private UserData userData;
 
     private boolean useDark = false;
 
     private Pixelfighter() {
 
-    }
-
-    public Team getTeam() {
-        return team;
-    }
-
-    public void setTeam(Team team) {
-        this.team = team;
     }
 
     public boolean isUseDark() {
@@ -66,14 +54,6 @@ public class Pixelfighter {
                 default: return DefaultApp.getAppContext().getColor(R.color.btn_none);
             }
         }
-    }
-
-    public int getMyTeamColor() {
-        Team team = getTeam();
-        if(team == null) {
-            return Color.WHITE;
-        }
-        return getTeamColor(team);
     }
 
     public void setUserData(UserData userData) {

@@ -1,6 +1,7 @@
 package de.lmu.ifi.pixelfighter.activities.game;
 
 import android.content.Intent;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -10,6 +11,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,6 +23,8 @@ import de.lmu.ifi.pixelfighter.models.Game;
 import de.lmu.ifi.pixelfighter.models.GamePlayer;
 import de.lmu.ifi.pixelfighter.models.Pixel;
 import de.lmu.ifi.pixelfighter.models.PixelModification;
+import de.lmu.ifi.pixelfighter.models.Team;
+import de.lmu.ifi.pixelfighter.models.UserData;
 import de.lmu.ifi.pixelfighter.services.android.LightSensor;
 import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 import de.lmu.ifi.pixelfighter.services.firebase.BoardHandling;
@@ -39,6 +43,8 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
     private static final String TAG = "ZoomableGameActivity";
 
     GameSettings gameSettings;
+
+    GenericReference<Board> boardReference;
 
     //private BoardService boardService;
     //private GameService gameService;
@@ -59,16 +65,27 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
 
         ButterKnife.bind(this);
 
-
-
         // Get GameKey from Intent
-        this.gameSettings = new GameSettings(getIntent().getExtras().getString("gameKey"));
+        this.gameSettings = new GameSettings(getIntent().getExtras().getString("gameKey"), Pixelfighter.getInstance().getUserData().getUid());
+
+        boardReference = Database.Game(gameSettings.gameKey).Board();
 
         // Load Game
         Database.Game(this.gameSettings.getGameKey()).Game().addSingleListener(new GenericReference.ValueListener<Game>() {
             @Override
             public void onData(Game object) {
                 gameSettings.setBoard(object.getBoard());
+
+                // search for my team
+                for(Map.Entry<String, Map<String, GamePlayer>> playersInTeam : object.getPlayers().entrySet()) {
+                    if(playersInTeam.getValue().containsKey(gameSettings.getUid())) {
+                        gameSettings.setTeam(Team.valueOf(playersInTeam.getKey()));
+                        break;
+                    }
+                }
+                gameView.setGameSettings(gameSettings);
+                Log.d("GameSettings", gameSettings.toString());
+                gameView.setOnClickListener(ZoomableGameActivity.this);
             }
 
             @Override
@@ -87,8 +104,6 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
                 Pixelfighter.getInstance().getUserData().getUid(),
                 this);
                 */
-        this.gameView.setOnClickListener(this);
-        this.gameView.setGameSettings(gameSettings);
 
         //updateBombView();
     }
@@ -113,7 +128,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
         this.gameView.resume();
         this.lightSensor.onResume();
 
-        Database.Game(gameSettings.gameKey).Board().addListener(boardListener);
+        boardReference.addListener(boardListener);
     }
 
     @Override
@@ -124,7 +139,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
         this.gameView.pause();
         this.lightSensor.onPause();
 
-        Database.Game(gameSettings.gameKey).Board().removeListener(boardListener);
+        boardReference.removeListener(boardListener);
     }
 
     @Override
@@ -153,16 +168,16 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
     @Override
     public void onClick(int x, int y) {
 
-        final PendingClick click = new PendingClick(x, y);
+        final PendingClick click = new PendingClick(x, y, gameSettings.getTeam());
         this.gameView.addPendingClick(click);
 
 
         new BoardHandling(gameSettings).placePixel(
                 gameSettings.getBoard(),
                 x, y,
-                Pixelfighter.getInstance().getUserData().getUid(),
-                Pixelfighter.getInstance().getTeam(),
-                PixelModification.None,
+                gameSettings.getUid(),
+                gameSettings.getTeam(),
+                PixelModification.Bomb,
                 new ServiceCallback<Pixel>() {
                     @Override
                     public void success(Pixel pixel) {
@@ -248,10 +263,13 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
 
     public static class GameSettings {
         private final String gameKey;
+        private String uid;
+        private Team team;
         private Board board;
 
-        public GameSettings(String gameKey) {
+        public GameSettings(String gameKey, String uid) {
             this.gameKey = gameKey;
+            this.uid = uid;
         }
 
         public String getGameKey() {
@@ -264,6 +282,28 @@ public class ZoomableGameActivity extends AppCompatActivity implements UpdateCal
 
         private void setBoard(Board board) {
             this.board = board;
+        }
+
+        public Team getTeam() {
+            return this.team;
+        }
+
+        private void setTeam(Team team) {
+            this.team = team;
+        }
+
+        public String getUid() {
+            return uid;
+        }
+
+        @Override
+        public String toString() {
+            return "GameSettings{" +
+                    "gameKey='" + gameKey + '\'' +
+                    ", uid='" + uid + '\'' +
+                    ", team=" + team +
+                    ", board=" + board +
+                    '}';
         }
     }
 }
