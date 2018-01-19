@@ -31,6 +31,12 @@ public class BoardHandling {
             public Pixel doTransaction(Pixel mutable) {
                 Rules rules = new Rules(board, team, x, y);
 
+                // Clicked on own Team
+                if(mutable.getTeam() == team && mutable.getPixelMod() == PixelModification.None) {
+                    mutable.setPixelMod(modification);
+                    return mutable;
+                }
+
                 // Check if Pixel can be set
                 if (!rules.isFree()) return null;
 

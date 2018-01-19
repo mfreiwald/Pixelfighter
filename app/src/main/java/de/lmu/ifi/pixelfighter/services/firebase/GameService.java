@@ -1,5 +1,7 @@
 package de.lmu.ifi.pixelfighter.services.firebase;
 
+import android.util.Log;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,8 +29,8 @@ public class GameService {
     private final Callback callback;
     private Map<DatabaseReference, ValueEventListener> listeners = new HashMap<>();
 
-    public GameService(Game game, String playerKey, Callback callback) {
-        dbRef = FirebaseDatabase.getInstance().getReference().child("games/"+game.getKey());
+    public GameService(Game game, String gameKey, String playerKey, Callback callback) {
+        dbRef = FirebaseDatabase.getInstance().getReference().child("games/"+gameKey);
         this.game = game;
         this.playerKey = playerKey;
         Team foundTeam = null;
