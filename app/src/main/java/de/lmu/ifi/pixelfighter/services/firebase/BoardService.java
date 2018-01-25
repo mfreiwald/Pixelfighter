@@ -28,7 +28,15 @@ import de.lmu.ifi.pixelfighter.services.firebase.callbacks.UpdateCallback;
  */
 
 public class BoardService extends BaseService<Board> {
+    public BoardService(String childRef) {
+        super(childRef);
+    }
 
+    @Override
+    protected Board wrap(DataSnapshot dataSnapshot) {
+        return null;
+    }
+/*
     private boolean isBombActive = false;
     private ToggleButton bombToggle;
 
@@ -216,4 +224,5 @@ public class BoardService extends BaseService<Board> {
             }
         });
     }
+    */
 }

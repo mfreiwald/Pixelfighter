@@ -37,7 +37,6 @@ public class ChooseTeamActivity extends AppCompatActivity {
             default: selectedTeam = RandomTeam.evaluateRandomTeam();
         }
 
-        Pixelfighter.getInstance().setTeam(selectedTeam);
 
         GamesService.getInstance().searchAndJoinGame(Pixelfighter.getInstance().getUserData().getUid(), selectedTeam, new Callback<Game>() {
             @Override

@@ -25,11 +25,17 @@ public class BoardHandling {
         this.gameSettings = gameSettings;
     }
 
-    public void placePixel(final Board board, final int x, final int y, final String uid, final Team team, final PixelModification modification, final ServiceCallback<Pixel> callback) {
+    public void placePixel(final GameService gameService, final Board board, final int x, final int y, final String uid, final Team team, final PixelModification modification, final ServiceCallback<Pixel> callback) {
         Database.Game(gameKey).Pixel(x, y).runTransaction(new GenericReference.Handler<Pixel>() {
             @Override
             public Pixel doTransaction(Pixel mutable) {
                 Rules rules = new Rules(board, team, x, y);
+
+                // Clicked on own Team
+                if(mutable.getTeam() == team && mutable.getPixelMod() == PixelModification.None) {
+                    mutable.setPixelMod(modification);
+                    return mutable;
+                }
 
                 // Check if Pixel can be set
                 if (!rules.isFree()) return null;
@@ -38,11 +44,7 @@ public class BoardHandling {
                 // need current board
                 if (!rules.isAtOwnTeam()) return null;
 
-                // Check if Pixel was modificated
-                if (mutable.getPixelMod() != PixelModification.None) {
-                    // do something with the modification
-                    // exp. earn it
-                }
+                Rules.checkForLootModification(gameService ,board, mutable);
 
                 // Check if we can replace a neighbour
                 for(Pixel pixel : Rules.checkForEnemiesToConvert(gameSettings.getBoard(), team, x, y)) {
@@ -78,9 +80,7 @@ public class BoardHandling {
 
                 // Check if replaced Pixel has a Bomb
                 if(mutable.getPixelMod() == PixelModification.Bomb) {
-                    executeBombFrom(x, y);
-                    mutable.setTeam(Team.None);
-                    mutable.setPlayerKey("");
+                    executeBombFrom(x, y, mutable.getTeam());
                     mutable.setPixelMod(PixelModification.None);
                     return mutable;
                 } else { // Simple replacing
@@ -103,10 +103,10 @@ public class BoardHandling {
         });
     }
 
-    public void executeBombFrom(final int x, final int y) {
+    public void executeBombFrom(final int x, final int y, Team team) {
         // Get all neighboars
         for(Pixel pixel : getNeighbour(x, y)) {
-            overridePixel(pixel.getX(), pixel.getY(), Team.None, "", PixelModification.None, null);
+            overridePixel(pixel.getX(), pixel.getY(), team, "", PixelModification.None, null);
         }
     }
 
