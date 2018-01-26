@@ -1,8 +1,11 @@
 package de.lmu.ifi.pixelfighter.activities;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,6 +28,10 @@ public class StatisticsActivity extends AppCompatActivity {
 
     TextView gamesCount;
     TextView myScore;
+    FirebaseUser user;
+    DatabaseReference rootRef;
+    DatabaseReference gamesRef;
+    DatabaseReference scoreRef;
 
     int games;
     int score;
@@ -35,6 +42,11 @@ public class StatisticsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_statistics);
         ButterKnife.bind(this);
 
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        rootRef = FirebaseDatabase.getInstance().getReference();
+        gamesRef = rootRef.child("users").child(user.getUid()).child("stats").child("games");
+        scoreRef = rootRef.child("users").child(user.getUid()).child("stats").child("score");
+
         gamesCount = (TextView) findViewById(R.id.gamesTextView);
         myScore = (TextView) findViewById(R.id.statsScore);
 
@@ -44,14 +56,27 @@ public class StatisticsActivity extends AppCompatActivity {
 
     @OnClick(R.id.button_reset)
     public void onClickReset() {
-        //Delete Statistics from Firebase
+        AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+
+        builder.setTitle("Delete statistics")
+                .setMessage("Are you sure you want to delete your statistics?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        gamesRef.setValue(0);
+                        scoreRef.setValue(0);
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     public void getStats() {
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference gamesRef = rootRef.child("users").child(user.getUid()).child("stats").child("games");
 
         gamesRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -67,14 +92,10 @@ public class StatisticsActivity extends AppCompatActivity {
 
                 Log.d("DEBUG STATS", gamesStr );
             }
-
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
+            public void onCancelled(DatabaseError databaseError) {            }
         });
 
-        DatabaseReference scoreRef = rootRef.child("users").child(user.getUid()).child("stats").child("score");
 
         scoreRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -82,17 +103,13 @@ public class StatisticsActivity extends AppCompatActivity {
                 if(dataSnapshot!= null) {
                     String scoreStr = dataSnapshot.getValue().toString();
                     score = Integer.parseInt(scoreStr);
-                    String scoreText = myScore.getText() + String.valueOf(score);
+                    String scoreText = "Score: " + String.valueOf(score);
                     myScore.setText(scoreText);
                     Log.d("DEBUG STATS", scoreStr );
                 }
             }
-
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
+            public void onCancelled(DatabaseError databaseError) {      }
         });
     }
-
 }
