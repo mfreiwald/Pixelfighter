@@ -40,17 +40,6 @@ public class StatisticsActivity extends AppCompatActivity {
 
         getStats();
 
-        String gamesStr = "Played games: " + String.valueOf(games);
-        String scoreStr = myScore.getText() + String.valueOf(score);
-
-        if (games == 0) {
-            gamesCount.setText("You haven't played any games yet.");
-        } else {
-            gamesCount.setText(gamesStr);
-        }
-
-        myScore.setText(scoreStr);
-
     }
 
     @OnClick(R.id.button_reset)
@@ -62,20 +51,40 @@ public class StatisticsActivity extends AppCompatActivity {
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference statsRef = rootRef.child("users").child(user.getUid()).child("stats");
+        DatabaseReference gamesRef = rootRef.child("users").child(user.getUid()).child("stats").child("games");
 
-        statsRef.addValueEventListener(new ValueEventListener() {
+        gamesRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Statistics statistics = dataSnapshot.getValue(Statistics.class);
-                if (statistics== null) {
-                    Log.d(TAG, "statistics is null");
-                    return;
+                String gamesStr = dataSnapshot.getValue().toString();
+                games = Integer.parseInt(gamesStr);
+                if (games == 0) {
+                    gamesCount.setText("You haven't played any games yet.");
                 } else {
-                    games = statistics.getGamesCount();
-                    score = statistics.getScore();
-                    Log.d(TAG,": games: " + games);
-                    Log.d(TAG,": score: " + score);
+                    String gamesText = "Played games: " + String.valueOf(games);
+                    gamesCount.setText(gamesText);
+                }
+
+                Log.d("DEBUG STATS", gamesStr );
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        DatabaseReference scoreRef = rootRef.child("users").child(user.getUid()).child("stats").child("score");
+
+        scoreRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot!= null) {
+                    String scoreStr = dataSnapshot.getValue().toString();
+                    score = Integer.parseInt(scoreStr);
+                    String scoreText = myScore.getText() + String.valueOf(score);
+                    myScore.setText(scoreText);
+                    Log.d("DEBUG STATS", scoreStr );
                 }
             }
 
