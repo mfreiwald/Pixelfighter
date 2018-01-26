@@ -24,30 +24,40 @@
         android:layout_gravity="center" />
 
     <TextView
-        android:id="@+id/gamesTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/space_margin"
-        android:layout_marginTop="@dimen/space_margin"
-        android:textSize="20sp"
-        android:text="Played Games: 7"/>
-
-    <TextView
         android:id="@+id/statsScore"
         android:text="Score: "
-        android:layout_marginStart="@dimen/space_margin"
-        android:layout_marginTop="@dimen/space_margin"
-        android:textSize="20sp"
+        android:layout_marginTop="@dimen/top_margin"
+        android:layout_gravity="center"
+        android:textSize="25sp"
+        android:textStyle="bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <TextView
+        android:id="@+id/gamesTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/top_margin"
+        android:layout_marginTop="@dimen/space_margin"
+        android:textSize="20sp"
+        android:text="Games played: "/>
+
+    <TextView
+        android:id="@+id/wonTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/top_margin"
+        android:layout_marginTop="@dimen/space_margin"
+        android:textSize="20sp"
+        android:text="Games won: "/>
 
     <Button
         android:id="@+id/button_reset"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/space_margin"
-        android:layout_marginTop="@dimen/space_margin"
+        android:layout_marginTop="@dimen/top_margin"
+        android:layout_marginEnd="@dimen/space_margin"
         android:text="@string/buttonReset" />
 
 

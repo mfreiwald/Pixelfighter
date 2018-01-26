@@ -26,15 +26,18 @@ public class StatisticsActivity extends AppCompatActivity {
 
     final String TAG = "StatisticsActivity";
 
-    TextView gamesCount;
+    TextView gamesView;
     TextView myScore;
+    TextView wonGames;
     FirebaseUser user;
     DatabaseReference rootRef;
     DatabaseReference gamesRef;
     DatabaseReference scoreRef;
+    DatabaseReference wonRef;
 
-    int games;
+    int gamesCount;
     int score;
+    int gamesWon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,12 +46,14 @@ public class StatisticsActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
-        rootRef = FirebaseDatabase.getInstance().getReference();
-        gamesRef = rootRef.child("users").child(user.getUid()).child("stats").child("games");
-        scoreRef = rootRef.child("users").child(user.getUid()).child("stats").child("score");
+        rootRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
+        gamesRef = rootRef.child("games");
+        scoreRef = rootRef.child("score");
+        wonRef = rootRef.child("won");
 
-        gamesCount = (TextView) findViewById(R.id.gamesTextView);
+        gamesView = (TextView) findViewById(R.id.gamesTextView);
         myScore = (TextView) findViewById(R.id.statsScore);
+        wonGames = (TextView) findViewById(R.id.wonTextView);
 
         getStats();
 
@@ -65,6 +70,7 @@ public class StatisticsActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         gamesRef.setValue(0);
                         scoreRef.setValue(0);
+                        wonRef.setValue(0);
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -81,16 +87,30 @@ public class StatisticsActivity extends AppCompatActivity {
         gamesRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String gamesStr = dataSnapshot.getValue().toString();
-                games = Integer.parseInt(gamesStr);
-                if (games == 0) {
-                    gamesCount.setText("You haven't played any games yet.");
+                if(dataSnapshot.exists()) {
+                    String gamesStr = dataSnapshot.getValue().toString();
+                    gamesCount = Integer.parseInt(gamesStr);
+                    String gamesText = "You played " + String.valueOf(gamesCount);
+                    gamesView.setText(gamesText);
                 } else {
-                    String gamesText = "Played games: " + String.valueOf(games);
-                    gamesCount.setText(gamesText);
+                    gamesView.setText("You haven't played any games yet.");
                 }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {            }
+        });
 
-                Log.d("DEBUG STATS", gamesStr );
+        wonRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    String wonStr = dataSnapshot.getValue().toString();
+                    gamesWon = Integer.parseInt(wonStr);
+                    String gamesText = "games and won " + String.valueOf(gamesWon) + ".";
+                    wonGames.setText(gamesText);
+                } else {
+                    wonGames.setVisibility(View.INVISIBLE);
+                }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {            }
@@ -100,12 +120,14 @@ public class StatisticsActivity extends AppCompatActivity {
         scoreRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot!= null) {
+                if(dataSnapshot.exists()) {
                     String scoreStr = dataSnapshot.getValue().toString();
                     score = Integer.parseInt(scoreStr);
                     String scoreText = "Score: " + String.valueOf(score);
                     myScore.setText(scoreText);
                     Log.d("DEBUG STATS", scoreStr );
+                } else {
+                    myScore.setText("Score: 0");
                 }
             }
             @Override
