@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
 
 import de.lmu.ifi.pixelfighter.R;
@@ -166,5 +168,8 @@ public class GameEndActivity extends AppCompatActivity {
                 winner = "The winner is YELLOW!";
                 break;
         }
+    }
+
+    private void saveStats() {
     }
 }
