@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.UUID;
 
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onData(UserData userData) {
                     if(userData == null) {
-                        userData = new UserData(user.getUid(), UUID.randomUUID().toString());
+                        userData = new UserData(user.getUid(), UUID.randomUUID().toString(), userData.getScore(), userData.getGames(), userData.getWon());
                         Database.UserData(user.getUid()).setValue(userData);
                     }
                     Pixelfighter.getInstance().setUserData(userData);

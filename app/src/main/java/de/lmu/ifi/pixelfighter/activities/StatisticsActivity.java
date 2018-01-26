@@ -8,33 +8,27 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.lmu.ifi.pixelfighter.R;
-import de.lmu.ifi.pixelfighter.models.Statistics;
+import de.lmu.ifi.pixelfighter.models.UserData;
+import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 import de.lmu.ifi.pixelfighter.services.firebase.Database;
 
 public class StatisticsActivity extends AppCompatActivity {
 
     final String TAG = "StatisticsActivity";
 
-    TextView gamesCount;
+    TextView gamesView;
     TextView myScore;
-    FirebaseUser user;
-    DatabaseReference rootRef;
-    DatabaseReference gamesRef;
-    DatabaseReference scoreRef;
+    TextView wonGames;
 
-    int games;
+    UserData userData;
+
+    int gamesCount;
     int score;
+    int gamesWon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,13 +36,11 @@ public class StatisticsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_statistics);
         ButterKnife.bind(this);
 
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        rootRef = FirebaseDatabase.getInstance().getReference();
-        gamesRef = rootRef.child("users").child(user.getUid()).child("stats").child("games");
-        scoreRef = rootRef.child("users").child(user.getUid()).child("stats").child("score");
+        userData = Pixelfighter.getInstance().getUserData();
 
-        gamesCount = (TextView) findViewById(R.id.gamesTextView);
+        gamesView = (TextView) findViewById(R.id.gamesTextView);
         myScore = (TextView) findViewById(R.id.statsScore);
+        wonGames = (TextView) findViewById(R.id.wonTextView);
 
         getStats();
 
@@ -63,8 +55,12 @@ public class StatisticsActivity extends AppCompatActivity {
                 .setMessage("Are you sure you want to delete your statistics?")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        gamesRef.setValue(0);
-                        scoreRef.setValue(0);
+                        userData.setGames(0);
+                        userData.setScore(0);
+                        userData.setWon(0);
+                        Database.UserData(userData.getUid()).setValue(userData);
+                        Pixelfighter.getInstance().setUserData(userData);
+                        //Todo: Reload view to show resetted data
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -78,38 +74,20 @@ public class StatisticsActivity extends AppCompatActivity {
 
     public void getStats() {
 
-        gamesRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String gamesStr = dataSnapshot.getValue().toString();
-                games = Integer.parseInt(gamesStr);
-                if (games == 0) {
-                    gamesCount.setText("You haven't played any games yet.");
-                } else {
-                    String gamesText = "Played games: " + String.valueOf(games);
-                    gamesCount.setText(gamesText);
-                }
+        gamesCount = userData.getGames();
+        if (gamesCount!=0) {
+            String gamesText = "Games played: " + String.valueOf(gamesCount);
+            gamesView.setText(gamesText);
+        } else {
+            gamesView.setText("You haven't played any games yet.");
+        }
 
-                Log.d("DEBUG STATS", gamesStr );
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {            }
-        });
+        gamesWon = userData.getWon();
+        String gamesText = "Games won: " + String.valueOf(gamesWon);
+        wonGames.setText(gamesText);
 
-
-        scoreRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot!= null) {
-                    String scoreStr = dataSnapshot.getValue().toString();
-                    score = Integer.parseInt(scoreStr);
-                    String scoreText = "Score: " + String.valueOf(score);
-                    myScore.setText(scoreText);
-                    Log.d("DEBUG STATS", scoreStr );
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {      }
-        });
+        score = userData.getScore();
+        String scoreText = "Score: " + String.valueOf(score);
+        myScore.setText(scoreText);
     }
 }

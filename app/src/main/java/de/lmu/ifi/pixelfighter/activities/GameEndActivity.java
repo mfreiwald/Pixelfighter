@@ -2,19 +2,19 @@ package de.lmu.ifi.pixelfighter.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.firebase.database.FirebaseDatabase;
-
 import java.util.ArrayList;
 
 import de.lmu.ifi.pixelfighter.R;
 import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.Pixel;
+import de.lmu.ifi.pixelfighter.models.UserData;
 import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 import de.lmu.ifi.pixelfighter.services.firebase.Database;
 import de.lmu.ifi.pixelfighter.services.firebase.GenericReference;
@@ -30,6 +30,7 @@ public class GameEndActivity extends AppCompatActivity {
     TextView yellowText;
     Button btnMain;
     String winner;
+    UserData userData;
 
     int red;
     int blue;
@@ -37,6 +38,7 @@ public class GameEndActivity extends AppCompatActivity {
     int yellow;
     int index;
 
+    Boolean won;
 
     Board board;
     ArrayList<ArrayList<Pixel>> pixelDoublelist;
@@ -45,6 +47,8 @@ public class GameEndActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_end);
+
+        userData = Pixelfighter.getInstance().getUserData();
 
         Database.Game(Pixelfighter.getInstance().getUserData().getGameKey()).Board().addSingleListener(new GenericReference.ValueListener<Board>() {
             @Override
@@ -97,19 +101,18 @@ public class GameEndActivity extends AppCompatActivity {
         getStats(pixelDoublelist);
         getHighest();
         setWinner(index);
+        saveStats(pixelDoublelist);
 
     }
 
     public void getPixellist(String key){
         pixelDoublelist = this.board.getPixels();
-        Log.d(TAG + "Board", pixelDoublelist.toString());
     }
 
     public void getStats(ArrayList<ArrayList<Pixel>> pixels) {
         try {
             for (int i=0; i<pixels.size(); i++) {
                 for (int j= 0; j<pixels.size(); j++) {
-                    Log.d("Statistics", pixels.get(i).get(j).getTeam().toString());
                     switch (pixels.get(i).get(j).getTeam()) {
                         case None:
                             break;
@@ -150,12 +153,14 @@ public class GameEndActivity extends AppCompatActivity {
     }
 
     private void setWinner(int winIndex){
+        String team = "none";
         winner = "The winner is...";
         switch (winIndex) {
             case 0:
                 winner = "There is no winner...try again.";
                 break;
             case 1:
+                team = "RED";
                 winner = "The winner is RED!";
                 break;
             case 2:
@@ -168,8 +173,29 @@ public class GameEndActivity extends AppCompatActivity {
                 winner = "The winner is YELLOW!";
                 break;
         }
+
     }
 
-    private void saveStats() {
+    private void saveStats(ArrayList<ArrayList<Pixel>> pixels) {
+        Log.d(TAG, "saveStatsCalled");
+        int score =0;
+        for (int i=0; i<pixels.size(); i++) {
+            for (int j= 0; j<pixels.size(); j++) {
+                if(pixels.get(i).get(j).getPlayerKey().equals(userData.getUid())) {
+                    score = score +2;
+                }
+            }
+        }
+        userData.setScore(userData.getScore() + score);
+        userData.setGames(userData.getGames() + 1);
+        /*if (won) {
+            userData.setWon(userData.getWon()+1);
+        }*/
+        String gamesStr = Integer.toString(userData.getGames());
+        String scoreStr = Integer.toString(userData.getScore());
+        Log.d(TAG + "games: ", gamesStr);
+        Log.d(TAG + "score: ", scoreStr);
+        Database.UserData(userData.getUid()).setValue(userData);
+
     }
 }
