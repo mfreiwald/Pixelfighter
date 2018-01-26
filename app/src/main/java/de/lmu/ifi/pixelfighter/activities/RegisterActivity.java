@@ -75,7 +75,7 @@ public class RegisterActivity extends AppCompatActivity {
                         .setDisplayName(username).build();
                 user.updateProfile(profileUpdates);
 
-                UserData userData = new UserData(user.getUid(), username);
+                UserData userData = new UserData(user.getUid(), username,0,0,0);
                 Database.UserData(user.getUid()).setValue(userData, new GenericReference.CompletionListener() {
                     @Override
                     public void onComplete() {
