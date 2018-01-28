@@ -144,13 +144,13 @@ public class Rules {
                 if (adjacentAllies.size() >= absoluteAmtOfNecPixels
                         && checkIfAlliesStandTogether(adjacentAllies)
                         ) {
-                    if (enemy.getPixelMod() == PixelModification.None) {
+                    //if (enemy.getPixelMod() == PixelModification.None) {
                         enemy.setTeam(team);
                         updateList.add(enemy);
-                    } else {
-                        Log.d("RULES", "Found MOD on Pixel, running check");
-                        updateList.addAll(calculateAffectedPixelsByMod(enemy));
-                    }
+                    //} else {
+                    //    Log.d("RULES", "Found MOD on Pixel, running check");
+                    //    updateList.addAll(calculateAffectedPixelsByMod(enemy));
+                    //}
                 }
             }
         }

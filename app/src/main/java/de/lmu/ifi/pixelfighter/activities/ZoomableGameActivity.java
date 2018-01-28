@@ -137,23 +137,6 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         } else {
             currentModification = PixelModification.None;
         }
-        /*
-        if(gameService == null) return;
-        if(gameService.getBombCount() <= 0) {
-            currentModification = PixelModification.None;
-            bombToggle.post(new Runnable() {
-                @Override
-                public void run() {
-                    bombToggle.setChecked(false);
-                }
-            });
-        }
-        if(isChecked) {
-            currentModification = PixelModification.Bomb;
-        } else {
-            currentModification = PixelModification.None;
-        }
-        */
     }
 
     private void updateBombView(int amount) {

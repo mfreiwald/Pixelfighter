@@ -113,6 +113,7 @@ public class GameUpdate {
     private GenericReference.ValueListener<GamePlayer> gamePlayerListener = new GenericReference.ValueListener<GamePlayer>() {
         @Override
         public void onData(GamePlayer object) {
+            gameSettings.setGamePlayer(object);
             gameUpdates.onGamePlayerChanged(object);
         }
 

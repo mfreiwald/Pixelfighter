@@ -1,12 +1,12 @@
 package de.lmu.ifi.pixelfighter.services.firebase;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import de.lmu.ifi.pixelfighter.activities.ZoomableGameActivity;
 import de.lmu.ifi.pixelfighter.activities.game.GameSettings;
 import de.lmu.ifi.pixelfighter.game.Rules;
-import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.GamePlayer;
 import de.lmu.ifi.pixelfighter.models.Pixel;
 import de.lmu.ifi.pixelfighter.models.PixelModification;
@@ -26,19 +26,19 @@ public class BoardHandling {
     }
 
     private boolean placeModification(Pixel mutable, PixelModification modification) {
-        if(modification == PixelModification.None) return false;
+        if (modification == PixelModification.None) return false;
         GamePlayer player = gameSettings.getGamePlayer();
-        if(player.getBombAmount() < 1) return false;
-        player.setBombAmount(player.getBombAmount()-1);
+        if (player.getBombAmount() < 1) return false;
+        player.setBombAmount(player.getBombAmount() - 1);
         Database.Game(gameSettings.getGameKey()).GamePlayer(gameSettings.getUid(), gameSettings.getTeam()).setValue(player);
         mutable.setPixelMod(modification);
         return true;
     }
 
     private boolean pickModification(Pixel mutable) {
-        if(mutable.getPixelMod() == PixelModification.None) return false;
+        if (mutable.getPixelMod() == PixelModification.None) return false;
         GamePlayer player = gameSettings.getGamePlayer();
-        player.setBombAmount(player.getBombAmount()+1);
+        player.setBombAmount(player.getBombAmount() + 1);
         Database.Game(gameSettings.getGameKey()).GamePlayer(gameSettings.getUid(), gameSettings.getTeam()).setValue(player);
         mutable.setPixelMod(PixelModification.None);
         return true;
@@ -52,8 +52,8 @@ public class BoardHandling {
                 Rules rules = new Rules(gameSettings.getBoard(), gameSettings.getTeam(), x, y);
 
                 // Clicked on own Team
-                if(mutable.getTeam() == gameSettings.getTeam() && mutable.getPixelMod() == PixelModification.None && modification != PixelModification.None) {
-                    if(placeModification(mutable, modification)) return mutable;
+                if (mutable.getTeam() == gameSettings.getTeam() && mutable.getPixelMod() == PixelModification.None && modification != PixelModification.None) {
+                    if (placeModification(mutable, modification)) return mutable;
                     else return null;
                 }
 
@@ -66,10 +66,6 @@ public class BoardHandling {
 
                 //Rules.checkForLootModification(gameService ,board, mutable);
 
-                // Check if we can replace a neighbour
-                for(Pixel pixel : Rules.checkForEnemiesToConvert(gameSettings.getBoard(), gameSettings.getTeam(), x, y)) {
-                    executeReplacing(pixel.getX(), pixel.getY(), gameSettings.getTeam(), gameSettings.getUid());
-                }
 
                 pickModification(mutable);
                 mutable.setPlayerKey(gameSettings.getUid());
@@ -83,6 +79,16 @@ public class BoardHandling {
             public void onComplete(boolean changed, Pixel object) {
                 if (changed) {
                     callback.success(object);
+
+                    // run replacing
+                    // Check if we can replace a neighbour
+                    List<Pixel> enemiesToConvert = Rules.checkForEnemiesToConvert(gameSettings.getBoard(), gameSettings.getTeam(), x, y);
+                    enemiesToConvertCount += enemiesToConvert.size();
+                    for (Pixel pixel : enemiesToConvert) {
+                        executeReplacing(pixel.getX(), pixel.getY(), gameSettings.getTeam(), gameSettings.getUid());
+                    }
+                    // after that, run bombs
+
                 } else {
                     callback.failure("Not valid to set");
                 }
@@ -90,9 +96,15 @@ public class BoardHandling {
         });
     }
 
-    private void checkReplacingFrom(int x, int y) {
-        // get a list will pixel to replacing
-        // and call @executeReplacing(x, y, ownTeam, uid);
+    private volatile int enemiesToConvertCount = 0;
+    private volatile int enemiesConverted = 0;
+    private List<BombCount> bombsToExecute = new ArrayList<>();
+
+    private static class BombCount {
+        int x;
+        int y;
+        Team team;
+        String uid;
     }
 
     public void executeReplacing(final int x, final int y, final Team ownTeam, final String uid) {
@@ -100,35 +112,61 @@ public class BoardHandling {
             @Override
             public Pixel doTransaction(Pixel mutable) {
 
-                // Check if replaced Pixel has a Bomb
-                if(mutable.getPixelMod() == PixelModification.Bomb) {
-                    executeBombFrom(x, y, mutable.getTeam());
-                    mutable.setPixelMod(PixelModification.None);
-                    return mutable;
-                } else { // Simple replacing
-                    mutable.setTeam(ownTeam);
-                    mutable.setPlayerKey(uid);
-                    mutable.setPixelMod(PixelModification.None);
-                    // Check if we can replace a neighbour
-                    for(Pixel pixel : Rules.checkForEnemiesToConvert(gameSettings.getBoard(), ownTeam, x, y)) {
-                        executeReplacing(pixel.getX(), pixel.getY(), ownTeam, uid);
-                    }
-                    return mutable;
+                if (mutable.getPixelMod() == PixelModification.Protection) {
+                    return null;
                 }
+                // Check if replaced Pixel has a Bomb
+                if (mutable.getPixelMod() == PixelModification.Bomb) {
+                    Log.d("Replace&Bomb", "Execute Bomb at " + mutable.toString());
+                    BombCount bc = new BombCount();
+                    bc.x = mutable.getX();
+                    bc.y = mutable.getY();
+                    bc.team = mutable.getTeam();
+                    bc.uid = mutable.getPlayerKey();
+                    bombsToExecute.add(bc);
+                    //executeBombFrom(x, y, mutable.getTeam());
+                }
+                mutable.setTeam(ownTeam);
+                mutable.setPlayerKey(uid);
+                mutable.setPixelMod(PixelModification.None);
+
+                // Check if we can replace a neighbour
+                List<Pixel> enemiesToConvert = Rules.checkForEnemiesToConvert(gameSettings.getBoard(), ownTeam, x, y);
+                enemiesToConvertCount += enemiesToConvert.size();
+                for (Pixel pixel : enemiesToConvert) {
+                    executeReplacing(pixel.getX(), pixel.getY(), ownTeam, uid);
+                }
+                return mutable;
+
 
             }
 
             @Override
             public void onComplete(boolean changed, Pixel object) {
                 // do nothing
+                enemiesConverted++;
+                convertingEnemiesFinished();
             }
         });
     }
 
-    public void executeBombFrom(final int x, final int y, Team team) {
+    private void convertingEnemiesFinished() {
+        Log.d("Replace&Bomb", enemiesConverted + " == " + enemiesToConvertCount);
+        if (enemiesConverted == enemiesToConvertCount) {
+            Log.d("Replace&Bomb", "all the fiels replaced. Start bombing");
+            // excute bombs
+            for(BombCount bc : bombsToExecute) {
+                executeBombFrom(bc.x, bc.y, bc.team, bc.uid);
+            }
+        }
+    }
+
+
+    public void executeBombFrom(final int x, final int y, Team team, String uid) {
         // Get all neighboars
-        for(Pixel pixel : getNeighbour(x, y)) {
-            overridePixel(pixel.getX(), pixel.getY(), team, "", PixelModification.None, null);
+        overridePixel(x, y, team, uid, PixelModification.None, null);
+        for (Pixel pixel : getNeighbour(x, y)) {
+            overridePixel(pixel.getX(), pixel.getY(), team, uid, PixelModification.None, null);
         }
     }
 
@@ -141,7 +179,7 @@ public class BoardHandling {
                 if (_y < 0 || _y >= this.gameSettings.getBoard().getHeight())
                     continue;
 
-                if(_x == x && _y == y)
+                if (_x == x && _y == y)
                     continue;
 
                 result.add(this.gameSettings.getBoard().getPixels().get(_x).get(_y));
@@ -152,8 +190,8 @@ public class BoardHandling {
 
     private List<Pixel> getOwnTeamNeighbour(int x, int y, Team team) {
         List<Pixel> result = new ArrayList<>();
-        for(Pixel pixel : getNeighbour(x ,y)) {
-            if(pixel.getTeam() == team) {
+        for (Pixel pixel : getNeighbour(x, y)) {
+            if (pixel.getTeam() == team) {
                 result.add(pixel);
             }
         }
@@ -162,14 +200,13 @@ public class BoardHandling {
 
     private List<Pixel> getEnemyNeighbour(int x, int y, Team team) {
         List<Pixel> result = new ArrayList<>();
-        for(Pixel pixel : getNeighbour(x ,y)) {
-            if(pixel.getTeam() != team && pixel.getTeam() != Team.None) {
+        for (Pixel pixel : getNeighbour(x, y)) {
+            if (pixel.getTeam() != team && pixel.getTeam() != Team.None) {
                 result.add(pixel);
             }
         }
         return result;
     }
-
 
 
     public void overridePixel(int x, int y, final Team team, final String uid, final PixelModification modification, final ServiceCallback<Pixel> callback) {
@@ -185,7 +222,7 @@ public class BoardHandling {
             @Override
             public void onComplete(boolean changed, Pixel object) {
                 // nothing to do
-                if(callback == null) return;
+                if (callback == null) return;
                 callback.success(object);
             }
         });
