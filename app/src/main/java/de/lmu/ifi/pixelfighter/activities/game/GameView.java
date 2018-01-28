@@ -15,7 +15,7 @@ import java.util.ListIterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.lmu.ifi.pixelfighter.R;
-import de.lmu.ifi.pixelfighter.models.Board;
+import de.lmu.ifi.pixelfighter.activities.ZoomableGameActivity;
 import de.lmu.ifi.pixelfighter.models.Pixel;
 import de.lmu.ifi.pixelfighter.models.PixelModification;
 import de.lmu.ifi.pixelfighter.models.Team;
@@ -41,7 +41,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
     public long ACTUAL_FPS = 0;
 
     private CopyOnWriteArrayList<PendingClick> pendingClicks = new CopyOnWriteArrayList<>();
-    private ZoomableGameActivity.GameSettings gameSettings;
+    private GameSettings gameSettings;
 
     public GameView(Context context) {
         super(context);
@@ -281,7 +281,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
         this.pendingClicks.remove(click);
     }
 
-    public void setGameSettings(ZoomableGameActivity.GameSettings gameSettings) {
+    public void setGameSettings(GameSettings gameSettings) {
         if(gameSettings == null) return;
         this.gameSettings = gameSettings;
     }

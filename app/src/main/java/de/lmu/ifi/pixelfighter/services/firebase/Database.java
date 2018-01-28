@@ -7,7 +7,9 @@ import com.google.firebase.database.MutableData;
 
 import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.Game;
+import de.lmu.ifi.pixelfighter.models.GamePlayer;
 import de.lmu.ifi.pixelfighter.models.Pixel;
+import de.lmu.ifi.pixelfighter.models.Team;
 import de.lmu.ifi.pixelfighter.models.UserData;
 
 /**
@@ -56,6 +58,35 @@ public class Database {
                 }
             };
         }
+
+        public GenericReference<Boolean> GameActive() {
+            return new GenericReference<Boolean>(shortReference.child("active")) {
+                @Override
+                public Boolean wrap(DataSnapshot dataSnapshot) {
+                    return dataSnapshot.getValue(Boolean.class);
+                }
+
+                @Override
+                public Boolean wrap(MutableData mutableData) {
+                    return mutableData.getValue(Boolean.class);
+                }
+            };
+        }
+
+        public GenericReference<GamePlayer> GamePlayer(String uid, Team team) {
+            return new GenericReference<GamePlayer>(shortReference.child("players").child(team.name()).child(uid)) {
+                @Override
+                public GamePlayer wrap(DataSnapshot dataSnapshot) {
+                    return dataSnapshot.getValue(GamePlayer.class);
+                }
+
+                @Override
+                public GamePlayer wrap(MutableData mutableData) {
+                    return mutableData.getValue(GamePlayer.class);
+                }
+            };
+        }
+
 
         public GenericReference<Board> Board() {
             return new GenericReference<Board>(shortReference.child("board")) {

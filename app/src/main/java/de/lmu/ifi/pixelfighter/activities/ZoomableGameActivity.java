@@ -1,10 +1,7 @@
-package de.lmu.ifi.pixelfighter.activities.game;
+package de.lmu.ifi.pixelfighter.activities;
 
 import android.content.Intent;
-import android.graphics.PixelFormat;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.CompoundButton;
@@ -12,44 +9,37 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import java.util.ArrayList;
-import java.util.Map;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import de.lmu.ifi.pixelfighter.R;
-import de.lmu.ifi.pixelfighter.activities.GameEndActivity;
-import de.lmu.ifi.pixelfighter.models.Board;
-import de.lmu.ifi.pixelfighter.models.Game;
+import de.lmu.ifi.pixelfighter.activities.game.GameSettings;
+import de.lmu.ifi.pixelfighter.activities.game.GameUpdate;
+import de.lmu.ifi.pixelfighter.activities.game.GameView;
+import de.lmu.ifi.pixelfighter.activities.game.OnGameUpdateCallback;
+import de.lmu.ifi.pixelfighter.activities.game.PendingClick;
 import de.lmu.ifi.pixelfighter.models.GamePlayer;
 import de.lmu.ifi.pixelfighter.models.Pixel;
 import de.lmu.ifi.pixelfighter.models.PixelModification;
-import de.lmu.ifi.pixelfighter.models.Team;
-import de.lmu.ifi.pixelfighter.models.UserData;
 import de.lmu.ifi.pixelfighter.services.android.LightSensor;
 import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 import de.lmu.ifi.pixelfighter.services.firebase.BoardHandling;
-import de.lmu.ifi.pixelfighter.services.firebase.Database;
-import de.lmu.ifi.pixelfighter.services.firebase.GameService;
-import de.lmu.ifi.pixelfighter.services.firebase.GenericReference;
 import de.lmu.ifi.pixelfighter.services.firebase.callbacks.ServiceCallback;
-import de.lmu.ifi.pixelfighter.services.firebase.callbacks.UpdateCallback;
 
 /**
  * Created by michael on 09.01.18.
  */
 
-public class ZoomableGameActivity extends AppCompatActivity implements GameService.Callback, GameView.OnClickListener {
+public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpdateCallback, GameView.OnClickListener {
 
     private static final String TAG = "ZoomableGameActivity";
 
     GameSettings gameSettings;
 
-    GenericReference<Board> boardReference;
+    //GenericReference<Board> boardReference;
 
     //private BoardService boardService;
-    private GameService gameService;
+    //private GameService gameService;
 
     @BindView(R.id.gameView)
     GameView gameView;
@@ -62,6 +52,9 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
 
     private PixelModification currentModification = PixelModification.None;
 
+
+    private GameUpdate gameUpdate;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,10 +63,17 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
         ButterKnife.bind(this);
 
         // Get GameKey from Intent
-        this.gameSettings = new GameSettings(getIntent().getExtras().getString("gameKey"), Pixelfighter.getInstance().getUserData().getUid());
+        String gameKey = getIntent().getExtras().getString("gameKey");
+        String uid = Pixelfighter.getInstance().getUserData().getUid();
 
-        boardReference = Database.Game(gameSettings.gameKey).Board();
+        this.gameUpdate = new GameUpdate(gameKey, uid, this);
+        this.gameUpdate.load();
 
+
+        //this.gameSettings = new GameSettings(gameKey, uid);
+
+        //boardReference = Database.Game(gameSettings.gameKey).Board();
+/*
         // Load Game
         Database.Game(this.gameSettings.getGameKey()).Game().addSingleListener(new GenericReference.ValueListener<Game>() {
             @Override
@@ -105,7 +105,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
 
             }
         });
-
+*/
         this.lightSensor = new LightSensor();
 
 
@@ -114,12 +114,15 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
 
 
 
+
+
         updateBombView();
     }
-
+/*
     private GenericReference.ValueListener<Board> boardListener = new GenericReference.ValueListener<Board>() {
         @Override
         public void onData(Board board) {
+            Log.d("BoardListener", "new Board data");
             gameSettings.setBoard(board);
         }
 
@@ -128,27 +131,42 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
 
         }
     };
-
+*/
     @Override
     protected void onResume() {
         super.onResume();
+
+
+
         //this.boardService.register();
-        if(gameService != null) this.gameService.register();
+        //if(gameService != null) this.gameService.register();
         this.gameView.resume();
         this.lightSensor.onResume();
 
-        boardReference.addListener(boardListener);
+        gameUpdate.addListeners();
+
+        //boardReference.addListener(boardListener);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         //this.boardService.unregister();
-        if(gameService != null) this.gameService.unregister();
+        //if(gameService != null) this.gameService.unregister();
         this.gameView.pause();
         this.lightSensor.onPause();
 
-        boardReference.removeListener(boardListener);
+        gameUpdate.removeListeners();
+
+        //boardReference.removeListener(boardListener);
+    }
+
+    @Override
+    public void onGameReady(GameSettings gameSettings) {
+        this.gameSettings = gameSettings;
+        gameView.setGameSettings(gameSettings);
+        gameView.setOnClickListener(ZoomableGameActivity.this);
+        gameUpdate.addListeners();
     }
 
     @Override
@@ -179,7 +197,6 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
 
 
         new BoardHandling(gameSettings).placePixel(
-                gameService,
                 gameSettings.getBoard(),
                 x, y,
                 gameSettings.getUid(),
@@ -191,10 +208,10 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
                         gameView.removePendingClick(click);
 
                         if(currentModification == PixelModification.Bomb) {
-                            gameService.placedBomb();
-                            if(gameService.getBombCount() <= 0) {
-                                currentModification = PixelModification.None;
-                            }
+                           // gameService.placedBomb();
+                            //if(gameService.getBombCount() <= 0) {
+                             //   currentModification = PixelModification.None;
+                            //}
                         }
                     }
 
@@ -255,6 +272,8 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
 
     @OnCheckedChanged(R.id.bombToggle)
     public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
+        return;
+        /*
         if(gameService == null) return;
         if(gameService.getBombCount() <= 0) {
             currentModification = PixelModification.None;
@@ -270,57 +289,17 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
         } else {
             currentModification = PixelModification.None;
         }
+        */
     }
 
     private void updateBombView() {
-        if(gameService == null) return;
-        bombCounterView.setText("x" + gameService.getBombCount());
+        //if(gameService == null) return;
+        //bombCounterView.setText("x" + gameService.getBombCount());
     }
 
 
-    public static class GameSettings {
-        private final String gameKey;
-        private String uid;
-        private Team team;
-        private Board board;
 
-        public GameSettings(String gameKey, String uid) {
-            this.gameKey = gameKey;
-            this.uid = uid;
-        }
 
-        public String getGameKey() {
-            return gameKey;
-        }
 
-        public Board getBoard() {
-            return board;
-        }
 
-        private void setBoard(Board board) {
-            this.board = board;
-        }
-
-        public Team getTeam() {
-            return this.team;
-        }
-
-        private void setTeam(Team team) {
-            this.team = team;
-        }
-
-        public String getUid() {
-            return uid;
-        }
-
-        @Override
-        public String toString() {
-            return "GameSettings{" +
-                    "gameKey='" + gameKey + '\'' +
-                    ", uid='" + uid + '\'' +
-                    ", team=" + team +
-                    ", board=" + board +
-                    '}';
-        }
-    }
 }

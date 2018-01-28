@@ -3,7 +3,8 @@ package de.lmu.ifi.pixelfighter.services.firebase;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.lmu.ifi.pixelfighter.activities.game.ZoomableGameActivity;
+import de.lmu.ifi.pixelfighter.activities.ZoomableGameActivity;
+import de.lmu.ifi.pixelfighter.activities.game.GameSettings;
 import de.lmu.ifi.pixelfighter.game.Rules;
 import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.Pixel;
@@ -18,14 +19,14 @@ import de.lmu.ifi.pixelfighter.services.firebase.callbacks.ServiceCallback;
 public class BoardHandling {
 
     private final String gameKey;
-    private final ZoomableGameActivity.GameSettings gameSettings;
+    private final GameSettings gameSettings;
 
-    public BoardHandling(ZoomableGameActivity.GameSettings gameSettings) {
+    public BoardHandling(GameSettings gameSettings) {
         this.gameKey = gameSettings.getGameKey();
         this.gameSettings = gameSettings;
     }
 
-    public void placePixel(final GameService gameService, final Board board, final int x, final int y, final String uid, final Team team, final PixelModification modification, final ServiceCallback<Pixel> callback) {
+    public void placePixel(final Board board, final int x, final int y, final String uid, final Team team, final PixelModification modification, final ServiceCallback<Pixel> callback) {
         Database.Game(gameKey).Pixel(x, y).runTransaction(new GenericReference.Handler<Pixel>() {
             @Override
             public Pixel doTransaction(Pixel mutable) {
@@ -44,7 +45,7 @@ public class BoardHandling {
                 // need current board
                 if (!rules.isAtOwnTeam()) return null;
 
-                Rules.checkForLootModification(gameService ,board, mutable);
+                //Rules.checkForLootModification(gameService ,board, mutable);
 
                 // Check if we can replace a neighbour
                 for(Pixel pixel : Rules.checkForEnemiesToConvert(gameSettings.getBoard(), team, x, y)) {
