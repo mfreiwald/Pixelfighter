@@ -24,6 +24,7 @@ public class GamePlayer extends BaseModel {
     }
 
     public void setBombAmount(int bombAmount) {
+        if(bombAmount < 0) bombAmount = 0;
         this.bombAmount = bombAmount;
     }
 }

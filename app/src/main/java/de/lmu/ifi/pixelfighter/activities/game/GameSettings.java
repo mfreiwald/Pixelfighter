@@ -1,6 +1,7 @@
 package de.lmu.ifi.pixelfighter.activities.game;
 
 import de.lmu.ifi.pixelfighter.models.Board;
+import de.lmu.ifi.pixelfighter.models.GamePlayer;
 import de.lmu.ifi.pixelfighter.models.Team;
 
 /**
@@ -12,6 +13,7 @@ public class GameSettings {
     private final String uid;
     private Team team;
     private Board board;
+    private GamePlayer gamePlayer;
 
     public GameSettings(String gameKey, String uid) {
         this.gameKey = gameKey;
@@ -36,6 +38,14 @@ public class GameSettings {
 
     protected void setTeam(Team team) {
         this.team = team;
+    }
+
+    public GamePlayer getGamePlayer() {
+        return gamePlayer;
+    }
+
+    protected void setGamePlayer(GamePlayer gamePlayer) {
+        this.gamePlayer = gamePlayer;
     }
 
     public String getUid() {

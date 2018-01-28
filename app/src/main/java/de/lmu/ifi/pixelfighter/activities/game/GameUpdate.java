@@ -49,6 +49,7 @@ public class GameUpdate {
                 GameSettings gameSettings = new GameSettings(gameKey, uid);
                 gameSettings.setBoard(object.getBoard());
                 gameSettings.setTeam(searchTeam(object, uid));
+                gameSettings.setGamePlayer(searchGamePlayer(object, uid));
 
                 gamePlayerReference = Database.Game(gameKey).GamePlayer(uid, gameSettings.getTeam());
 
@@ -66,6 +67,7 @@ public class GameUpdate {
             }
         });
     }
+
 
 
     private void onGameReady(GameSettings gameSettings) {
@@ -146,5 +148,15 @@ public class GameUpdate {
         }
         return Team.None;
     }
+
+    private GamePlayer searchGamePlayer(Game object, String uid) {
+        for(Map.Entry<String, Map<String, GamePlayer>> playersInTeam : object.getPlayers().entrySet()) {
+            if(playersInTeam.getValue().containsKey(uid)) {
+                return playersInTeam.getValue().get(uid);
+            }
+        }
+        return null;
+    }
+
 
 }

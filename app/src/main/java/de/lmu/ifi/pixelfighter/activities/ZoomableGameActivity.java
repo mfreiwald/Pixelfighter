@@ -34,13 +34,6 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
 
     private static final String TAG = "ZoomableGameActivity";
 
-    GameSettings gameSettings;
-
-    //GenericReference<Board> boardReference;
-
-    //private BoardService boardService;
-    //private GameService gameService;
-
     @BindView(R.id.gameView)
     GameView gameView;
     @BindView(R.id.bombToggle)
@@ -48,12 +41,10 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
     @BindView(R.id.bombCountView)
     TextView bombCounterView;
 
-    private LightSensor lightSensor;
-
-    private PixelModification currentModification = PixelModification.None;
-
-
+    private GameSettings gameSettings;
     private GameUpdate gameUpdate;
+    private PixelModification currentModification = PixelModification.None;
+    private LightSensor lightSensor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,104 +60,33 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         this.gameUpdate = new GameUpdate(gameKey, uid, this);
         this.gameUpdate.load();
 
-
-        //this.gameSettings = new GameSettings(gameKey, uid);
-
-        //boardReference = Database.Game(gameSettings.gameKey).Board();
-/*
-        // Load Game
-        Database.Game(this.gameSettings.getGameKey()).Game().addSingleListener(new GenericReference.ValueListener<Game>() {
-            @Override
-            public void onData(Game object) {
-                gameSettings.setBoard(object.getBoard());
-
-                // search for my team
-                for(Map.Entry<String, Map<String, GamePlayer>> playersInTeam : object.getPlayers().entrySet()) {
-                    if(playersInTeam.getValue().containsKey(gameSettings.getUid())) {
-                        gameSettings.setTeam(Team.valueOf(playersInTeam.getKey()));
-                        break;
-                    }
-                }
-                gameView.setGameSettings(gameSettings);
-                Log.d("GameSettings", gameSettings.toString());
-                gameView.setOnClickListener(ZoomableGameActivity.this);
-
-                gameService = new GameService(
-                        object,
-                        gameSettings.getGameKey(),
-                        gameSettings.getUid(),
-                        ZoomableGameActivity.this);
-                gameService.register();
-
-            }
-
-            @Override
-            public void onError(GenericReference.Error error) {
-
-            }
-        });
-*/
         this.lightSensor = new LightSensor();
 
-
-        //this.boardService = new BoardService(Pixelfighter.getInstance().getGame(), bombToggle, this);
-
-
-
-
-
-
-        updateBombView();
+        updateBombView(0);
     }
-/*
-    private GenericReference.ValueListener<Board> boardListener = new GenericReference.ValueListener<Board>() {
-        @Override
-        public void onData(Board board) {
-            Log.d("BoardListener", "new Board data");
-            gameSettings.setBoard(board);
-        }
 
-        @Override
-        public void onError(GenericReference.Error error) {
-
-        }
-    };
-*/
     @Override
     protected void onResume() {
         super.onResume();
-
-
-
-        //this.boardService.register();
-        //if(gameService != null) this.gameService.register();
         this.gameView.resume();
         this.lightSensor.onResume();
-
-        gameUpdate.addListeners();
-
-        //boardReference.addListener(boardListener);
+        this.gameUpdate.addListeners();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        //this.boardService.unregister();
-        //if(gameService != null) this.gameService.unregister();
         this.gameView.pause();
         this.lightSensor.onPause();
-
-        gameUpdate.removeListeners();
-
-        //boardReference.removeListener(boardListener);
+        this.gameUpdate.removeListeners();
     }
 
     @Override
     public void onGameReady(GameSettings gameSettings) {
         this.gameSettings = gameSettings;
-        gameView.setGameSettings(gameSettings);
-        gameView.setOnClickListener(ZoomableGameActivity.this);
-        gameUpdate.addListeners();
+        this.gameView.setGameSettings(gameSettings);
+        this.gameView.setOnClickListener(ZoomableGameActivity.this);
+        this.gameUpdate.addListeners();
     }
 
     @Override
@@ -184,7 +104,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
 
     @Override
     public void onGamePlayerChanged(GamePlayer gamePlayer) {
-        updateBombView();
+        updateBombView(gamePlayer.getBombAmount());
     }
 
     @Override
@@ -194,85 +114,29 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         this.gameView.addPendingClick(click);
 
 
-
-
-        new BoardHandling(gameSettings).placePixel(
-                gameSettings.getBoard(),
-                x, y,
-                gameSettings.getUid(),
-                gameSettings.getTeam(),
-                currentModification,
-                new ServiceCallback<Pixel>() {
-                    @Override
-                    public void success(Pixel pixel) {
-                        gameView.removePendingClick(click);
-
-                        if(currentModification == PixelModification.Bomb) {
-                           // gameService.placedBomb();
-                            //if(gameService.getBombCount() <= 0) {
-                             //   currentModification = PixelModification.None;
-                            //}
-                        }
-                    }
-
-                    @Override
-                    public void failure(String message) {
-                        gameView.removePendingClick(click);
-
-                    }
-                });
-
-/*
-        this.boardService.setPixel(x, y, gameService, new ServiceCallback<Pixel>() {
+        // Check what to do
+        BoardHandling handling = new BoardHandling(gameSettings);
+        handling.placePixel(x ,y, currentModification, new ServiceCallback<Pixel>() {
             @Override
             public void success(Pixel pixel) {
-                Log.d(TAG, "Successfully set pixel " + pixel.toString());
-                // remove from pending
                 gameView.removePendingClick(click);
-
-                //Die Umgebung auf Gegner überprüfen, die umgefärbt werden müssen
-                Log.d(TAG, "Running enemy check now");
-                ArrayList<Pixel> pixelsToUpdate = boardService.checkForEnemiesToConvert(gameService, pixel.getX(), pixel.getY());
-                for (Pixel newPixel : pixelsToUpdate) {
-                    Log.d(TAG, "updating Pixel: " + pixel);
-                    boardService.updatePixel(newPixel, customCallback);
-                }
             }
 
             @Override
             public void failure(String message) {
-                Log.d(TAG, message);
-                // remove from pending
                 gameView.removePendingClick(click);
             }
         });
- */
+
     }
-/*
-    private ServiceCallback<Pixel> customCallback = new ServiceCallback<Pixel>() {
-        @Override
-        public void success(Pixel pixel) {
-            Log.d(TAG, "Successfully changed pixel " + pixel.toString());
-
-            //Wiederum die Umgebung auf Gegner überprüfen, die umgefärbt werden müssen
-            Log.d(TAG, "Running deeper level enemy check now");
-            ArrayList<Pixel> pixelsToUpdate = boardService.checkForEnemiesToConvert(gameService, pixel.getX(), pixel.getY());
-            for (Pixel newPixel : pixelsToUpdate) {
-                Log.d(TAG, "(deeper level) updating Pixel: " + pixel);
-                boardService.updatePixel(newPixel, customCallback);
-            }
-        }
-
-        @Override
-        public void failure(String message) {
-            Log.d(TAG, message);
-        }
-    };
-*/
 
     @OnCheckedChanged(R.id.bombToggle)
     public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
-        return;
+        if(isChecked) {
+            currentModification = PixelModification.Bomb;
+        } else {
+            currentModification = PixelModification.None;
+        }
         /*
         if(gameService == null) return;
         if(gameService.getBombCount() <= 0) {
@@ -292,14 +156,8 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         */
     }
 
-    private void updateBombView() {
-        //if(gameService == null) return;
-        //bombCounterView.setText("x" + gameService.getBombCount());
+    private void updateBombView(int amount) {
+        bombCounterView.setText("x" + amount);
     }
-
-
-
-
-
 
 }

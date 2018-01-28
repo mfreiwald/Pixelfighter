@@ -7,6 +7,7 @@ import de.lmu.ifi.pixelfighter.activities.ZoomableGameActivity;
 import de.lmu.ifi.pixelfighter.activities.game.GameSettings;
 import de.lmu.ifi.pixelfighter.game.Rules;
 import de.lmu.ifi.pixelfighter.models.Board;
+import de.lmu.ifi.pixelfighter.models.GamePlayer;
 import de.lmu.ifi.pixelfighter.models.Pixel;
 import de.lmu.ifi.pixelfighter.models.PixelModification;
 import de.lmu.ifi.pixelfighter.models.Team;
@@ -18,24 +19,42 @@ import de.lmu.ifi.pixelfighter.services.firebase.callbacks.ServiceCallback;
 
 public class BoardHandling {
 
-    private final String gameKey;
     private final GameSettings gameSettings;
 
     public BoardHandling(GameSettings gameSettings) {
-        this.gameKey = gameSettings.getGameKey();
         this.gameSettings = gameSettings;
     }
 
-    public void placePixel(final Board board, final int x, final int y, final String uid, final Team team, final PixelModification modification, final ServiceCallback<Pixel> callback) {
-        Database.Game(gameKey).Pixel(x, y).runTransaction(new GenericReference.Handler<Pixel>() {
+    private boolean placeModification(Pixel mutable, PixelModification modification) {
+        if(modification == PixelModification.None) return false;
+        GamePlayer player = gameSettings.getGamePlayer();
+        if(player.getBombAmount() < 1) return false;
+        player.setBombAmount(player.getBombAmount()-1);
+        Database.Game(gameSettings.getGameKey()).GamePlayer(gameSettings.getUid(), gameSettings.getTeam()).setValue(player);
+        mutable.setPixelMod(modification);
+        return true;
+    }
+
+    private boolean pickModification(Pixel mutable) {
+        if(mutable.getPixelMod() == PixelModification.None) return false;
+        GamePlayer player = gameSettings.getGamePlayer();
+        player.setBombAmount(player.getBombAmount()+1);
+        Database.Game(gameSettings.getGameKey()).GamePlayer(gameSettings.getUid(), gameSettings.getTeam()).setValue(player);
+        mutable.setPixelMod(PixelModification.None);
+        return true;
+    }
+
+    public void placePixel(final int x, final int y, final PixelModification modification, final ServiceCallback<Pixel> callback) {
+        Database.Game(gameSettings.getGameKey()).Pixel(x, y).runTransaction(new GenericReference.Handler<Pixel>() {
+
             @Override
             public Pixel doTransaction(Pixel mutable) {
-                Rules rules = new Rules(board, team, x, y);
+                Rules rules = new Rules(gameSettings.getBoard(), gameSettings.getTeam(), x, y);
 
                 // Clicked on own Team
-                if(mutable.getTeam() == team && mutable.getPixelMod() == PixelModification.None) {
-                    mutable.setPixelMod(modification);
-                    return mutable;
+                if(mutable.getTeam() == gameSettings.getTeam() && mutable.getPixelMod() == PixelModification.None && modification != PixelModification.None) {
+                    if(placeModification(mutable, modification)) return mutable;
+                    else return null;
                 }
 
                 // Check if Pixel can be set
@@ -48,13 +67,15 @@ public class BoardHandling {
                 //Rules.checkForLootModification(gameService ,board, mutable);
 
                 // Check if we can replace a neighbour
-                for(Pixel pixel : Rules.checkForEnemiesToConvert(gameSettings.getBoard(), team, x, y)) {
-                    executeReplacing(pixel.getX(), pixel.getY(), team, uid);
+                for(Pixel pixel : Rules.checkForEnemiesToConvert(gameSettings.getBoard(), gameSettings.getTeam(), x, y)) {
+                    executeReplacing(pixel.getX(), pixel.getY(), gameSettings.getTeam(), gameSettings.getUid());
                 }
 
-                mutable.setPlayerKey(uid);
-                mutable.setTeam(team);
-                mutable.setPixelMod(modification);
+                pickModification(mutable);
+                mutable.setPlayerKey(gameSettings.getUid());
+                mutable.setTeam(gameSettings.getTeam());
+                placeModification(mutable, modification);
+
                 return mutable;
             }
 
@@ -75,7 +96,7 @@ public class BoardHandling {
     }
 
     public void executeReplacing(final int x, final int y, final Team ownTeam, final String uid) {
-        Database.Game(gameKey).Pixel(x, y).runTransaction(new GenericReference.Handler<Pixel>() {
+        Database.Game(gameSettings.getGameKey()).Pixel(x, y).runTransaction(new GenericReference.Handler<Pixel>() {
             @Override
             public Pixel doTransaction(Pixel mutable) {
 
@@ -152,7 +173,7 @@ public class BoardHandling {
 
 
     public void overridePixel(int x, int y, final Team team, final String uid, final PixelModification modification, final ServiceCallback<Pixel> callback) {
-        Database.Game(this.gameKey).Pixel(x, y).runTransaction(new GenericReference.Handler<Pixel>() {
+        Database.Game(this.gameSettings.getGameKey()).Pixel(x, y).runTransaction(new GenericReference.Handler<Pixel>() {
             @Override
             public Pixel doTransaction(Pixel mutable) {
                 mutable.setTeam(team);
