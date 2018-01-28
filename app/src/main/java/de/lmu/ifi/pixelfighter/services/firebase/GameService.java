@@ -20,7 +20,7 @@ import de.lmu.ifi.pixelfighter.models.Team;
  */
 
 public class GameService {
-
+/*
     protected final DatabaseReference dbRef;
     private final Game game;
     private final String playerKey;
@@ -138,4 +138,5 @@ public class GameService {
         void onGameOver();
         void onGamePlayerChanged(GamePlayer gamePlayer);
     }
+    */
 }

@@ -40,6 +40,10 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
     ToggleButton bombToggle;
     @BindView(R.id.bombCountView)
     TextView bombCounterView;
+    @BindView(R.id.protectionToggle)
+    ToggleButton protectionToggle;
+    @BindView(R.id.protectionCountView)
+    TextView protectionCountView;
 
     private GameSettings gameSettings;
     private GameUpdate gameUpdate;
@@ -63,6 +67,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         this.lightSensor = new LightSensor();
 
         updateBombView(0);
+        updateProtectionView(0);
     }
 
     @Override
@@ -96,7 +101,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         Toast.makeText(this, "Game is over", Toast.LENGTH_LONG).show();
         Intent intent = new Intent(ZoomableGameActivity.this, GameEndActivity.class);
         intent.putExtra("board", gameSettings.getBoard().getPixels());
-        String key = Pixelfighter.getInstance().getUserData().getGameKey();
+        String key = gameSettings.getGameKey();
         intent.putExtra("gamekey",key);
         Log.d("D/gameOver: ", key);
         startActivity(intent);
@@ -104,7 +109,8 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
 
     @Override
     public void onGamePlayerChanged(GamePlayer gamePlayer) {
-        updateBombView(gamePlayer.getBombAmount());
+        updateBombView(gamePlayer.getModificationAmount().get(PixelModification.Bomb.name()));
+        updateProtectionView(gamePlayer.getModificationAmount().get(PixelModification.Protection.name()));
     }
 
     @Override
@@ -131,7 +137,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
     }
 
     @OnCheckedChanged(R.id.bombToggle)
-    public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
+    public void onCheckedChangedBomb(CompoundButton buttonView, final boolean isChecked) {
         if(isChecked) {
             currentModification = PixelModification.Bomb;
         } else {
@@ -139,8 +145,22 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         }
     }
 
+    @OnCheckedChanged(R.id.protectionToggle)
+    public void onCheckedChangedProtection(CompoundButton buttonView, final boolean isChecked) {
+        if(isChecked) {
+            currentModification = PixelModification.Protection;
+        } else {
+            currentModification = PixelModification.None;
+        }
+    }
+
+
     private void updateBombView(int amount) {
         bombCounterView.setText("x" + amount);
+    }
+
+    private void updateProtectionView(int amount) {
+        protectionCountView.setText("x" + amount);
     }
 
 }

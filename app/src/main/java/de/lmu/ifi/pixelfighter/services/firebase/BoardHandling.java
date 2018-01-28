@@ -28,8 +28,8 @@ public class BoardHandling {
     private boolean placeModification(Pixel mutable, PixelModification modification) {
         if (modification == PixelModification.None) return false;
         GamePlayer player = gameSettings.getGamePlayer();
-        if (player.getBombAmount() < 1) return false;
-        player.setBombAmount(player.getBombAmount() - 1);
+        if (player.getModificationAmount().get(modification.name()) < 1) return false;
+        player.getModificationAmount().put(modification.name(), player.getModificationAmount().get(modification.name()) - 1);
         Database.Game(gameSettings.getGameKey()).GamePlayer(gameSettings.getUid(), gameSettings.getTeam()).setValue(player);
         mutable.setPixelMod(modification);
         return true;
@@ -38,7 +38,7 @@ public class BoardHandling {
     private boolean pickModification(Pixel mutable) {
         if (mutable.getPixelMod() == PixelModification.None) return false;
         GamePlayer player = gameSettings.getGamePlayer();
-        player.setBombAmount(player.getBombAmount() + 1);
+        player.getModificationAmount().put(mutable.getPixelMod().name(), player.getModificationAmount().get(mutable.getPixelMod().name()) + 1);
         Database.Game(gameSettings.getGameKey()).GamePlayer(gameSettings.getUid(), gameSettings.getTeam()).setValue(player);
         mutable.setPixelMod(PixelModification.None);
         return true;
@@ -213,6 +213,7 @@ public class BoardHandling {
         Database.Game(this.gameSettings.getGameKey()).Pixel(x, y).runTransaction(new GenericReference.Handler<Pixel>() {
             @Override
             public Pixel doTransaction(Pixel mutable) {
+                if(mutable.getPixelMod() == PixelModification.Protection) return null;
                 mutable.setTeam(team);
                 mutable.setPlayerKey(uid);
                 mutable.setPixelMod(modification);

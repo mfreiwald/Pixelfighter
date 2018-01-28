@@ -173,17 +173,24 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
 
                 Team playerTeam = this.gameSettings.getTeam();
                 if(pixel.getPixelMod() == PixelModification.Bomb && team.equals(playerTeam)) {
-                    Drawable d = getResources().getDrawable(R.drawable.ic_bomb, null);
-                    d.setBounds((int)Math.ceil(mRect.left), (int)Math.ceil(mRect.top), (int)Math.floor(mRect.right), (int)Math.floor(mRect.bottom));
-                    d.draw(canvas);
+                    drawMod(mRect, canvas, R.drawable.ic_bomb);
                 } else if(pixel.getPixelMod() == PixelModification.Bomb && team.equals(Team.None)) {
-                    Drawable d = getResources().getDrawable(R.drawable.ic_bomb_transparent, null);
-                    d.setBounds((int)Math.ceil(mRect.left), (int)Math.ceil(mRect.top), (int)Math.floor(mRect.right), (int)Math.floor(mRect.bottom));
-                    d.draw(canvas);
+                    drawMod(mRect, canvas, R.drawable.ic_bomb_transparent);
+                } else if(pixel.getPixelMod() == PixelModification.Protection && team.equals(playerTeam)) {
+                    drawMod(mRect, canvas, R.drawable.ic_indicator_selected);
+                } else if(pixel.getPixelMod() == PixelModification.Protection && team.equals(Team.None)) {
+                    drawMod(mRect, canvas, R.drawable.ic_indicator_unselected);
                 }
+
             }
         }
 
+    }
+
+    private void drawMod(RectF mRect, Canvas canvas, int drawable) {
+        Drawable d = getResources().getDrawable(drawable, null);
+        d.setBounds((int)Math.ceil(mRect.left), (int)Math.ceil(mRect.top), (int)Math.floor(mRect.right), (int)Math.floor(mRect.bottom));
+        d.draw(canvas);
     }
 
     private float calculateBoxSize() {
