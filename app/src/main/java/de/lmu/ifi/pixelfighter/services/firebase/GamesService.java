@@ -77,7 +77,7 @@ public class GamesService extends BaseKeyService<Game> {
 
     // ToDo: Sollte vom Server gelöst weden
     private void createNewGame(ServiceCallback<Game> callback) {
-        Board board = new Board(Rules.X_DEFAULT_SIZE, Rules.Y_DEFAULT_SIZE);
+        Board board = new Board(); //(Rules.X_DEFAULT_SIZE, Rules.Y_DEFAULT_SIZE);
         distributeBombsAsLoot(board);
         distributeProtectionAsLoot(board);
         Game game = new Game(board);

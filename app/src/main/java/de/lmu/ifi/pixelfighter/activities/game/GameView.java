@@ -139,6 +139,9 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
                 float bottom = top + boxSize;
 
                 Pixel pixel = this.gameSettings.getBoard().getPixels().get(x).get(y);
+
+                if(pixel.isInvalid()) continue;
+
                 Team team = pixel.getTeam();
 
                 Paint mFillPaint = new Paint();
@@ -268,6 +271,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
         Log.d("GameView", "Click at (" + pX + ", " + pY + ")");
         if (pX < 0 || pX >= this.gameSettings.getBoard().getWidth()) return;
         if (pY < 0 || pY >= this.gameSettings.getBoard().getHeight()) return;
+        if(this.gameSettings.getBoard().getPixels().get(pX).get(pY).isInvalid()) return;
 
         if (onClickListener == null) return;
         onClickListener.onClick(pX, pY);

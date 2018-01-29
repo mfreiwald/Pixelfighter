@@ -8,17 +8,36 @@ import java.util.ArrayList;
 
 public class Board extends BaseModel {
 
+    private static int[][] WORLD = {
+            {0,0,1,1,1,1,1,1,0,0,0,1,1,0,1,1,1,0,0,0},
+            {0,0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,0},
+            {0,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1},
+            {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+            {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0},
+            {0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+            {0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+            {0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0},
+            {0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0},
+            {0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0},
+            {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0},
+            {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0},
+            {0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+            {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0},
+            {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0},
+            {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0},
+            {0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0},
+            {0,0,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,0},
+            {0,0,1,1,1,1,0,1,1,0,0,0,1,1,1,1,1,1,1,0},
+            {1,1,1,1,1,1,0,1,1,0,0,0,1,1,1,1,1,1,0,0}
+    };
+
     private int width;
     private int height;
     private ArrayList<ArrayList<Pixel>> pixels;
 
     public Board() {
-        this(0, 0);
-    }
-
-    public Board(int width, int height) {
-        this.width = width;
-        this.height = height;
+        this.width = WORLD[0].length;
+        this.height = WORLD.length;
         reset(width, height);
     }
 
@@ -27,7 +46,12 @@ public class Board extends BaseModel {
         for(int x=0; x<size_x; x++) {
             ArrayList<Pixel> column = new ArrayList();
             for(int y=0; y<size_y; y++) {
-                column.add(new Pixel(x, y));
+                int a = WORLD[y][x];
+                if(a == 0) {
+                    column.add(new Pixel(x, y, true));
+                } else {
+                    column.add(new Pixel(x, y, false));
+                }
             }
             pixels.add(column);
         }
