@@ -2,6 +2,8 @@ package de.lmu.ifi.pixelfighter.models;
 
 import java.util.ArrayList;
 
+import de.lmu.ifi.pixelfighter.game.RandomTeam;
+
 /**
  * Created by michael on 23.11.17.
  */
@@ -107,24 +109,23 @@ public class Board extends BaseModel {
             }
     };
 
-    private static final int SELECTED_WORLD = 2;
-
     private int width;
     private int height;
     private ArrayList<ArrayList<Pixel>> pixels;
 
     public Board() {
-        this.width = WORLD[SELECTED_WORLD][0].length;
-        this.height = WORLD[SELECTED_WORLD].length;
-        reset(width, height);
+        int world = RandomTeam.random(0, WORLD.length-1);
+        this.width = WORLD[world][0].length;
+        this.height = WORLD[world].length;
+        reset(width, height, world);
     }
 
-    private void reset(int size_x, int size_y) {
+    private void reset(int size_x, int size_y, int world) {
         pixels = new ArrayList<>();
         for(int x=0; x<size_x; x++) {
             ArrayList<Pixel> column = new ArrayList();
             for(int y=0; y<size_y; y++) {
-                int a = WORLD[SELECTED_WORLD][y][x];
+                int a = WORLD[world][y][x];
                 if(a == 0) {
                     column.add(new Pixel(x, y, true));
                 } else {
