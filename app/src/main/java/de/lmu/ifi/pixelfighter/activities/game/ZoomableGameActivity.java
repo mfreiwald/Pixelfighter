@@ -45,6 +45,11 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
     private static final String TAG = "ZoomableGameActivity";
 
     GameSettings gameSettings;
+    int red;
+    int blue;
+    int green;
+    int yellow;
+    int free;
 
     GenericReference<Board> boardReference;
 
@@ -57,6 +62,21 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
     ToggleButton bombToggle;
     @BindView(R.id.bombCountView)
     TextView bombCounterView;
+
+    @BindView(R.id.freePixel)
+    TextView freePixel;
+
+    @BindView(R.id.redPixel)
+    TextView redPixel;
+
+    @BindView(R.id.bluePixel)
+    TextView bluePixel;
+
+    @BindView(R.id.greenPixel)
+    TextView greenPixel;
+
+    @BindView(R.id.yellowPixel)
+    TextView yellowPixel;
 
     private LightSensor lightSensor;
 
@@ -138,6 +158,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
         this.lightSensor.onResume();
 
         boardReference.addListener(boardListener);
+        setStatsinGame();
     }
 
     @Override
@@ -277,6 +298,52 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
         bombCounterView.setText("x" + gameService.getBombCount());
     }
 
+    public void setStatsinGame(){
+        blue=0;
+        red = 0;
+        green = 0;
+        blue = 0;
+        boardReference.addListener(new GenericReference.ValueListener<Board>() {
+            @Override
+            public void onData(Board object) {
+                ArrayList<ArrayList<Pixel>> pixels = object.getPixels();
+                for(int i=0; i<pixels.size(); i++) {
+                    for (int j=0; j<pixels.size();j++) {
+                        switch (pixels.get(i).get(j).getTeam()) {
+                            case Red:
+                                red = red+1;
+                                redPixel.setWidth(red*2);
+                                break;
+                            case Blue:
+                                blue = blue + 1;
+                                bluePixel.setWidth(blue*2);
+                                break;
+                            case Green:
+                                green = green+1;
+                                greenPixel.setWidth(green*2);
+                                break;
+                            case Yellow:
+                                yellow = yellow+1;
+                                yellowPixel.setWidth(yellow*2);
+                                break;
+                            case None:
+                                break;
+                        }
+                    }
+                }
+                free = 400 - red -blue-green-yellow; //Todo: anpassen, wenn flexibles Spielfeld
+                freePixel.setWidth(free);
+                Log.d(TAG, "setStatsinGame");
+                Log.d("Blue", Integer.toString(blue));
+            }
+
+            @Override
+            public void onError(GenericReference.Error error) {
+
+            }
+        });
+    }
+
 
     public static class GameSettings {
         private final String gameKey;
@@ -323,4 +390,5 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
                     '}';
         }
     }
+
 }

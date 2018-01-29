@@ -6,6 +6,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:id="@+id/scoreLayout"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <TextView
+            android:id="@+id/freePixel"
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"/>
+        <TextView
+            android:id="@+id/redPixel"
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:background="@color/btn_red"/>
+        <TextView
+            android:id="@+id/bluePixel"
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:background="@color/btn_blue"/>
+        <TextView
+            android:id="@+id/greenPixel"
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:background="@color/btn_green"/>
+        <TextView
+            android:id="@+id/yellowPixel"
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:background="@color/btn_yellow"/>
+
+    </LinearLayout>
+
     <FrameLayout
         android:id="@+id/zoomLayout"
         android:layout_width="0dp"
@@ -14,7 +50,7 @@
         app:layout_constraintBottom_toTopOf="@id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/scoreLayout">
 
 
         <de.lmu.ifi.pixelfighter.activities.game.GameView
