@@ -25,7 +25,7 @@ public class Board extends BaseModel {
     private void reset(int size_x, int size_y) {
         pixels = new ArrayList<>();
         for(int x=0; x<size_x; x++) {
-            ArrayList<Pixel> column = new ArrayList();
+            ArrayList<Pixel> column = new ArrayList<>();
             for(int y=0; y<size_y; y++) {
                 column.add(new Pixel(x, y));
             }

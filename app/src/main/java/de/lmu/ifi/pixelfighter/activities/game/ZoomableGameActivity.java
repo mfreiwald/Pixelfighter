@@ -1,13 +1,21 @@
 package de.lmu.ifi.pixelfighter.activities.game;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.PixelFormat;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.Size;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -81,8 +89,8 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
                 gameSettings.setBoard(object.getBoard());
 
                 // search for my team
-                for(Map.Entry<String, Map<String, GamePlayer>> playersInTeam : object.getPlayers().entrySet()) {
-                    if(playersInTeam.getValue().containsKey(gameSettings.getUid())) {
+                for (Map.Entry<String, Map<String, GamePlayer>> playersInTeam : object.getPlayers().entrySet()) {
+                    if (playersInTeam.getValue().containsKey(gameSettings.getUid())) {
                         gameSettings.setTeam(Team.valueOf(playersInTeam.getKey()));
                         break;
                     }
@@ -108,13 +116,13 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
 
         this.lightSensor = new LightSensor();
 
-
         //this.boardService = new BoardService(Pixelfighter.getInstance().getGame(), bombToggle, this);
 
-
-
-
         updateBombView();
+
+        BroadcastReceiver br = new MyBroadcastReceiver();
+        IntentFilter filter = new IntentFilter("de.lmu.ifi.pixelfighter.MY_NOTIFICATION");
+        LocalBroadcastManager.getInstance(this).registerReceiver(br, filter);
     }
 
     private GenericReference.ValueListener<Board> boardListener = new GenericReference.ValueListener<Board>() {
@@ -133,7 +141,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
     protected void onResume() {
         super.onResume();
         //this.boardService.register();
-        if(gameService != null) this.gameService.register();
+        if (gameService != null) this.gameService.register();
         this.gameView.resume();
         this.lightSensor.onResume();
 
@@ -144,7 +152,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
     protected void onPause() {
         super.onPause();
         //this.boardService.unregister();
-        if(gameService != null) this.gameService.unregister();
+        if (gameService != null) this.gameService.unregister();
         this.gameView.pause();
         this.lightSensor.onPause();
 
@@ -159,7 +167,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
         Intent intent = new Intent(ZoomableGameActivity.this, GameEndActivity.class);
         intent.putExtra("board", gameSettings.getBoard().getPixels());
         String key = Pixelfighter.getInstance().getUserData().getGameKey();
-        intent.putExtra("gamekey",key);
+        intent.putExtra("gamekey", key);
         Log.d("D/gameOver: ", key);
         startActivity(intent);
     }
@@ -176,9 +184,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
         this.gameView.addPendingClick(click);
 
 
-
-
-        new BoardHandling(gameSettings).placePixel(
+        new BoardHandling(this).placePixel(
                 gameService,
                 gameSettings.getBoard(),
                 x, y,
@@ -190,9 +196,9 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
                     public void success(Pixel pixel) {
                         gameView.removePendingClick(click);
 
-                        if(currentModification == PixelModification.Bomb) {
+                        if (currentModification == PixelModification.Bomb) {
                             gameService.placedBomb();
-                            if(gameService.getBombCount() <= 0) {
+                            if (gameService.getBombCount() <= 0) {
                                 currentModification = PixelModification.None;
                             }
                         }
@@ -204,59 +210,13 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
 
                     }
                 });
-
-/*
-        this.boardService.setPixel(x, y, gameService, new ServiceCallback<Pixel>() {
-            @Override
-            public void success(Pixel pixel) {
-                Log.d(TAG, "Successfully set pixel " + pixel.toString());
-                // remove from pending
-                gameView.removePendingClick(click);
-
-                //Die Umgebung auf Gegner überprüfen, die umgefärbt werden müssen
-                Log.d(TAG, "Running enemy check now");
-                ArrayList<Pixel> pixelsToUpdate = boardService.checkForEnemiesToConvert(gameService, pixel.getX(), pixel.getY());
-                for (Pixel newPixel : pixelsToUpdate) {
-                    Log.d(TAG, "updating Pixel: " + pixel);
-                    boardService.updatePixel(newPixel, customCallback);
-                }
-            }
-
-            @Override
-            public void failure(String message) {
-                Log.d(TAG, message);
-                // remove from pending
-                gameView.removePendingClick(click);
-            }
-        });
- */
     }
-/*
-    private ServiceCallback<Pixel> customCallback = new ServiceCallback<Pixel>() {
-        @Override
-        public void success(Pixel pixel) {
-            Log.d(TAG, "Successfully changed pixel " + pixel.toString());
 
-            //Wiederum die Umgebung auf Gegner überprüfen, die umgefärbt werden müssen
-            Log.d(TAG, "Running deeper level enemy check now");
-            ArrayList<Pixel> pixelsToUpdate = boardService.checkForEnemiesToConvert(gameService, pixel.getX(), pixel.getY());
-            for (Pixel newPixel : pixelsToUpdate) {
-                Log.d(TAG, "(deeper level) updating Pixel: " + pixel);
-                boardService.updatePixel(newPixel, customCallback);
-            }
-        }
-
-        @Override
-        public void failure(String message) {
-            Log.d(TAG, message);
-        }
-    };
-*/
 
     @OnCheckedChanged(R.id.bombToggle)
     public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
-        if(gameService == null) return;
-        if(gameService.getBombCount() <= 0) {
+        if (gameService == null) return;
+        if (gameService.getBombCount() <= 0) {
             currentModification = PixelModification.None;
             bombToggle.post(new Runnable() {
                 @Override
@@ -265,7 +225,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
                 }
             });
         }
-        if(isChecked) {
+        if (isChecked) {
             currentModification = PixelModification.Bomb;
         } else {
             currentModification = PixelModification.None;
@@ -273,8 +233,12 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
     }
 
     private void updateBombView() {
-        if(gameService == null) return;
+        if (gameService == null) return;
         bombCounterView.setText("x" + gameService.getBombCount());
+    }
+
+    public GameSettings getGameSettings() {
+        return gameSettings;
     }
 
 
@@ -321,6 +285,40 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
                     ", team=" + team +
                     ", board=" + board +
                     '}';
+        }
+    }
+
+    private class MyBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int x = intent.getIntExtra("x", 0);
+            int y = intent.getIntExtra("y", 0);
+
+            final FrameLayout fl = findViewById(R.id.zoomLayout);
+            final TextView textView = new TextView(context);
+            FrameLayout.LayoutParams p = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
+                    FrameLayout.LayoutParams.WRAP_CONTENT, 10);
+            int left = x * 60;
+            int top = y * 60;
+            p.setMargins(left, top, 0, 0);
+            textView.setLayoutParams(p);
+            textView.setText("BOMBO");
+            final float[] size = {5.0f};
+            textView.setTextSize(size[0]);
+            fl.addView(textView);
+
+            new CountDownTimer(1000, 100) {
+                public void onTick(long millisUntilFinished) {
+                    size[0] += 0.5f;
+                    textView.setTextSize(size[0]);
+                }
+
+                public void onFinish() {
+                    fl.removeView(textView);
+                }
+            }.start();
+
         }
     }
 }
