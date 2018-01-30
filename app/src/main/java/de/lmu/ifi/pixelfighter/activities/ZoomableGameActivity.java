@@ -118,6 +118,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         BroadcastReceiver br = new MyBroadcastReceiver();
         IntentFilter filter = new IntentFilter("de.lmu.ifi.pixelfighter.MY_NOTIFICATION");
         LocalBroadcastManager.getInstance(this).registerReceiver(br, filter);
+
     }
 
     @Override
@@ -142,6 +143,8 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         this.gameView.setGameSettings(gameSettings);
         this.gameView.setOnClickListener(ZoomableGameActivity.this);
         this.gameUpdate.addListeners();
+        setStatistics(gameSettings.getStatics());
+
     }
 
     @Override
@@ -167,7 +170,6 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         final PendingClick click = new PendingClick(x, y, gameSettings.getTeam());
         this.gameView.addPendingClick(click);
 
-
         // Check what to do
         BoardHandling handling = new BoardHandling(gameSettings);
         handling.placePixel(x ,y, currentModification, new ServiceCallback<Pixel>() {
@@ -175,7 +177,6 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
             public void success(Pixel pixel) {
                 gameView.removePendingClick(click);
                 updateToogles();
-                setStatistics(gameSettings.getStatics());
             }
 
             @Override
@@ -188,6 +189,8 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         bombToggle.setChecked(false);
         protectionToggle.setChecked(false);
         currentModification = PixelModification.None;
+
+        setStatistics(gameSettings.getStatics());
 
     }
 
@@ -241,47 +244,37 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
             int y = intent.getIntExtra("y", 0);
 
             final FrameLayout fl = findViewById(R.id.zoomLayout);
-            final TextView textView = new TextView(context);
             FrameLayout.LayoutParams p = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
                     FrameLayout.LayoutParams.WRAP_CONTENT, 10);
-            int left = (int)(10 + gameView.calculateOffsetX() + x * gameView.calculateBoxSize());
-            int top = (int)(10 + gameView.calculateOffsetY() + y * gameView.calculateBoxSize());
+            int left = (int)(gameView.calculateOffsetX() + x * gameView.calculateBoxSize() - 80);
+            int top = (int)(gameView.calculateOffsetY() + y * gameView.calculateBoxSize() - 80);
             p.setMargins(left, top, 0, 0);
-            textView.setLayoutParams(p);
-            textView.setText("BOMBO");
-            final float[] size = {5.0f};
-            textView.setTextSize(size[0]);
-            fl.addView(textView);
 
             final ImageView expImgView = new ImageView(context);
             expImgView.setImageResource(R.drawable.explosion);
             expImgView.setLayoutParams(p);
 
-            final float[] scale = {1.0f};
-            expImgView.setScaleType(ImageView.ScaleType.CENTER);
+            final float[] scale = {0.2f};
             expImgView.setScaleX(scale[0]);
             expImgView.setScaleY(scale[0]);
             fl.addView(expImgView);
 
-            new CountDownTimer(1000, 100) {
+            new CountDownTimer(700, 100) {
                 public void onTick(long millisUntilFinished) {
-                    size[0] += 0.8f;
-                    textView.setTextSize(size[0]);
-
-                    scale[0] += 0.05f;
+                    scale[0] += 0.04f;
                     expImgView.setScaleX(scale[0]);
                     expImgView.setScaleY(scale[0]);
                 }
 
                 public void onFinish() {
-                    fl.removeView(textView);
                     fl.removeView(expImgView);
                 }
             }.start();
         }
     }
+
     private void setStatistics(Map<Team, Integer> statics ) {
-        int full = gameView.getWidth();
+        int full = findViewById(android.R.id.content).getWidth();
 
         int red = statics.get(Team.Red);
         int blue = statics.get(Team.Blue);
