@@ -76,8 +76,11 @@
 
         <ToggleButton
             android:id="@+id/bombToggle"
-            android:layout_width="70dp"
+            style="@style/ButtonTheme"
+            android:layout_marginBottom="@dimen/space_margin"
+            android:layout_width="wrap_content"
             android:layout_height="45dp"
+            android:layout_marginStart="@dimen/space_margin"
             android:textOn="Cancel"
             android:textOff="Bomb"
             android:textSize="12sp"
@@ -88,13 +91,16 @@
             android:layout_width="60dp"
             android:layout_height="40dp"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
             android:text="x1"
             android:textColor="@android:color/holo_red_dark"
             android:textSize="16sp" />
 
         <ToggleButton
             android:id="@+id/protectionToggle"
-            android:layout_width="70dp"
+            style="@style/ButtonTheme"
+            android:layout_marginBottom="@dimen/space_margin"
+            android:layout_width="wrap_content"
             android:layout_height="45dp"
             android:textOn="Cancel"
             android:textOff="Protection"
@@ -106,6 +112,7 @@
             android:layout_width="60dp"
             android:layout_height="40dp"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
             android:text="x1"
             android:textColor="@android:color/holo_red_dark"
             android:textSize="16sp" />
