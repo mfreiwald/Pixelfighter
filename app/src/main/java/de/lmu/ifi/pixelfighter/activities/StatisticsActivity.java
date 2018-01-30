@@ -73,6 +73,7 @@ public class StatisticsActivity extends AppCompatActivity {
     }
 
     public void getStats() {
+        Log.d("getStats", "UserData: " + userData.getGameKey());
 
         gamesCount = userData.getGames();
         if (gamesCount!=0) {

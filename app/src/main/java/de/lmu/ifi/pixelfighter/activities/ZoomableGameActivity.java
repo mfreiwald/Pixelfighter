@@ -146,14 +146,12 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
 
     @Override
     public void onGameOver() {
-        Log.d("DEBUG Game over", "onGameOvercalled");
-
         Toast.makeText(this, "Game is over", Toast.LENGTH_LONG).show();
         Intent intent = new Intent(ZoomableGameActivity.this, GameEndActivity.class);
         intent.putExtra("board", gameSettings.getBoard().getPixels());
         String key = gameSettings.getGameKey();
         intent.putExtra("gamekey",key);
-        Log.d("D/gameOver: ", key);
+        intent.putExtra("team", gameSettings.getTeam());
         startActivity(intent);
     }
 
@@ -291,7 +289,6 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         int yellow = statics.get(Team.Yellow);
         int free = statics.get(Team.None);
         int pixels = red + blue + green + yellow + free;
-        Log.d("Statistics", "Gesamt: " + pixels);
 
         if (red!=0) {
             redPixel.setVisibility(View.VISIBLE);
@@ -310,7 +307,6 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
             yellowPixel.setVisibility(View.VISIBLE);
             yellow = (statics.get(Team.Yellow)*full/pixels);
         }
-        Log.d("Statics", "Full: " + full);
         if(free!=0) {
             free = (statics.get(Team.None)*full/pixels);
         }
@@ -332,13 +328,6 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         bluePixel.setLayoutParams(lpBlue);
         greenPixel.setLayoutParams(lpGreen);
         yellowPixel.setLayoutParams(lpYellow);
-
-        Log.d("Statics", "Red: " + red);
-        Log.d("Statics", "Blue: " + blue);
-        Log.d("Statics", "Green: " + green);
-        Log.d("Statics", "Yellow: " + yellow);
-        Log.d("Statics", "None: " + free);
-
     }
 
 }

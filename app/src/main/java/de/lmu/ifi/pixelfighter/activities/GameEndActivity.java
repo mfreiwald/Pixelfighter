@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import de.lmu.ifi.pixelfighter.R;
 import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.Pixel;
+import de.lmu.ifi.pixelfighter.models.Team;
 import de.lmu.ifi.pixelfighter.models.UserData;
 import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 import de.lmu.ifi.pixelfighter.services.firebase.Database;
@@ -39,6 +40,7 @@ public class GameEndActivity extends AppCompatActivity {
     int index;
 
     Boolean won;
+    String playerTeam;
 
     Board board;
     ArrayList<ArrayList<Pixel>> pixelDoublelist;
@@ -49,6 +51,7 @@ public class GameEndActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game_end);
 
         userData = Pixelfighter.getInstance().getUserData();
+        Log.d("UserData: Name ", userData.getUsername());
 
         Database.Game(Pixelfighter.getInstance().getUserData().getGameKey()).Board().addSingleListener(new GenericReference.ValueListener<Board>() {
             @Override
@@ -97,6 +100,7 @@ public class GameEndActivity extends AppCompatActivity {
     public void init() {
         Intent intent = getIntent();
         String key = intent.getStringExtra("gamekey");
+        playerTeam = intent.getStringExtra("team");
         getPixellist(key);
         getStats(pixelDoublelist);
         getHighest();
@@ -153,7 +157,7 @@ public class GameEndActivity extends AppCompatActivity {
     }
 
     private void setWinner(int winIndex){
-        String team = "none";
+        String team = "None";
         winner = "The winner is...";
         switch (winIndex) {
             case 0:
@@ -176,6 +180,9 @@ public class GameEndActivity extends AppCompatActivity {
                 winner = "The winner is YELLOW!";
                 break;
         }
+        if(team.equals(playerTeam)) {
+            won = true;
+        }
 
     }
 
@@ -191,9 +198,9 @@ public class GameEndActivity extends AppCompatActivity {
         }
         userData.setScore(userData.getScore() + score);
         userData.setGames(userData.getGames() + 1);
-        /*if (won) {
+        if (won) {
             userData.setWon(userData.getWon()+1);
-        }*/
+        }
         String gamesStr = Integer.toString(userData.getGames());
         String scoreStr = Integer.toString(userData.getScore());
         Log.d(TAG + "games: ", gamesStr);
