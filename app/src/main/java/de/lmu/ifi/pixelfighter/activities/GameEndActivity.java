@@ -39,7 +39,7 @@ public class GameEndActivity extends AppCompatActivity {
     int yellow;
     int index;
 
-    Boolean won;
+    Boolean won = false;
     String playerTeam;
 
     Board board;
