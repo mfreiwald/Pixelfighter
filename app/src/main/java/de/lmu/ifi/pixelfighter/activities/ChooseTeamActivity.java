@@ -24,16 +24,17 @@ public class ChooseTeamActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_team);
         ButterKnife.bind(this);
+        setTitle("Choose Team");
     }
 
     public void selectedTeam(View view) {
         Team selectedTeam;
         switch(view.getId()) {
             case R.id.btnRandom: selectedTeam = RandomTeam.evaluateRandomTeam(); break;
-            case R.id.btnRed: selectedTeam = Team.Red; break;
-            case R.id.btnBlue: selectedTeam = Team.Blue; break;
-            case R.id.btnGreen: selectedTeam = Team.Green; break;
-            case R.id.btnYellow: selectedTeam = Team.Yellow; break;
+            case R.id.imgbtnred: selectedTeam = Team.Red; break;
+            case R.id.imgbtnblue: selectedTeam = Team.Blue; break;
+            case R.id.imgbtngreen: selectedTeam = Team.Green; break;
+            case R.id.imgbtnyellow: selectedTeam = Team.Yellow; break;
             default: selectedTeam = RandomTeam.evaluateRandomTeam();
         }
 

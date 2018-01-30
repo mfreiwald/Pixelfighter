@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,16 +7,69 @@
     android:orientation="vertical"
     tools:context="de.lmu.ifi.pixelfighter.activities.ChooseTeamActivity">
 
+    <LinearLayout
+        android:id="@+id/linChoose1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/linChoose2"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/imgbtnblue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:onClick="selectedTeam"
+            android:src="@drawable/blue" />
+
+        <ImageButton
+            android:id="@+id/imgbtnyellow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:onClick="selectedTeam"
+            android:src="@drawable/yellow" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linChoose2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/imgbtngreen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:onClick="selectedTeam"
+            android:src="@drawable/green" />
+
+        <ImageButton
+            android:id="@+id/imgbtnred"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:onClick="selectedTeam"
+            android:src="@drawable/red" />
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/btnRandom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/btn_none"
+        android:layout_below="@+id/linChoose2"
+        android:layout_marginTop="40dp"
         android:onClick="selectedTeam"
-        android:text="Random Team" />
+        android:text="Random" />
 
-    <Button
+ <!--   <Button
         android:id="@+id/btnRed"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -46,6 +99,6 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/btn_yellow"
         android:onClick="selectedTeam"
-        android:text="Team Yellow" />
+        android:text="Team Yellow" />-->
 
-</LinearLayout>
+</RelativeLayout>
