@@ -77,8 +77,9 @@ public class GamesService extends BaseKeyService<Game> {
 
     // ToDo: Sollte vom Server gelöst weden
     private void createNewGame(ServiceCallback<Game> callback) {
-        Board board = new Board(Rules.X_DEFAULT_SIZE, Rules.Y_DEFAULT_SIZE);
+        Board board = new Board(); //(Rules.X_DEFAULT_SIZE, Rules.Y_DEFAULT_SIZE);
         distributeBombsAsLoot(board);
+        distributeProtectionAsLoot(board);
         Game game = new Game(board);
         Log.d("GamesService", "Add Game " + game.toString());
         add(game, callback);
@@ -94,6 +95,21 @@ public class GamesService extends BaseKeyService<Game> {
                 double probability = ((double) random.nextInt(max + 1 - min) + min) / 100.0;
                 if (probability <= Rules.BOMB_PLCMNT_PROB) {
                     board.getPixels().get(x).get(y).setPixelMod(PixelModification.Bomb);
+                }
+            }
+        }
+    }
+
+    private void distributeProtectionAsLoot(Board board) {
+        Random random = new Random();
+        int max = 100;
+        int min = 0;
+
+        for (int x = 0; x < board.getWidth(); x++) {
+            for (int y = 0; y < board.getHeight(); y++) {
+                double probability = ((double) random.nextInt(max + 1 - min) + min) / 100.0;
+                if (probability <= Rules.BOMB_PLCMNT_PROB) {
+                    board.getPixels().get(x).get(y).setPixelMod(PixelModification.Protection);
                 }
             }
         }

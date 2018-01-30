@@ -15,7 +15,7 @@ import java.util.ListIterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.lmu.ifi.pixelfighter.R;
-import de.lmu.ifi.pixelfighter.models.Board;
+import de.lmu.ifi.pixelfighter.activities.ZoomableGameActivity;
 import de.lmu.ifi.pixelfighter.models.Pixel;
 import de.lmu.ifi.pixelfighter.models.PixelModification;
 import de.lmu.ifi.pixelfighter.models.Team;
@@ -41,7 +41,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
     public long ACTUAL_FPS = 0;
 
     private CopyOnWriteArrayList<PendingClick> pendingClicks = new CopyOnWriteArrayList<>();
-    private ZoomableGameActivity.GameSettings gameSettings;
+    private GameSettings gameSettings;
 
     public GameView(Context context) {
         super(context);
@@ -139,6 +139,9 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
                 float bottom = top + boxSize;
 
                 Pixel pixel = this.gameSettings.getBoard().getPixels().get(x).get(y);
+
+                if(pixel.isInvalid()) continue;
+
                 Team team = pixel.getTeam();
 
                 Paint mFillPaint = new Paint();
@@ -173,17 +176,24 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
 
                 Team playerTeam = this.gameSettings.getTeam();
                 if(pixel.getPixelMod() == PixelModification.Bomb && team.equals(playerTeam)) {
-                    Drawable d = getResources().getDrawable(R.drawable.ic_bomb, null);
-                    d.setBounds((int)Math.ceil(mRect.left), (int)Math.ceil(mRect.top), (int)Math.floor(mRect.right), (int)Math.floor(mRect.bottom));
-                    d.draw(canvas);
+                    drawMod(mRect, canvas, R.drawable.ic_bomb);
                 } else if(pixel.getPixelMod() == PixelModification.Bomb && team.equals(Team.None)) {
-                    Drawable d = getResources().getDrawable(R.drawable.ic_bomb_transparent, null);
-                    d.setBounds((int)Math.ceil(mRect.left), (int)Math.ceil(mRect.top), (int)Math.floor(mRect.right), (int)Math.floor(mRect.bottom));
-                    d.draw(canvas);
+                    drawMod(mRect, canvas, R.drawable.ic_bomb_transparent);
+                } else if(pixel.getPixelMod() == PixelModification.Protection && team.equals(playerTeam)) {
+                    drawMod(mRect, canvas, R.drawable.ic_indicator_selected);
+                } else if(pixel.getPixelMod() == PixelModification.Protection && team.equals(Team.None)) {
+                    drawMod(mRect, canvas, R.drawable.ic_indicator_unselected);
                 }
+
             }
         }
 
+    }
+
+    private void drawMod(RectF mRect, Canvas canvas, int drawable) {
+        Drawable d = getResources().getDrawable(drawable, null);
+        d.setBounds((int)Math.ceil(mRect.left), (int)Math.ceil(mRect.top), (int)Math.floor(mRect.right), (int)Math.floor(mRect.bottom));
+        d.draw(canvas);
     }
 
     private float calculateBoxSize() {
@@ -261,6 +271,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
         Log.d("GameView", "Click at (" + pX + ", " + pY + ")");
         if (pX < 0 || pX >= this.gameSettings.getBoard().getWidth()) return;
         if (pY < 0 || pY >= this.gameSettings.getBoard().getHeight()) return;
+        if(this.gameSettings.getBoard().getPixels().get(pX).get(pY).isInvalid()) return;
 
         if (onClickListener == null) return;
         onClickListener.onClick(pX, pY);
@@ -281,7 +292,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
         this.pendingClicks.remove(click);
     }
 
-    public void setGameSettings(ZoomableGameActivity.GameSettings gameSettings) {
+    public void setGameSettings(GameSettings gameSettings) {
         if(gameSettings == null) return;
         this.gameSettings = gameSettings;
     }

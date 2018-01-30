@@ -11,11 +11,11 @@ import de.lmu.ifi.pixelfighter.models.Team;
 public class RandomTeam {
 
     public static Team evaluateRandomTeam() {
-        return Team.values()[random()];
+        return Team.values()[random(1, 4)];
     }
 
-    private static int random() {
-        return ThreadLocalRandom.current().nextInt(1, 4 + 1);
+    public static int random(int min, int max) {
+        return ThreadLocalRandom.current().nextInt(min, max + 1);
     }
 
 }

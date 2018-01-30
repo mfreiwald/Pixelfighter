@@ -8,6 +8,7 @@ import java.io.Serializable;
 
 public class Pixel implements Serializable{
 
+    private boolean invalid = false;
     private Team team;
     private String playerKey;
     private int x;
@@ -23,6 +24,19 @@ public class Pixel implements Serializable{
         this.team = Team.None;
         this.playerKey = "";
         this.pixelMod = PixelModification.None;
+    }
+
+    public Pixel(int x, int y, boolean invalid) {
+        this(x, y);
+        this.invalid = invalid;
+    }
+
+    public boolean isInvalid() {
+        return invalid;
+    }
+
+    public void setInvalid(boolean invalid) {
+        this.invalid = invalid;
     }
 
     public Team getTeam() {

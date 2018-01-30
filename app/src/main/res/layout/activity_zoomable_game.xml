@@ -91,6 +91,24 @@
             android:text="x1"
             android:textColor="@android:color/holo_red_dark"
             android:textSize="16sp" />
+
+        <ToggleButton
+            android:id="@+id/protectionToggle"
+            android:layout_width="70dp"
+            android:layout_height="45dp"
+            android:textOn="Cancel"
+            android:textOff="Protection"
+            android:textSize="12sp"
+            />
+
+        <TextView
+            android:id="@+id/protectionCountView"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="10dp"
+            android:text="x1"
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="16sp" />
     </LinearLayout>
 
 

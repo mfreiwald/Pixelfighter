@@ -21,6 +21,9 @@ db.ref('/games').on("child_added", function(snapshot) {
 		for(var x=0; x<game.board.width; x++) {
 			for(var y=0; y<game.board.height; y++) {
 				var pixel = game.board.pixels[x][y];
+				if(pixel.invalid) {
+					continue;
+				}
 				if(pixel.playerKey == "" && pixel.team == "None") {
 					foundEmpty = true;
 					break;

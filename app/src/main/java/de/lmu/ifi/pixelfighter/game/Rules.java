@@ -24,7 +24,7 @@ public class Rules {
 
     private final static double PERCNTGE_OF_NECES_SURR_ENEMIES = 0.5;
 
-    public final static double BOMB_PLCMNT_PROB = 0.04;
+    public final static double BOMB_PLCMNT_PROB = 0.02;
 
     public static boolean validate(final Board board, final Team team, final int x, final int y) {
 
@@ -62,7 +62,7 @@ public class Rules {
     public static void checkForLootModification(GameService gameService, Board board, Pixel currentPixel) {
         if (board.getPixels().get(currentPixel.getX()).get(currentPixel.getY()).getPixelMod().equals(PixelModification.Bomb)) {
             Log.d("RULES", "empty Pixel had bomb");
-            gameService.foundBomb();
+            //gameService.foundBomb();
         } else {
             Log.d("RULES", "empty Pixel had no Mod");
         }
@@ -144,13 +144,13 @@ public class Rules {
                 if (adjacentAllies.size() >= absoluteAmtOfNecPixels
                         && checkIfAlliesStandTogether(adjacentAllies)
                         ) {
-                    if (enemy.getPixelMod() == PixelModification.None) {
-                        enemy.setTeam(team);
+                    //if (enemy.getPixelMod() == PixelModification.None) {
+                        //enemy.setTeam(team);
                         updateList.add(enemy);
-                    } else {
-                        Log.d("RULES", "Found MOD on Pixel, running check");
-                        updateList.addAll(calculateAffectedPixelsByMod(enemy));
-                    }
+                    //} else {
+                    //    Log.d("RULES", "Found MOD on Pixel, running check");
+                    //    updateList.addAll(calculateAffectedPixelsByMod(enemy));
+                    //}
                 }
             }
         }
