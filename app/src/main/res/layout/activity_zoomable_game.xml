@@ -17,27 +17,31 @@
         <TextView
             android:id="@+id/freePixel"
             android:layout_width="20dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:background="@color/colorPrimaryDark"/>
         <TextView
             android:id="@+id/redPixel"
             android:layout_width="20dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:visibility="gone"
             android:background="@color/btn_red"/>
         <TextView
             android:id="@+id/bluePixel"
             android:layout_width="20dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:visibility="gone"
             android:background="@color/btn_blue"/>
         <TextView
             android:id="@+id/greenPixel"
             android:layout_width="20dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:visibility="gone"
             android:background="@color/btn_green"/>
         <TextView
             android:id="@+id/yellowPixel"
             android:layout_width="20dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:visibility="gone"
             android:background="@color/btn_yellow"/>
 
     </LinearLayout>
