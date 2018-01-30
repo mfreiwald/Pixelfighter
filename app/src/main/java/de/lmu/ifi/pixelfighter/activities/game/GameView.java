@@ -1,16 +1,19 @@
 package de.lmu.ifi.pixelfighter.activities.game;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.widget.Toast;
+import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -169,7 +172,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
                     if (oldPixel.getPixelMod() == PixelModification.Bomb && oldPixel.getTeam() != Team.None && pixel.getPixelMod() == PixelModification.None) {
                         Log.d("Bomb", "bomb exploeded at " + pixel.toString());
                         //Toast.makeText(getContext(), "Bomb exploded", Toast.LENGTH_SHORT).show();
-                        
+                        sendBroadcastToUI(x, y);
                     }
                 }
 
@@ -218,6 +221,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
 
             }
         }
+
         if(gameSettings != null) gameSettings.setStatics(statics);
 
     }
@@ -228,7 +232,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
         d.draw(canvas);
     }
 
-    private float calculateBoxSize() {
+    public float calculateBoxSize() {
         if(gameSettings == null) return 1.0f;
         return (
                 Math.min(
@@ -236,12 +240,12 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
                         (this.getWidth()-OFFSET*2) / new Float(this.gameSettings.getBoard().getWidth())));
     }
 
-    private float calculateOffsetX() {
+    public float calculateOffsetX() {
         if(gameSettings == null) return 1.0f;
         return (this.getWidth()-this.gameSettings.getBoard().getWidth()*calculateBoxSize()-OFFSET*2)/2.0f;
     }
 
-    private float calculateOffsetY() {
+    public float calculateOffsetY() {
         if(gameSettings == null) return 1.0f;
         return (this.getHeight()-this.gameSettings.getBoard().getHeight()*calculateBoxSize()-OFFSET*2)/2.0f;
     }
@@ -328,6 +332,15 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
     public void setGameSettings(GameSettings gameSettings) {
         if(gameSettings == null) return;
         this.gameSettings = gameSettings;
+    }
+
+    private void sendBroadcastToUI(int x, int y) {
+        Intent intent = new Intent();
+        intent.setAction("de.lmu.ifi.pixelfighter.MY_NOTIFICATION");
+        intent.putExtra("x", x);
+        intent.putExtra("y", y);
+        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+        Log.d("BOARDHANDLING", "sent broadcast to UI");
     }
 
     public interface OnClickListener {

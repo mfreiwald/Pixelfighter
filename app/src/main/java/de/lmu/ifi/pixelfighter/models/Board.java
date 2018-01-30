@@ -123,7 +123,7 @@ public class Board extends BaseModel {
     private void reset(int size_x, int size_y, int world) {
         pixels = new ArrayList<>();
         for(int x=0; x<size_x; x++) {
-            ArrayList<Pixel> column = new ArrayList();
+            ArrayList<Pixel> column = new ArrayList<>();
             for(int y=0; y<size_y; y++) {
                 int a = WORLD[world][y][x];
                 if(a == 0) {
