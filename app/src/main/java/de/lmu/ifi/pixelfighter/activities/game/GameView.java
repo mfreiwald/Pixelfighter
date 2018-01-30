@@ -182,7 +182,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
 
 
                 Team team = pixel.getTeam();
-                statistics.put(team, statistics.get(team)+1);
+                statics.put(team, statics.get(team)+1);
 
                 Paint mFillPaint = new Paint();
                 Paint mStrokePaint = new Paint();
@@ -222,7 +222,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
             }
         }
 
-        if(gameSettings != null) gameSettings.setStatics(statistics);
+        if(gameSettings != null) gameSettings.setStatics(statics);
 
     }
 
