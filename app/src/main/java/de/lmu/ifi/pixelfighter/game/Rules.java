@@ -16,13 +16,9 @@ import de.lmu.ifi.pixelfighter.services.firebase.GameService;
 
 public class Rules {
 
-    public final static int X_DEFAULT_SIZE = 20;
-
-    public final static int Y_DEFAULT_SIZE = 20;
-
     private static boolean ALLOW_DIAGONAL = false;
 
-    private final static double PERCNTGE_OF_NECES_SURR_ENEMIES = 0.5;
+    private final static double PERCNTGE_OF_NECES_SURR_ENEMIES = 0.3;
 
     public final static double BOMB_PLCMNT_PROB = 0.02;
 

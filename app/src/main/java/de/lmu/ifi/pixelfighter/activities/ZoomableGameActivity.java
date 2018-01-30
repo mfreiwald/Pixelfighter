@@ -255,15 +255,29 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
             textView.setTextSize(size[0]);
             fl.addView(textView);
 
+            final ImageView expImgView = new ImageView(context);
+            expImgView.setImageResource(R.drawable.explosion);
+            expImgView.setLayoutParams(p);
+
+            final float[] scale = {1.0f};
+            expImgView.setScaleType(ImageView.ScaleType.CENTER);
+            expImgView.setScaleX(scale[0]);
+            expImgView.setScaleY(scale[0]);
+            fl.addView(expImgView);
 
             new CountDownTimer(1000, 100) {
                 public void onTick(long millisUntilFinished) {
                     size[0] += 0.8f;
                     textView.setTextSize(size[0]);
+
+                    scale[0] += 0.05f;
+                    expImgView.setScaleX(scale[0]);
+                    expImgView.setScaleY(scale[0]);
                 }
 
                 public void onFinish() {
                     fl.removeView(textView);
+                    fl.removeView(expImgView);
                 }
             }.start();
         }
