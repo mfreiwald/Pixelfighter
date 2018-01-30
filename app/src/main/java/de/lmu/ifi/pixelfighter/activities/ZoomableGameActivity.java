@@ -66,6 +66,8 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
     private PixelModification currentModification = PixelModification.None;
     private LightSensor lightSensor;
 
+    private Thread staticsThread;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +103,8 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         BroadcastReceiver br = new MyBroadcastReceiver();
         IntentFilter filter = new IntentFilter("de.lmu.ifi.pixelfighter.MY_NOTIFICATION");
         LocalBroadcastManager.getInstance(this).registerReceiver(br, filter);
+
+
     }
 
     @Override
@@ -109,6 +113,20 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         this.gameView.resume();
         this.lightSensor.onResume();
         this.gameUpdate.addListeners();
+        this.staticsThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true) {
+                    
+
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Exception ex) {
+                    }
+                }
+            }
+        });
+        staticsThread.start();
     }
 
     @Override
@@ -117,6 +135,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         this.gameView.pause();
         this.lightSensor.onPause();
         this.gameUpdate.removeListeners();
+        staticsThread.stop();
     }
 
     @Override
