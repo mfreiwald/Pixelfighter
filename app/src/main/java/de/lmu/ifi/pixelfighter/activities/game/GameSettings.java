@@ -1,5 +1,7 @@
 package de.lmu.ifi.pixelfighter.activities.game;
 
+import java.util.Map;
+
 import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.GamePlayer;
 import de.lmu.ifi.pixelfighter.models.Team;
@@ -14,6 +16,7 @@ public class GameSettings {
     private Team team;
     private Board board;
     private GamePlayer gamePlayer;
+    private Map<Team, Integer> statics;
 
     public GameSettings(String gameKey, String uid) {
         this.gameKey = gameKey;
@@ -50,6 +53,14 @@ public class GameSettings {
 
     public String getUid() {
         return uid;
+    }
+
+    public Map<Team, Integer> getStatics() {
+        return statics;
+    }
+
+    public void setStatics(Map<Team, Integer> statics) {
+        this.statics = statics;
     }
 
     @Override

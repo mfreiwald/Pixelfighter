@@ -11,7 +11,9 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
+import java.util.HashMap;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.lmu.ifi.pixelfighter.R;
@@ -129,6 +131,11 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
         float offsetX = calculateOffsetX();
         float offsetY = calculateOffsetY();
 
+        Map<Team, Integer> statics = new HashMap<>();
+        statics.put(Team.Blue, 0);
+        statics.put(Team.Green, 0);
+        statics.put(Team.Red, 0);
+        statics.put(Team.Yellow, 0);
 
         for (int x = 0; x < this.gameSettings.getBoard().getWidth(); x++) {
             for (int y = 0; y < this.gameSettings.getBoard().getHeight(); y++) {
@@ -143,6 +150,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
                 if(pixel.isInvalid()) continue;
 
                 Team team = pixel.getTeam();
+                statics.put(team, statics.get(team)+1);
 
                 Paint mFillPaint = new Paint();
                 Paint mStrokePaint = new Paint();
@@ -157,12 +165,6 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
 
                     if(click.getX() == x && click.getY() == y) {
                         color = click.getColor();
-/*
-                        if(color == getContext().getColor(R.color.btn_none)) {
-                        } else {
-                            color = Color.LTGRAY;
-                        }
-                        */
                     }
                 }
 
@@ -187,6 +189,8 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
 
             }
         }
+
+        if(gameSettings != null) gameSettings.setStatics(statics);
 
     }
 
@@ -236,6 +240,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
     private PendingClick downEventClick;
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if(gameSettings == null) return false;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 startX = event.getX();
