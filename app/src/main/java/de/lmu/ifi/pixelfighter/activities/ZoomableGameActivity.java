@@ -167,10 +167,20 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
 
 
     private void updateBombView(int amount) {
+        if(amount < 1) {
+            bombToggle.setEnabled(false);
+        } else {
+            bombToggle.setEnabled(true);
+        }
         bombCounterView.setText("x" + amount);
     }
 
     private void updateProtectionView(int amount) {
+        if(amount < 1) {
+            protectionToggle.setEnabled(false);
+        } else {
+            protectionToggle.setEnabled(true);
+        }
         protectionCountView.setText("x" + amount);
     }
 
