@@ -10,7 +10,9 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
+import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ListIterator;
 import java.util.Map;
@@ -44,6 +46,8 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
 
     private CopyOnWriteArrayList<PendingClick> pendingClicks = new CopyOnWriteArrayList<>();
     private GameSettings gameSettings;
+
+    ArrayList<ArrayList<Pixel>> oldPixels;
 
     public GameView(Context context) {
         super(context);
@@ -138,6 +142,16 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
         statics.put(Team.Red, 0);
         statics.put(Team.Yellow, 0);
 
+
+        if(oldPixels == null) {
+            oldPixels = new ArrayList<>();
+            for (int x = 0; x < this.gameSettings.getBoard().getWidth(); x++) {
+                oldPixels.add(x, new ArrayList<Pixel>());
+                for (int y = 0; y < this.gameSettings.getBoard().getHeight(); y++) {
+                    oldPixels.get(x).add(y, null);
+                }
+            }
+        }
         for (int x = 0; x < this.gameSettings.getBoard().getWidth(); x++) {
             for (int y = 0; y < this.gameSettings.getBoard().getHeight(); y++) {
 
@@ -149,6 +163,20 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
                 Pixel pixel = this.gameSettings.getBoard().getPixels().get(x).get(y);
 
                 if(pixel.isInvalid()) continue;
+
+                Pixel oldPixel = oldPixels.get(x).get(y);
+                if(oldPixel != null) {
+                    if (oldPixel.getPixelMod() == PixelModification.Bomb && oldPixel.getTeam() != Team.None && pixel.getPixelMod() == PixelModification.None) {
+                        Log.d("Bomb", "bomb exploeded at " + pixel.toString());
+                        //Toast.makeText(getContext(), "Bomb exploded", Toast.LENGTH_SHORT).show();
+                        
+                    }
+                }
+
+
+                oldPixels.get(x).set(y, pixel);
+
+
 
                 Team team = pixel.getTeam();
                 statics.put(team, statics.get(team)+1);
@@ -190,7 +218,6 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
 
             }
         }
-
         if(gameSettings != null) gameSettings.setStatics(statics);
 
     }

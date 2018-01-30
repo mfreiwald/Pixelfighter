@@ -68,6 +68,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
 
         updateBombView(0);
         updateProtectionView(0);
+
     }
 
     @Override
@@ -126,13 +127,23 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
             @Override
             public void success(Pixel pixel) {
                 gameView.removePendingClick(click);
+                updateToogles();
             }
 
             @Override
             public void failure(String message) {
                 gameView.removePendingClick(click);
+                updateToogles();
             }
         });
+
+        bombToggle.setChecked(false);
+        protectionToggle.setChecked(false);
+        currentModification = PixelModification.None;
+
+    }
+
+    private void updateToogles() {
 
     }
 
