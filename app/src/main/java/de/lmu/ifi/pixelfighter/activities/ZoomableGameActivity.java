@@ -169,6 +169,12 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         final PendingClick click = new PendingClick(x, y, gameSettings.getTeam());
         this.gameView.addPendingClick(click);
 
+        Intent intent = new Intent();
+        intent.setAction("de.lmu.ifi.pixelfighter.MY_NOTIFICATION");
+        intent.putExtra("x", x);
+        intent.putExtra("y", y);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+
 
         // Check what to do
         BoardHandling handling = new BoardHandling(gameSettings);
@@ -243,45 +249,35 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
             int y = intent.getIntExtra("y", 0);
 
             final FrameLayout fl = findViewById(R.id.zoomLayout);
-            final TextView textView = new TextView(context);
             FrameLayout.LayoutParams p = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
                     FrameLayout.LayoutParams.WRAP_CONTENT, 10);
-            int left = (int)(10 + gameView.calculateOffsetX() + x * gameView.calculateBoxSize());
-            int top = (int)(10 + gameView.calculateOffsetY() + y * gameView.calculateBoxSize());
+            int left = (int)(gameView.calculateOffsetX() + x * gameView.calculateBoxSize() - 80);
+            int top = (int)(gameView.calculateOffsetY() + y * gameView.calculateBoxSize() - 80);
             p.setMargins(left, top, 0, 0);
-            textView.setLayoutParams(p);
-            textView.setText("BOMBO");
-            final float[] size = {5.0f};
-            textView.setTextSize(size[0]);
-            fl.addView(textView);
 
             final ImageView expImgView = new ImageView(context);
             expImgView.setImageResource(R.drawable.explosion);
             expImgView.setLayoutParams(p);
 
-            final float[] scale = {1.0f};
-            expImgView.setScaleType(ImageView.ScaleType.CENTER);
+            final float[] scale = {0.2f};
             expImgView.setScaleX(scale[0]);
             expImgView.setScaleY(scale[0]);
             fl.addView(expImgView);
 
-            new CountDownTimer(1000, 100) {
+            new CountDownTimer(700, 100) {
                 public void onTick(long millisUntilFinished) {
-                    size[0] += 0.8f;
-                    textView.setTextSize(size[0]);
-
-                    scale[0] += 0.05f;
+                    scale[0] += 0.04f;
                     expImgView.setScaleX(scale[0]);
                     expImgView.setScaleY(scale[0]);
                 }
 
                 public void onFinish() {
-                    fl.removeView(textView);
                     fl.removeView(expImgView);
                 }
             }.start();
         }
     }
+
     private void setStatistics(Map<Team, Integer> statics ) {
         int full = gameView.getWidth();
 
