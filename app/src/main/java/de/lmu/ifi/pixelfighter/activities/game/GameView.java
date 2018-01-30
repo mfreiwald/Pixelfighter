@@ -236,6 +236,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
     private PendingClick downEventClick;
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if(gameSettings == null) return false;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 startX = event.getX();
