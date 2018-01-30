@@ -17,11 +17,12 @@ public class LightSensor implements SensorEventListener {
 
     private SensorManager sensorManager;
     private Sensor lightSensor;
+    private LightListener listener;
 
-    public LightSensor() {
+    public LightSensor(LightListener listener) {
         sensorManager = (SensorManager) DefaultApp.getAppContext().getSystemService(Context.SENSOR_SERVICE);
         lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
-
+        this.listener = listener;
     }
 
     public void onResume() {
@@ -37,13 +38,19 @@ public class LightSensor implements SensorEventListener {
         float light = event.values[0];
         if(light < LUX_THRESHOLD) {
             Pixelfighter.getInstance().setUseDark(true);
+            if(listener != null) listener.onChanged(true);
         } else {
             Pixelfighter.getInstance().setUseDark(false);
+            if(listener != null) listener.onChanged(false);
         }
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
+    }
+
+    public interface LightListener {
+        void onChanged(boolean useDark);
     }
 }

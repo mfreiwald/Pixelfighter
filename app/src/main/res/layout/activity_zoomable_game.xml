@@ -6,6 +6,46 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:id="@+id/scoreLayout"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <TextView
+            android:id="@+id/freePixel"
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimaryDark"/>
+        <TextView
+            android:id="@+id/redPixel"
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:background="@color/btn_red"/>
+        <TextView
+            android:id="@+id/bluePixel"
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:background="@color/btn_blue"/>
+        <TextView
+            android:id="@+id/greenPixel"
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:background="@color/btn_green"/>
+        <TextView
+            android:id="@+id/yellowPixel"
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:background="@color/btn_yellow"/>
+
+    </LinearLayout>
+
     <FrameLayout
         android:id="@+id/zoomLayout"
         android:layout_width="0dp"
@@ -14,7 +54,7 @@
         app:layout_constraintBottom_toTopOf="@id/buttonsLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/scoreLayout">
 
 
         <de.lmu.ifi.pixelfighter.activities.game.GameView
@@ -31,14 +71,14 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/buttonsLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/zoomLayout"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_height="80dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/zoomLayout">
 
         <ToggleButton
             android:id="@+id/bombToggle"
             android:layout_width="100dp"
-            android:layout_height="45dp"
+            android:layout_height="48dp"
             android:layout_marginEnd="8dp"
             android:textOff="Bomb"
             android:textOn="Cancel"
@@ -56,35 +96,35 @@
             android:layout_marginEnd="8dp"
             app:layout_constraintBottom_toBottomOf="@+id/bombCountView"
             app:layout_constraintEnd_toStartOf="@+id/bombCountView"
+            app:layout_constraintStart_toStartOf="@+id/bombToggle"
             app:layout_constraintTop_toBottomOf="@+id/bombToggle"
             app:srcCompat="@drawable/ic_bomb" />
 
         <TextView
             android:id="@+id/bombCountView"
             android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_height="0dp"
             android:gravity="center_vertical"
             android:text="x1"
             android:textAlignment="center"
             android:textColor="@android:color/holo_red_dark"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="@id/bombToggle"
+            app:layout_constraintLeft_toRightOf="@id/bombImage"
             app:layout_constraintRight_toRightOf="@id/bombToggle"
-            app:layout_constraintTop_toTopOf="@id/bombToggle" />
+            app:layout_constraintTop_toBottomOf="@id/bombToggle" />
 
         <ToggleButton
             android:id="@+id/protectionToggle"
             android:layout_width="100dp"
-            android:layout_height="45dp"
+            android:layout_height="48dp"
             android:textOff="Protection"
             android:textOn="Cancel"
             android:textSize="12sp"
             app:layout_constraintBottom_toTopOf="@id/protectionCountView"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toEndOf="@+id/bombToggle"
-            />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/protectionImage"
@@ -95,16 +135,15 @@
             android:layout_marginTop="8dp"
             app:layout_constraintBottom_toBottomOf="@+id/protectionCountView"
             app:layout_constraintEnd_toStartOf="@+id/protectionCountView"
+            app:layout_constraintStart_toStartOf="@+id/protectionToggle"
             app:layout_constraintTop_toBottomOf="@+id/protectionToggle"
             app:srcCompat="@drawable/ic_indicator_selected" />
 
         <TextView
             android:id="@+id/protectionCountView"
             android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginBottom="8dp"
+            android:layout_height="0dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
             android:gravity="center_vertical"
             android:text="x1"
             android:textAlignment="center"
@@ -112,8 +151,8 @@
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/protectionToggle"
-            app:layout_constraintStart_toStartOf="@+id/protectionToggle"
-            app:layout_constraintTop_toTopOf="@id/protectionToggle"/>
+            app:layout_constraintLeft_toRightOf="@id/protectionImage"
+            app:layout_constraintTop_toBottomOf="@id/protectionToggle" />
 
 
     </android.support.constraint.ConstraintLayout>
