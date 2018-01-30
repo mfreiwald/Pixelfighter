@@ -310,7 +310,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements GameServi
 
             new CountDownTimer(1000, 100) {
                 public void onTick(long millisUntilFinished) {
-                    size[0] += 0.5f;
+                    size[0] += 0.2f;
                     textView.setTextSize(size[0]);
                 }
 
