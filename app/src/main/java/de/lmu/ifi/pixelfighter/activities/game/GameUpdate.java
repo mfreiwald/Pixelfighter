@@ -1,6 +1,7 @@
 package de.lmu.ifi.pixelfighter.activities.game;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,13 +52,24 @@ public class GameUpdate {
                 gameSettings.setTeam(searchTeam(object, uid));
                 gameSettings.setGamePlayer(searchGamePlayer(object, uid));
 
+                Map<Team, Integer> statics = new HashMap<>();
+                statics.put(Team.None, 0);
+                statics.put(Team.Blue, 0);
+                statics.put(Team.Green, 0);
+                statics.put(Team.Red, 0);
+                statics.put(Team.Yellow, 0);
+
                 gamePlayerReference = Database.Game(gameKey).GamePlayer(uid, gameSettings.getTeam());
 
                 for (int x = 0; x < object.getBoard().getWidth(); x++) {
                     for (int y = 0; y < object.getBoard().getHeight(); y++) {
                         pixelReferences.add(Database.Game(gameKey).Pixel(x, y));
+
+                        Team pixelTeam = object.getBoard().getPixels().get(x).get(y).getTeam();
+                        statics.put(pixelTeam, statics.get(pixelTeam)+1);
                     }
                 }
+                gameSettings.setStatics(statics);
                 onGameReady(gameSettings);
             }
 

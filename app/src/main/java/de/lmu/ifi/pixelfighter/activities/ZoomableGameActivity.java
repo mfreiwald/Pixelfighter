@@ -82,7 +82,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
     private GameUpdate gameUpdate;
     private PixelModification currentModification = PixelModification.None;
     private LightSensor lightSensor;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -143,6 +143,8 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         this.gameView.setGameSettings(gameSettings);
         this.gameView.setOnClickListener(ZoomableGameActivity.this);
         this.gameUpdate.addListeners();
+        setStatistics(gameSettings.getStatics());
+
     }
 
     @Override
@@ -285,7 +287,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         }
     }
     private void setStatistics(Map<Team, Integer> statics ) {
-        int full = gameView.getWidth();
+        int full = findViewById(android.R.id.content).getWidth();
 
         int red = statics.get(Team.Red);
         int blue = statics.get(Team.Blue);
