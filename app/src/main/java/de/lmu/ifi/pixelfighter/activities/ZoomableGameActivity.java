@@ -11,12 +11,18 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,6 +36,7 @@ import de.lmu.ifi.pixelfighter.activities.game.PendingClick;
 import de.lmu.ifi.pixelfighter.models.GamePlayer;
 import de.lmu.ifi.pixelfighter.models.Pixel;
 import de.lmu.ifi.pixelfighter.models.PixelModification;
+import de.lmu.ifi.pixelfighter.models.Team;
 import de.lmu.ifi.pixelfighter.services.android.LightSensor;
 import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 import de.lmu.ifi.pixelfighter.services.firebase.BoardHandling;
@@ -58,6 +65,16 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
     ToggleButton protectionToggle;
     @BindView(R.id.protectionCountView)
     TextView protectionCountView;
+    @BindView(R.id.freePixel)
+    TextView freePixel;
+    @BindView(R.id.redPixel)
+    TextView redPixel;
+    @BindView(R.id.bluePixel)
+    TextView bluePixel;
+    @BindView(R.id.greenPixel)
+    TextView greenPixel;
+    @BindView(R.id.yellowPixel)
+    TextView yellowPixel;
     @BindView(R.id.protectionImage)
     ImageView protectionImage;
 
@@ -160,6 +177,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
             public void success(Pixel pixel) {
                 gameView.removePendingClick(click);
                 updateToogles();
+                setStatistics(gameSettings.getStatics());
             }
 
             @Override
@@ -250,4 +268,63 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
             }.start();
         }
     }
+    private void setStatistics(Map<Team, Integer> statics ) {
+        int full = gameView.getWidth();
+
+        int red = statics.get(Team.Red);
+        int blue = statics.get(Team.Blue);
+        int green = statics.get(Team.Green);
+        int yellow = statics.get(Team.Yellow);
+        int free = statics.get(Team.None);
+        int pixels = red + blue + green + yellow + free;
+        Log.d("Statistics", "Gesamt: " + pixels);
+
+        if (red!=0) {
+            redPixel.setVisibility(View.VISIBLE);
+            red = (statics.get(Team.Red)*full/pixels) ;
+        }
+        if(blue!=0){
+            bluePixel.setVisibility(View.VISIBLE);
+            blue = (statics.get(Team.Blue)*full/pixels);
+
+        }
+        if(green!=0 ) {
+            greenPixel.setVisibility(View.VISIBLE);
+            green = (statics.get(Team.Green)*full/pixels);
+        }
+        if(yellow!=0) {
+            yellowPixel.setVisibility(View.VISIBLE);
+            yellow = (statics.get(Team.Yellow)*full/pixels);
+        }
+        Log.d("Statics", "Full: " + full);
+        if(free!=0) {
+            free = (statics.get(Team.None)*full/pixels);
+        }
+
+        LinearLayout.LayoutParams lpNone = (LinearLayout.LayoutParams) freePixel.getLayoutParams();
+        LinearLayout.LayoutParams lpRed = (LinearLayout.LayoutParams) redPixel.getLayoutParams();
+        LinearLayout.LayoutParams lpBlue = (LinearLayout.LayoutParams) bluePixel.getLayoutParams();
+        LinearLayout.LayoutParams lpGreen = (LinearLayout.LayoutParams) greenPixel.getLayoutParams();
+        LinearLayout.LayoutParams lpYellow = (LinearLayout.LayoutParams) yellowPixel.getLayoutParams();
+
+        lpNone.width = free;
+        lpRed.width = red;
+        lpBlue.width = blue;
+        lpGreen.width = green;
+        lpYellow.width = yellow;
+
+        freePixel.setLayoutParams(lpNone);
+        redPixel.setLayoutParams(lpRed);
+        bluePixel.setLayoutParams(lpBlue);
+        greenPixel.setLayoutParams(lpGreen);
+        yellowPixel.setLayoutParams(lpYellow);
+
+        Log.d("Statics", "Red: " + red);
+        Log.d("Statics", "Blue: " + blue);
+        Log.d("Statics", "Green: " + green);
+        Log.d("Statics", "Yellow: " + yellow);
+        Log.d("Statics", "None: " + free);
+
+    }
+
 }

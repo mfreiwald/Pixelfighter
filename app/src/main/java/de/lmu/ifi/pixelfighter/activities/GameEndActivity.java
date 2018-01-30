@@ -160,16 +160,19 @@ public class GameEndActivity extends AppCompatActivity {
                 winner = "There is no winner...try again.";
                 break;
             case 1:
-                team = "RED";
+                team = "Red";
                 winner = "The winner is RED!";
                 break;
             case 2:
+                team = "Blue";
                 winner = "The winner is BLUE!";
                 break;
             case 3:
+                team = "Green";
                 winner = "The winner is GREEN!";
                 break;
             case 4:
+                team = "Yellow";
                 winner = "The winner is YELLOW!";
                 break;
         }
