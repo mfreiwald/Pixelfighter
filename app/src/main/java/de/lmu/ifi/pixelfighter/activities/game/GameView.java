@@ -132,6 +132,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
         float offsetY = calculateOffsetY();
 
         Map<Team, Integer> statics = new HashMap<>();
+        statics.put(Team.None, 0);
         statics.put(Team.Blue, 0);
         statics.put(Team.Green, 0);
         statics.put(Team.Red, 0);
