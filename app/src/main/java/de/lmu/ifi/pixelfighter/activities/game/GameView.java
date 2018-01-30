@@ -138,12 +138,12 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
         float offsetX = calculateOffsetX();
         float offsetY = calculateOffsetY();
 
-        Map<Team, Integer> statics = new HashMap<>();
-        statics.put(Team.None, 0);
-        statics.put(Team.Blue, 0);
-        statics.put(Team.Green, 0);
-        statics.put(Team.Red, 0);
-        statics.put(Team.Yellow, 0);
+        Map<Team, Integer> statistics = new HashMap<>();
+        statistics.put(Team.None, 0);
+        statistics.put(Team.Blue, 0);
+        statistics.put(Team.Green, 0);
+        statistics.put(Team.Red, 0);
+        statistics.put(Team.Yellow, 0);
 
 
         if(oldPixels == null) {
@@ -182,7 +182,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
 
 
                 Team team = pixel.getTeam();
-                statics.put(team, statics.get(team)+1);
+                statistics.put(team, statistics.get(team)+1);
 
                 Paint mFillPaint = new Paint();
                 Paint mStrokePaint = new Paint();
@@ -222,7 +222,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
             }
         }
 
-        if(gameSettings != null) gameSettings.setStatics(statics);
+        if(gameSettings != null) gameSettings.setStatics(statistics);
 
     }
 

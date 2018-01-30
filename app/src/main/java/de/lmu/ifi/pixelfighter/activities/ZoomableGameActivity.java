@@ -118,6 +118,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         BroadcastReceiver br = new MyBroadcastReceiver();
         IntentFilter filter = new IntentFilter("de.lmu.ifi.pixelfighter.MY_NOTIFICATION");
         LocalBroadcastManager.getInstance(this).registerReceiver(br, filter);
+
     }
 
     @Override
@@ -142,6 +143,8 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         this.gameView.setGameSettings(gameSettings);
         this.gameView.setOnClickListener(ZoomableGameActivity.this);
         this.gameUpdate.addListeners();
+        setStatistics(gameSettings.getStatics());
+
     }
 
     @Override
@@ -176,7 +179,6 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
             public void success(Pixel pixel) {
                 gameView.removePendingClick(click);
                 updateToogles();
-                setStatistics(gameSettings.getStatics());
             }
 
             @Override
@@ -189,6 +191,8 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         bombToggle.setChecked(false);
         protectionToggle.setChecked(false);
         currentModification = PixelModification.None;
+
+        setStatistics(gameSettings.getStatics());
 
     }
 
@@ -272,7 +276,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
     }
 
     private void setStatistics(Map<Team, Integer> statics ) {
-        int full = gameView.getWidth();
+        int full = findViewById(android.R.id.content).getWidth();
 
         int red = statics.get(Team.Red);
         int blue = statics.get(Team.Blue);
