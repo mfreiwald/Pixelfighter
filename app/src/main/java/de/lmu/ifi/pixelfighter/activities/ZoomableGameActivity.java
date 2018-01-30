@@ -4,8 +4,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -43,14 +45,21 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
 
     @BindView(R.id.gameView)
     GameView gameView;
+    @BindView(R.id.buttonsLayout)
+    ConstraintLayout buttonsLayout;
     @BindView(R.id.bombToggle)
     ToggleButton bombToggle;
     @BindView(R.id.bombCountView)
     TextView bombCounterView;
+    @BindView(R.id.bombImage)
+    ImageView bombImage;
+
     @BindView(R.id.protectionToggle)
     ToggleButton protectionToggle;
     @BindView(R.id.protectionCountView)
     TextView protectionCountView;
+    @BindView(R.id.protectionImage)
+    ImageView protectionImage;
 
     private GameSettings gameSettings;
     private GameUpdate gameUpdate;
@@ -71,7 +80,20 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         this.gameUpdate = new GameUpdate(gameKey, uid, this);
         this.gameUpdate.load();
 
-        this.lightSensor = new LightSensor();
+        this.lightSensor = new LightSensor(new LightSensor.LightListener() {
+            @Override
+            public void onChanged(boolean useDark) {
+                if(useDark) {
+                    buttonsLayout.setBackgroundColor(getColor(R.color.game_background_dark));
+                    bombImage.setColorFilter(getColor(R.color.game_background));
+                    protectionImage.setColorFilter(getColor(R.color.game_background));
+                } else {
+                    buttonsLayout.setBackgroundColor(getColor(R.color.game_background));
+                    bombImage.setColorFilter(getColor(R.color.game_background_dark));
+                    protectionImage.setColorFilter(getColor(R.color.game_background_dark));
+                }
+            }
+        });
 
         updateBombView(0);
         updateProtectionView(0);
@@ -182,7 +204,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         } else {
             bombToggle.setEnabled(true);
         }
-        bombCounterView.setText("x" + amount);
+        bombCounterView.setText(""+amount);
     }
 
     private void updateProtectionView(int amount) {
@@ -191,7 +213,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         } else {
             protectionToggle.setEnabled(true);
         }
-        protectionCountView.setText("x" + amount);
+        protectionCountView.setText(""+amount);
     }
 
     private class MyBroadcastReceiver extends BroadcastReceiver {
