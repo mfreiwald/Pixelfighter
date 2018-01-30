@@ -169,13 +169,6 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         final PendingClick click = new PendingClick(x, y, gameSettings.getTeam());
         this.gameView.addPendingClick(click);
 
-        Intent intent = new Intent();
-        intent.setAction("de.lmu.ifi.pixelfighter.MY_NOTIFICATION");
-        intent.putExtra("x", x);
-        intent.putExtra("y", y);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-
-
         // Check what to do
         BoardHandling handling = new BoardHandling(gameSettings);
         handling.placePixel(x ,y, currentModification, new ServiceCallback<Pixel>() {
