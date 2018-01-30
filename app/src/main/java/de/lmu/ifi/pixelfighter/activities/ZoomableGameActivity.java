@@ -1,10 +1,16 @@
 package de.lmu.ifi.pixelfighter.activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -68,6 +74,10 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
 
         updateBombView(0);
         updateProtectionView(0);
+
+        BroadcastReceiver br = new MyBroadcastReceiver();
+        IntentFilter filter = new IntentFilter("de.lmu.ifi.pixelfighter.MY_NOTIFICATION");
+        LocalBroadcastManager.getInstance(this).registerReceiver(br, filter);
     }
 
     @Override
@@ -121,7 +131,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
 
 
         // Check what to do
-        BoardHandling handling = new BoardHandling(gameSettings);
+        BoardHandling handling = new BoardHandling(this, gameSettings);
         handling.placePixel(x ,y, currentModification, new ServiceCallback<Pixel>() {
             @Override
             public void success(Pixel pixel) {
@@ -163,4 +173,37 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         protectionCountView.setText("x" + amount);
     }
 
+    private class MyBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "received broadcast");
+            int x = intent.getIntExtra("x", 0);
+            int y = intent.getIntExtra("y", 0);
+
+            final FrameLayout fl = findViewById(R.id.zoomLayout);
+            final TextView textView = new TextView(context);
+            FrameLayout.LayoutParams p = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
+                    FrameLayout.LayoutParams.WRAP_CONTENT, 10);
+            int left = (int)(10 + gameView.calculateOffsetX() + x * gameView.calculateBoxSize());
+            int top = (int)(10 + gameView.calculateOffsetY() + y * gameView.calculateBoxSize());
+            p.setMargins(left, top, 0, 0);
+            textView.setLayoutParams(p);
+            textView.setText("BOMBO");
+            final float[] size = {5.0f};
+            textView.setTextSize(size[0]);
+            fl.addView(textView);
+
+            new CountDownTimer(1000, 100) {
+                public void onTick(long millisUntilFinished) {
+                    size[0] += 0.8f;
+                    textView.setTextSize(size[0]);
+                }
+
+                public void onFinish() {
+                    fl.removeView(textView);
+                }
+            }.start();
+        }
+    }
 }

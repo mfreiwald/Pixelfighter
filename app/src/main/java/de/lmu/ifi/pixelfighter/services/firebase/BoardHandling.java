@@ -1,11 +1,15 @@
 package de.lmu.ifi.pixelfighter.services.firebase;
 
+import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import de.lmu.ifi.pixelfighter.activities.game.GameSettings;
+import de.lmu.ifi.pixelfighter.activities.ZoomableGameActivity;
 import de.lmu.ifi.pixelfighter.game.Rules;
 import de.lmu.ifi.pixelfighter.models.GamePlayer;
 import de.lmu.ifi.pixelfighter.models.Pixel;
@@ -20,9 +24,11 @@ import de.lmu.ifi.pixelfighter.services.firebase.callbacks.ServiceCallback;
 public class BoardHandling {
 
     private final GameSettings gameSettings;
+    private final Context context;
 
-    public BoardHandling(GameSettings gameSettings) {
+    public BoardHandling(ZoomableGameActivity zoomableGameActivity, GameSettings gameSettings) {
         this.gameSettings = gameSettings;
+        this.context = zoomableGameActivity;
     }
 
     private boolean placeModification(Pixel mutable, PixelModification modification) {
@@ -65,7 +71,6 @@ public class BoardHandling {
                 if (!rules.isAtOwnTeam()) return null;
 
                 //Rules.checkForLootModification(gameService ,board, mutable);
-
 
                 pickModification(mutable);
                 mutable.setPlayerKey(gameSettings.getUid());
@@ -150,25 +155,36 @@ public class BoardHandling {
         });
     }
 
+    private void sendBroadcastToUI(int x, int y) {
+        Intent intent = new Intent();
+        intent.setAction("de.lmu.ifi.pixelfighter.MY_NOTIFICATION");
+        intent.putExtra("x", x);
+        intent.putExtra("y", y);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+        Log.d("BOARDHANDLING", "sent broadcast to UI");
+    }
+
     private void convertingEnemiesFinished() {
         Log.d("Replace&Bomb", enemiesConverted + " == " + enemiesToConvertCount);
         if (enemiesConverted == enemiesToConvertCount) {
             Log.d("Replace&Bomb", "all the fiels replaced. Start bombing");
             // excute bombs
-            for(BombCount bc : bombsToExecute) {
+            for (BombCount bc : bombsToExecute) {
                 executeBombFrom(bc.x, bc.y, bc.team, bc.uid);
+                sendBroadcastToUI(bc.x, bc.y);
             }
         }
     }
 
 
     public void executeBombFrom(final int x, final int y, Team team, String uid) {
-        // Get all neighboars
+        // Get all neighbors
         overridePixel(x, y, team, uid, PixelModification.None, null);
         for (Pixel pixel : getNeighbour(x, y)) {
             overridePixel(pixel.getX(), pixel.getY(), team, uid, PixelModification.None, null);
         }
     }
+
 
     private List<Pixel> getNeighbour(int x, int y) {
         List<Pixel> result = new ArrayList<>();
@@ -213,7 +229,7 @@ public class BoardHandling {
         Database.Game(this.gameSettings.getGameKey()).Pixel(x, y).runTransaction(new GenericReference.Handler<Pixel>() {
             @Override
             public Pixel doTransaction(Pixel mutable) {
-                if(mutable.getPixelMod() == PixelModification.Protection) return null;
+                if (mutable.getPixelMod() == PixelModification.Protection) return null;
                 mutable.setTeam(team);
                 mutable.setPlayerKey(uid);
                 mutable.setPixelMod(modification);

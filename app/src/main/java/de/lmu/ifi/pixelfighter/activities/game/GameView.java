@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
+import android.widget.LinearLayout;
 
 import java.util.ListIterator;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -108,10 +109,15 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
 
     private void updateFrame(Canvas canvas) {
 
+        LinearLayout ln = findViewById(R.id.bottomLinLayoutForButtons);
         if(Pixelfighter.getInstance().isUseDark()) {
             canvas.drawColor(getContext().getColor(R.color.game_background_dark));
+            if(ln!=null)
+            ln.setBackgroundColor(getContext().getColor(R.color.game_background_dark));
         } else {
             canvas.drawColor(getContext().getColor(R.color.game_background));
+            if (ln!=null)
+            ln.setBackgroundColor(getContext().getColor(R.color.game_background));
         }
 
         if(gameSettings == null) return;
@@ -196,7 +202,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
         d.draw(canvas);
     }
 
-    private float calculateBoxSize() {
+    public float calculateBoxSize() {
         if(gameSettings == null) return 1.0f;
         return (
                 Math.min(
@@ -204,12 +210,12 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
                         (this.getWidth()-OFFSET*2) / new Float(this.gameSettings.getBoard().getWidth())));
     }
 
-    private float calculateOffsetX() {
+    public float calculateOffsetX() {
         if(gameSettings == null) return 1.0f;
         return (this.getWidth()-this.gameSettings.getBoard().getWidth()*calculateBoxSize()-OFFSET*2)/2.0f;
     }
 
-    private float calculateOffsetY() {
+    public float calculateOffsetY() {
         if(gameSettings == null) return 1.0f;
         return (this.getHeight()-this.gameSettings.getBoard().getHeight()*calculateBoxSize()-OFFSET*2)/2.0f;
     }

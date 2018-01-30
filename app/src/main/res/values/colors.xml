@@ -10,7 +10,7 @@
 
 
     <color name="btn_none">#f2f2f2</color>
-    <color name="btn_none_dark">#d0d0d0</color>
+    <color name="btn_none_dark">#8b8b8b</color>
 
     <color name="btn_green">#00cc00</color>
     <color name="btn_green_pending">#aaccaa</color>
@@ -18,15 +18,15 @@
 
     <color name="btn_red">#ff0000</color>
     <color name="btn_red_pending">#ffcccc</color>
-    <color name="btn_red_dark">#cc0000</color>
+    <color name="btn_red_dark">#ac0000</color>
 
     <color name="btn_yellow">#ffcc00</color>
     <color name="btn_yellow_pending">#eeee00</color>
-    <color name="btn_yellow_dark">#ccaa00</color>
+    <color name="btn_yellow_dark">#ab8e00</color>
 
     <color name="btn_blue">#0000cc</color>
     <color name="btn_blue_pending">#aaaacc</color>
-    <color name="btn_blue_dark">#0000aa</color>
+    <color name="btn_blue_dark">#000086</color>
 
     <color name="onboarding_btn">#434346</color>
     <color name="status_bar_color_onbrd">#96484849</color>
