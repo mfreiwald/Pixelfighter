@@ -1,6 +1,7 @@
 package de.lmu.ifi.pixelfighter.activities;
 
 import android.animation.ArgbEvaluator;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -46,7 +47,7 @@ public class OnboardingActivity extends AppCompatActivity implements ViewPager.O
     @BindView(R.id.onbrd_btn_prev)
     ImageButton prev_button;
 
-    @BindViews({R.id.intro_indicator_0, R.id.intro_indicator_1, R.id.intro_indicator_2})
+    @BindViews({R.id.intro_indicator_0, R.id.intro_indicator_1, R.id.intro_indicator_2, R.id.intro_indicator_3})
     ImageView[] indicators;
 
 
@@ -96,14 +97,15 @@ public class OnboardingActivity extends AppCompatActivity implements ViewPager.O
         int color1 = ContextCompat.getColor(this, R.color.onboarding_screen_bg_1);
         int color2 = ContextCompat.getColor(this, R.color.onboarding_screen_bg_2);
         int color3 = ContextCompat.getColor(this, R.color.onboarding_screen_bg_3);
-        colorList = new int[]{color1, color2, color3};
+        int color4 = ContextCompat.getColor(this, R.color.onboarding_screen_bg_4);
+        colorList = new int[]{color1, color2, color3, color4};
     }
 
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         //color update
-        int colorUpdate = (Integer) evaluator.evaluate(positionOffset, colorList[position], colorList[position == 2 ? position : position + 1]);
+        int colorUpdate = (Integer) evaluator.evaluate(positionOffset, colorList[position], colorList[position == 3 ? position : position + 1]);
         mViewPager.setBackgroundColor(colorUpdate);
     }
 
@@ -122,10 +124,13 @@ public class OnboardingActivity extends AppCompatActivity implements ViewPager.O
             case 2:
                 mViewPager.setBackgroundColor(colorList[position]);
                 break;
+            case 3:
+                mViewPager.setBackgroundColor(colorList[position]);
+                break;
         }
 
-        next_button.setVisibility(position == 2 ? View.GONE : View.VISIBLE);
-        finish_button.setVisibility(position == 2 ? View.VISIBLE : View.GONE);
+        next_button.setVisibility(position == 3 ? View.GONE : View.VISIBLE);
+        finish_button.setVisibility(position == 3 ? View.VISIBLE : View.GONE);
         skip_button.setVisibility(position == 0 ? View.VISIBLE : View.GONE);
         prev_button.setVisibility(position == 0 ? View.GONE : View.VISIBLE);
     }
@@ -177,9 +182,9 @@ public class OnboardingActivity extends AppCompatActivity implements ViewPager.O
 
         ImageView img;
 
-        int[] onboarding_imgs = new int[]{R.drawable.onboarding1, R.drawable.onboarding2, R.drawable.onboarding3};
-        int[] onboarding_titles = new int[]{R.string.onboarding1_title, R.string.onboarding2_title, R.string.onboarding3_title};
-        int[] onboarding_txts = new int[]{R.string.onboarding1_text, R.string.onboarding2_text, R.string.onboarding3_text};
+        int[] onboarding_imgs = new int[]{R.drawable.onboarding1, R.drawable.onboarding2, R.drawable.onboarding3, R.drawable.onboarding4};
+        int[] onboarding_titles = new int[]{R.string.onboarding1_title, R.string.onboarding2_title, R.string.onboarding3_title, R.string.onboarding4_title};
+        int[] onboarding_txts = new int[]{R.string.onboarding1_text, R.string.onboarding2_text, R.string.onboarding3_text, R.string.onboarding4_text};
 
         public PlaceholderFragment() {
         }
@@ -233,8 +238,8 @@ public class OnboardingActivity extends AppCompatActivity implements ViewPager.O
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
-            return 3;
+            // Show 4 total pages.
+            return 4;
         }
     }
 }

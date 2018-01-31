@@ -18,6 +18,7 @@
     <string name="onboarding1_title">The Rules Are Simple</string>
     <string name="onboarding2_title">Fight \'Til The End</string>
     <string name="onboarding3_title">Collect Loot</string>
+    <string name="onboarding4_title">Protect your pixels</string>
 
     <string name="onboarding1_text">Your team tries to
         color every pixel in your color, while the enemy teams try to do the same.</string>
@@ -25,4 +26,6 @@
         surrounding it with 4 or more pixels of your own!</string>
     <string name="onboarding3_text">The grey bombs on the empty fields can be collected.
         Place a hidden bomb on your own pixels to recolor unsuspecting enemies!</string>
+    <string name="onboarding4_text">The circles are shields to protect your pixels. Collect and place
+        them the same way as the bombs. The shield will protect the 8 pixels around it. </string>
 </resources>

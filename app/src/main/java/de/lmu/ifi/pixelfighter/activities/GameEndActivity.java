@@ -3,6 +3,7 @@ package de.lmu.ifi.pixelfighter.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -49,6 +50,8 @@ public class GameEndActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_end);
+
+        Log.d(TAG, "Oncreate called");
 
         userData = Pixelfighter.getInstance().getUserData();
         Log.d("UserData: Name ", userData.getUsername());
@@ -166,18 +169,22 @@ public class GameEndActivity extends AppCompatActivity {
             case 1:
                 team = "Red";
                 winner = "The winner is RED!";
+                teamWon.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_red));
                 break;
             case 2:
                 team = "Blue";
                 winner = "The winner is BLUE!";
+                teamWon.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_blue));
                 break;
             case 3:
                 team = "Green";
                 winner = "The winner is GREEN!";
+                teamWon.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_green));
                 break;
             case 4:
                 team = "Yellow";
                 winner = "The winner is YELLOW!";
+                teamWon.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_yellow));
                 break;
         }
         if(team.equals(playerTeam)) {

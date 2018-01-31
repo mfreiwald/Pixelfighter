@@ -155,8 +155,10 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         intent.putExtra("board", gameSettings.getBoard().getPixels());
         String key = gameSettings.getGameKey();
         intent.putExtra("gamekey",key);
-        intent.putExtra("team", gameSettings.getTeam());
+        String team = gameSettings.getTeam().toString();
+        intent.putExtra("team", team);
         startActivity(intent);
+        Log.d("onGameOver", "activityStarted");
     }
 
     @Override
