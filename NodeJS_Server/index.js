@@ -16,7 +16,7 @@ db.ref('/games').on("child_added", function(snapshot) {
   if(game.active) {
   	db.ref('games/'+key).on("value", function(snapshot) {
   		var game = snapshot.val();
-
+  		if(game == null) return;
   		var foundEmpty = false;
 		for(var x=0; x<game.board.width; x++) {
 			for(var y=0; y<game.board.height; y++) {
