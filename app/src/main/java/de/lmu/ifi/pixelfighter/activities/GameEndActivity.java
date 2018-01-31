@@ -169,22 +169,22 @@ public class GameEndActivity extends AppCompatActivity {
             case 1:
                 team = "Red";
                 winner = "The winner is RED!";
-                teamWon.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_red));
+                //teamWon.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_red));
                 break;
             case 2:
                 team = "Blue";
                 winner = "The winner is BLUE!";
-                teamWon.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_blue));
+                //teamWon.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_blue));
                 break;
             case 3:
                 team = "Green";
                 winner = "The winner is GREEN!";
-                teamWon.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_green));
+                //teamWon.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_green));
                 break;
             case 4:
                 team = "Yellow";
                 winner = "The winner is YELLOW!";
-                teamWon.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_yellow));
+                //teamWon.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_yellow));
                 break;
         }
         if(team.equals(playerTeam)) {
