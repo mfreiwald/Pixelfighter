@@ -158,6 +158,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         intent.putExtra("team", team);
         startActivity(intent);
         Log.d("onGameOver", "activityStarted");
+        lightSensor.onPause();
     }
 
     @Override

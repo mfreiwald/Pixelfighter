@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -30,6 +31,8 @@ public class GameEndActivity extends AppCompatActivity {
     TextView redText;
     TextView greenText;
     TextView yellowText;
+    TextView ownTeamWon;
+    LinearLayout linTeamWon;
     Button btnMain;
     String winner;
     UserData userData;
@@ -66,6 +69,8 @@ public class GameEndActivity extends AppCompatActivity {
                 init();
 
                 teamWon = (TextView) findViewById(R.id.teamWonTextview);
+                ownTeamWon = (TextView) findViewById(R.id.ownTeamWonTv);
+                linTeamWon = (LinearLayout) findViewById(R.id.linTeamWon);
                 blueText = (TextView) findViewById(R.id.blue);
                 redText = (TextView) findViewById(R.id.red);
                 greenText = (TextView) findViewById(R.id.green);
@@ -73,7 +78,10 @@ public class GameEndActivity extends AppCompatActivity {
 
 
                 teamWon.setText(winner);
-                teamWon.setBackgroundColor(color);
+                linTeamWon.setBackgroundColor(color);
+                if(won) {
+                    ownTeamWon.setVisibility(View.VISIBLE);
+                }
                 String redStr = " Team Red filled " + String.valueOf(red) + " pixel(s). ";
                 String blueStr = " Team Blue filled " + String.valueOf(blue) + " pixel(s). ";
                 String greenStr = " Team Green filled " + String.valueOf(green) + " pixel(s). ";

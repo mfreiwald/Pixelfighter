@@ -5,12 +5,30 @@
     android:layout_height="match_parent"
     tools:context="de.lmu.ifi.pixelfighter.activities.GameEndActivity">
 
-    <TextView
-        android:id="@+id/teamWonTextview"
-        style="@style/TitleTheme"
+    <LinearLayout
+        android:id="@+id/linTeamWon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="The winner is ...!"/>
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/teamWonTextview"
+            style="@style/TitleTheme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="The winner is ...!"/>
+
+        <TextView
+            android:id="@+id/ownTeamWonTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:layout_marginTop="15dp"
+            android:gravity="center"
+            android:layout_marginBottom="15dp"
+            android:visibility="visible"
+            android:text="You and your team won!"/>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/gameStatsTitle"
@@ -18,7 +36,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/space_margin"
-        android:layout_below="@+id/teamWonTextview"
+        android:layout_below="@+id/linTeamWon"
         android:text="Game statistics"/>
     <TextView
         android:id="@+id/red"
