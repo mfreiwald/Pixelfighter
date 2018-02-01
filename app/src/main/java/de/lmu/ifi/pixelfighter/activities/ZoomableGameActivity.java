@@ -246,6 +246,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         public void onReceive(Context context, Intent intent) {
             if(Objects.equals(intent.getAction(), "de.lmu.ifi.pixelfighter.BOMB_WAS_EXECUTED")) {
                 Log.d(TAG, "received bomb broadcast");
+                Log.d(TAG, "action: " + intent.getAction());
                 int x = intent.getIntExtra("x", 0);
                 int y = intent.getIntExtra("y", 0);
 
@@ -253,6 +254,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
 
             } else if(Objects.equals(intent.getAction(), "de.lmu.ifi.pixelfighter.PROTECTION_WAS_EXECUTED")) {
                 Log.d(TAG, "received protection broadcast");
+                Log.d(TAG, "action: " + intent.getAction());
                 int x = intent.getIntExtra("x", 0);
                 int y = intent.getIntExtra("y", 0);
 
@@ -269,35 +271,35 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         int top = (int)(gameView.calculateOffsetY() + y * gameView.calculateBoxSize() - 40);
         p.setMargins(left, top, 0, 0);
 
-        final ImageView expImgView = new ImageView(context);
+        final ImageView iconImgView = new ImageView(context);
         switch (typeOfAnimation) {
 
             case MyBroadcastReceiver.EXPLOSION:
-                expImgView.setImageResource(R.drawable.explosion);
+                iconImgView.setImageResource(R.drawable.explosion);
                 break;
             case MyBroadcastReceiver.PROTECTION:
-                expImgView.setImageResource(R.drawable.shield);
+                iconImgView.setImageResource(R.drawable.shield);
                 break;
             default:
-                expImgView.setImageResource(R.drawable.explosion);
+                iconImgView.setImageResource(R.drawable.explosion);
                 break;
         }
-        expImgView.setLayoutParams(p);
+        iconImgView.setLayoutParams(p);
 
         final float[] scale = {0.2f};
-        expImgView.setScaleX(scale[0]);
-        expImgView.setScaleY(scale[0]);
-        fl.addView(expImgView);
+        iconImgView.setScaleX(scale[0]);
+        iconImgView.setScaleY(scale[0]);
+        fl.addView(iconImgView);
 
         new CountDownTimer(850, 100) {
             public void onTick(long millisUntilFinished) {
                 scale[0] += 0.04f;
-                expImgView.setScaleX(scale[0]);
-                expImgView.setScaleY(scale[0]);
+                iconImgView.setScaleX(scale[0]);
+                iconImgView.setScaleY(scale[0]);
             }
 
             public void onFinish() {
-                fl.removeView(expImgView);
+                fl.removeView(iconImgView);
             }
         }.start();
     }
