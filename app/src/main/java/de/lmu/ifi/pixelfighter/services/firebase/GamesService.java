@@ -108,7 +108,7 @@ public class GamesService extends BaseKeyService<Game> {
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
                 double probability = ((double) random.nextInt(max + 1 - min) + min) / 100.0;
-                if (probability <= Rules.BOMB_PLCMNT_PROB) {
+                if (probability <= Rules.PROT_PLCMNT_PROB) {
                     board.getPixels().get(x).get(y).setPixelMod(PixelModification.Protection);
                 }
             }

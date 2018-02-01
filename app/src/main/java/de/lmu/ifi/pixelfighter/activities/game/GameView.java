@@ -1,7 +1,9 @@
 package de.lmu.ifi.pixelfighter.activities.game;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -51,6 +53,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
     private GameSettings gameSettings;
 
     ArrayList<ArrayList<Pixel>> oldPixels;
+    ArrayList<int[]> triggeredProtections = new ArrayList<>();
 
     public GameView(Context context) {
         super(context);
@@ -117,13 +120,13 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
 
     private void updateFrame(Canvas canvas) {
 
-        if(Pixelfighter.getInstance().isUseDark()) {
+        if (Pixelfighter.getInstance().isUseDark()) {
             canvas.drawColor(getContext().getColor(R.color.game_background_dark));
         } else {
             canvas.drawColor(getContext().getColor(R.color.game_background));
         }
 
-        if(gameSettings == null) return;
+        if (gameSettings == null) return;
         if (gameSettings.getBoard() == null) return;
 
         float boxSize = calculateBoxSize();
@@ -146,7 +149,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
         statistics.put(Team.Yellow, 0);
 
 
-        if(oldPixels == null) {
+        if (oldPixels == null) {
             oldPixels = new ArrayList<>();
             for (int x = 0; x < this.gameSettings.getBoard().getWidth(); x++) {
                 oldPixels.add(x, new ArrayList<Pixel>());
@@ -166,24 +169,28 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
 
                 Pixel pixel = this.gameSettings.getBoard().getPixels().get(x).get(y);
 
-                if(pixel.isInvalid()) continue;
+                if (pixel.isInvalid()) continue;
 
                 Pixel oldPixel = oldPixels.get(x).get(y);
-                if(oldPixel != null) {
+                if (oldPixel != null) {
                     if (oldPixel.getPixelMod() == PixelModification.Bomb && oldPixel.getTeam() != Team.None && pixel.getPixelMod() == PixelModification.None) {
                         Log.d("Bomb", "bomb exploeded at " + pixel.toString());
                         //Toast.makeText(getContext(), "Bomb exploded", Toast.LENGTH_SHORT).show();
-                        sendBroadcastToUI(x, y);
+                        sendBroadcastToUI(x, y, ZoomableGameActivity.MyBroadcastReceiver.EXPLOSION);
                     }
                 }
+
+                for (int[] coords : triggeredProtections) {
+                    sendBroadcastToUI(coords[0], coords[1], ZoomableGameActivity.MyBroadcastReceiver.PROTECTION);
+                }
+                triggeredProtections.clear();
 
 
                 oldPixels.get(x).set(y, pixel);
 
 
-
                 Team team = pixel.getTeam();
-                statistics.put(team, statistics.get(team)+1);
+                statistics.put(team, statistics.get(team) + 1);
 
                 Paint mFillPaint = new Paint();
                 Paint mStrokePaint = new Paint();
@@ -193,10 +200,10 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
                 int color = Pixelfighter.getInstance().getTeamColor(team);
 
                 ListIterator<PendingClick> iterator = pendingClicks.listIterator();
-                while(iterator.hasNext()){
+                while (iterator.hasNext()) {
                     PendingClick click = iterator.next();
 
-                    if(click.getX() == x && click.getY() == y) {
+                    if (click.getX() == x && click.getY() == y) {
                         color = click.getColor();
                     }
                 }
@@ -210,45 +217,45 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
                 canvas.drawRect(mRect, mStrokePaint);
 
                 Team playerTeam = this.gameSettings.getTeam();
-                if(pixel.getPixelMod() == PixelModification.Bomb && team.equals(playerTeam)) {
+                if (pixel.getPixelMod() == PixelModification.Bomb && team.equals(playerTeam)) {
                     drawMod(mRect, canvas, R.drawable.ic_bomb);
-                } else if(pixel.getPixelMod() == PixelModification.Bomb && team.equals(Team.None)) {
+                } else if (pixel.getPixelMod() == PixelModification.Bomb && team.equals(Team.None)) {
                     drawMod(mRect, canvas, R.drawable.ic_bomb_transparent);
-                } else if(pixel.getPixelMod() == PixelModification.Protection && team.equals(playerTeam)) {
+                } else if (pixel.getPixelMod() == PixelModification.Protection && team.equals(playerTeam)) {
                     drawMod(mRect, canvas, R.drawable.ic_indicator_selected);
-                } else if(pixel.getPixelMod() == PixelModification.Protection && team.equals(Team.None)) {
+                } else if (pixel.getPixelMod() == PixelModification.Protection && team.equals(Team.None)) {
                     drawMod(mRect, canvas, R.drawable.ic_indicator_unselected);
                 }
 
             }
         }
 
-        if(gameSettings != null) gameSettings.setStatics(statistics);
+        if (gameSettings != null) gameSettings.setStatics(statistics);
 
     }
 
     private void drawMod(RectF mRect, Canvas canvas, int drawable) {
         Drawable d = getResources().getDrawable(drawable, null);
-        d.setBounds((int)Math.ceil(mRect.left), (int)Math.ceil(mRect.top), (int)Math.floor(mRect.right), (int)Math.floor(mRect.bottom));
+        d.setBounds((int) Math.ceil(mRect.left), (int) Math.ceil(mRect.top), (int) Math.floor(mRect.right), (int) Math.floor(mRect.bottom));
         d.draw(canvas);
     }
 
     public float calculateBoxSize() {
-        if(gameSettings == null) return 1.0f;
+        if (gameSettings == null) return 1.0f;
         return (
                 Math.min(
-                        (this.getHeight()-OFFSET*2) / new Float(this.gameSettings.getBoard().getHeight()),
-                        (this.getWidth()-OFFSET*2) / new Float(this.gameSettings.getBoard().getWidth())));
+                        (this.getHeight() - OFFSET * 2) / new Float(this.gameSettings.getBoard().getHeight()),
+                        (this.getWidth() - OFFSET * 2) / new Float(this.gameSettings.getBoard().getWidth())));
     }
 
     public float calculateOffsetX() {
-        if(gameSettings == null) return 1.0f;
-        return (this.getWidth()-this.gameSettings.getBoard().getWidth()*calculateBoxSize()-OFFSET*2)/2.0f;
+        if (gameSettings == null) return 1.0f;
+        return (this.getWidth() - this.gameSettings.getBoard().getWidth() * calculateBoxSize() - OFFSET * 2) / 2.0f;
     }
 
     public float calculateOffsetY() {
-        if(gameSettings == null) return 1.0f;
-        return (this.getHeight()-this.gameSettings.getBoard().getHeight()*calculateBoxSize()-OFFSET*2)/2.0f;
+        if (gameSettings == null) return 1.0f;
+        return (this.getHeight() - this.gameSettings.getBoard().getHeight() * calculateBoxSize() - OFFSET * 2) / 2.0f;
     }
 
     public void pause() {
@@ -271,9 +278,10 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
     private float startY;
 
     private PendingClick downEventClick;
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if(gameSettings == null) return false;
+        if (gameSettings == null) return false;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 startX = event.getX();
@@ -301,7 +309,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
     }
 
     private void click(float x, float y) {
-        if(this.gameSettings == null) return;
+        if (this.gameSettings == null) return;
 
         float boxSize = calculateBoxSize();
         int pX = getCoordinateX(x);
@@ -309,7 +317,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
         Log.d("GameView", "Click at (" + pX + ", " + pY + ")");
         if (pX < 0 || pX >= this.gameSettings.getBoard().getWidth()) return;
         if (pY < 0 || pY >= this.gameSettings.getBoard().getHeight()) return;
-        if(this.gameSettings.getBoard().getPixels().get(pX).get(pY).isInvalid()) return;
+        if (this.gameSettings.getBoard().getPixels().get(pX).get(pY).isInvalid()) return;
 
         if (onClickListener == null) return;
         onClickListener.onClick(pX, pY);
@@ -318,8 +326,9 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
     private int getCoordinateX(float x) {
         return (int) ((x - calculateOffsetX() - OFFSET) / new Float(calculateBoxSize()));
     }
+
     private int getCoordinateY(float x) {
-        return (int) ((x-calculateOffsetY()-OFFSET) / new Float(calculateBoxSize()));
+        return (int) ((x - calculateOffsetY() - OFFSET) / new Float(calculateBoxSize()));
     }
 
     public void addPendingClick(PendingClick click) {
@@ -331,17 +340,40 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
     }
 
     public void setGameSettings(GameSettings gameSettings) {
-        if(gameSettings == null) return;
+        if (gameSettings == null) return;
         this.gameSettings = gameSettings;
+
+        BroadcastReceiver br = new MyBroadcastReceiver();
+        IntentFilter filter = new IntentFilter("de.lmu.ifi.pixelfighter.PROTECTION_TRIGGERED");
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(br, filter);
     }
 
-    private void sendBroadcastToUI(int x, int y) {
+    private void sendBroadcastToUI(int x, int y, int typeOfAction) {
         Intent intent = new Intent();
-        intent.setAction("de.lmu.ifi.pixelfighter.MY_NOTIFICATION");
         intent.putExtra("x", x);
         intent.putExtra("y", y);
+
+        switch (typeOfAction) {
+            case ZoomableGameActivity.MyBroadcastReceiver.EXPLOSION:
+                intent.setAction("de.lmu.ifi.pixelfighter.BOMB_WAS_EXECUTED");
+            case ZoomableGameActivity.MyBroadcastReceiver.PROTECTION:
+                intent.setAction("de.lmu.ifi.pixelfighter.PROTECTION_WAS_EXECUTED");
+        }
+
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
-        Log.d("BOARDHANDLING", "sent broadcast to UI");
+        Log.d("GAMEVIEW", "sent actionType:" + typeOfAction + " broadcast to UI");
+    }
+
+    private class MyBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int x = intent.getIntExtra("x", 0);
+            int y = intent.getIntExtra("y", 0);
+
+            triggeredProtections.add(new int[]{x, y});
+        }
+
     }
 
     public interface OnClickListener {

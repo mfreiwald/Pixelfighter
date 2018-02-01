@@ -1,6 +1,5 @@
 package de.lmu.ifi.pixelfighter.services.firebase;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -8,8 +7,8 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.lmu.ifi.pixelfighter.activities.game.GameSettings;
 import de.lmu.ifi.pixelfighter.activities.ZoomableGameActivity;
+import de.lmu.ifi.pixelfighter.activities.game.GameSettings;
 import de.lmu.ifi.pixelfighter.game.Rules;
 import de.lmu.ifi.pixelfighter.models.GamePlayer;
 import de.lmu.ifi.pixelfighter.models.Pixel;
@@ -24,8 +23,10 @@ import de.lmu.ifi.pixelfighter.services.firebase.callbacks.ServiceCallback;
 public class BoardHandling {
 
     private final GameSettings gameSettings;
+    private ZoomableGameActivity zoomActivity;
 
-    public BoardHandling(GameSettings gameSettings) {
+    public BoardHandling(ZoomableGameActivity zoomActivity, GameSettings gameSettings) {
+        this.zoomActivity = zoomActivity;
         this.gameSettings = gameSettings;
     }
 
@@ -49,6 +50,7 @@ public class BoardHandling {
     }
 
     public void placePixel(final int x, final int y, final PixelModification modification, final ServiceCallback<Pixel> callback) {
+        sendBroadcastToGameView(x,y);
         Database.Game(gameSettings.getGameKey()).Pixel(x, y).runTransaction(new GenericReference.Handler<Pixel>() {
 
             @Override
@@ -116,6 +118,7 @@ public class BoardHandling {
             public Pixel doTransaction(Pixel mutable) {
 
                 if (mutable.getPixelMod() == PixelModification.Protection) {
+                    sendBroadcastToGameView(x, y);
                     return null;
                 }
                 // Check if replaced Pixel has a Bomb
@@ -140,8 +143,6 @@ public class BoardHandling {
                     executeReplacing(pixel.getX(), pixel.getY(), ownTeam, uid);
                 }
                 return mutable;
-
-
             }
 
             @Override
@@ -168,13 +169,13 @@ public class BoardHandling {
     public void executeBombFrom(final int x, final int y, Team team, String uid) {
         // Get all neighbors
         overridePixel(x, y, team, uid, PixelModification.None, null);
-        for (Pixel pixel : getNeighbour(x, y)) {
+        for (Pixel pixel : getNeighbours(x, y)) {
             overridePixel(pixel.getX(), pixel.getY(), team, uid, PixelModification.None, null);
         }
     }
 
 
-    private List<Pixel> getNeighbour(int x, int y) {
+    private List<Pixel> getNeighbours(int x, int y) {
         List<Pixel> result = new ArrayList<>();
         for (int _x = x - 1; _x <= x + 1; _x++) {
             for (int _y = y - 1; _y <= y + 1; _y++) {
@@ -192,9 +193,9 @@ public class BoardHandling {
         return result;
     }
 
-    private List<Pixel> getOwnTeamNeighbour(int x, int y, Team team) {
+    private List<Pixel> getOwnTeamNeighbours(int x, int y, Team team) {
         List<Pixel> result = new ArrayList<>();
-        for (Pixel pixel : getNeighbour(x, y)) {
+        for (Pixel pixel : getNeighbours(x, y)) {
             if (pixel.getTeam() == team) {
                 result.add(pixel);
             }
@@ -202,9 +203,9 @@ public class BoardHandling {
         return result;
     }
 
-    private List<Pixel> getEnemyNeighbour(int x, int y, Team team) {
+    private List<Pixel> getEnemyNeighbours(int x, int y, Team team) {
         List<Pixel> result = new ArrayList<>();
-        for (Pixel pixel : getNeighbour(x, y)) {
+        for (Pixel pixel : getNeighbours(x, y)) {
             if (pixel.getTeam() != team && pixel.getTeam() != Team.None) {
                 result.add(pixel);
             }
@@ -231,6 +232,15 @@ public class BoardHandling {
                 callback.success(object);
             }
         });
+    }
+
+    private void sendBroadcastToGameView(int x, int y) {
+        Intent intent = new Intent();
+        intent.setAction("de.lmu.ifi.pixelfighter.PROTECTION_TRIGGERED");
+        intent.putExtra("x", x);
+        intent.putExtra("y", y);
+        LocalBroadcastManager.getInstance(zoomActivity).sendBroadcast(intent);
+        Log.d("BOARDHANDLING", "sent protection broadcast to GameView");
     }
 
 

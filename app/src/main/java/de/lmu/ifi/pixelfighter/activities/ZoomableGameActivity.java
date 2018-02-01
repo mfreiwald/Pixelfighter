@@ -20,6 +20,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import java.util.Map;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -113,7 +114,9 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         updateProtectionView(0);
 
         BroadcastReceiver br = new MyBroadcastReceiver();
-        IntentFilter filter = new IntentFilter("de.lmu.ifi.pixelfighter.MY_NOTIFICATION");
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("de.lmu.ifi.pixelfighter.BOMB_WAS_EXECUTED");
+        filter.addAction("de.lmu.ifi.pixelfighter.PROTECTION_WAS_EXECUTED");
         LocalBroadcastManager.getInstance(this).registerReceiver(br, filter);
 
     }
@@ -141,7 +144,6 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         this.gameView.setOnClickListener(ZoomableGameActivity.this);
         this.gameUpdate.addListeners();
         setStatistics(gameSettings.getStatics());
-
     }
 
     @Override
@@ -171,7 +173,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         this.gameView.addPendingClick(click);
 
         // Check what to do
-        BoardHandling handling = new BoardHandling(gameSettings);
+        BoardHandling handling = new BoardHandling(this, gameSettings);
         handling.placePixel(x ,y, currentModification, new ServiceCallback<Pixel>() {
             @Override
             public void success(Pixel pixel) {
@@ -235,28 +237,51 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         protectionCountView.setText(""+amount);
     }
 
-    private class MyBroadcastReceiver extends BroadcastReceiver {
+    public class MyBroadcastReceiver extends BroadcastReceiver {
+
+        public final static int EXPLOSION = 1;
+        public final static int PROTECTION = 2;
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "received broadcast");
-            int x = intent.getIntExtra("x", 0);
-            int y = intent.getIntExtra("y", 0);
+            if(Objects.equals(intent.getAction(), "de.lmu.ifi.pixelfighter.BOMB_WAS_EXECUTED")) {
+                Log.d(TAG, "received bomb broadcast");
+                int x = intent.getIntExtra("x", 0);
+                int y = intent.getIntExtra("y", 0);
 
-            animateExplosion(x, y, context);
+                animateIcon(x, y, context, MyBroadcastReceiver.EXPLOSION);
+
+            } else if(Objects.equals(intent.getAction(), "de.lmu.ifi.pixelfighter.PROTECTION_WAS_EXECUTED")) {
+                Log.d(TAG, "received protection broadcast");
+                int x = intent.getIntExtra("x", 0);
+                int y = intent.getIntExtra("y", 0);
+
+                animateIcon(x, y, context, MyBroadcastReceiver.PROTECTION);
+            }
         }
     }
 
-    private void animateExplosion(int x, int y, Context context) {
+    private void animateIcon(int x, int y, Context context, int typeOfAnimation) {
         final FrameLayout fl = findViewById(R.id.zoomLayout);
         FrameLayout.LayoutParams p = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
                 FrameLayout.LayoutParams.WRAP_CONTENT, 10);
-        int left = (int)(gameView.calculateOffsetX() + x * gameView.calculateBoxSize() - 70);
-        int top = (int)(gameView.calculateOffsetY() + y * gameView.calculateBoxSize() - 70);
+        int left = (int)(gameView.calculateOffsetX() + x * gameView.calculateBoxSize() - 40);
+        int top = (int)(gameView.calculateOffsetY() + y * gameView.calculateBoxSize() - 40);
         p.setMargins(left, top, 0, 0);
 
         final ImageView expImgView = new ImageView(context);
-        expImgView.setImageResource(R.drawable.explosion);
+        switch (typeOfAnimation) {
+
+            case MyBroadcastReceiver.EXPLOSION:
+                expImgView.setImageResource(R.drawable.explosion);
+                break;
+            case MyBroadcastReceiver.PROTECTION:
+                expImgView.setImageResource(R.drawable.shield);
+                break;
+            default:
+                expImgView.setImageResource(R.drawable.explosion);
+                break;
+        }
         expImgView.setLayoutParams(p);
 
         final float[] scale = {0.2f};
@@ -276,6 +301,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
             }
         }.start();
     }
+
 
     private void setStatistics(Map<Team, Integer> statics ) {
         int full = findViewById(android.R.id.content).getWidth();

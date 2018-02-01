@@ -21,6 +21,7 @@ public class Rules {
     private final static double PERCNTGE_OF_NECES_SURR_ENEMIES = 0.3;
 
     public final static double BOMB_PLCMNT_PROB = 0.02;
+    public final static double PROT_PLCMNT_PROB = 0.02;
 
     public static boolean validate(final Board board, final Team team, final int x, final int y) {
 
