@@ -155,6 +155,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
                 }
             }
         }
+
         for (int x = 0; x < this.gameSettings.getBoard().getWidth(); x++) {
             for (int y = 0; y < this.gameSettings.getBoard().getHeight(); y++) {
 

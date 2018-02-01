@@ -4,18 +4,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -179,13 +176,13 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
             @Override
             public void success(Pixel pixel) {
                 gameView.removePendingClick(click);
-                updateToogles();
+                updateToggles();
             }
 
             @Override
             public void failure(String message) {
                 gameView.removePendingClick(click);
-                updateToogles();
+                updateToggles();
             }
         });
 
@@ -197,7 +194,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
 
     }
 
-    private void updateToogles() {
+    private void updateToggles() {
 
     }
 
@@ -246,34 +243,38 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
             int x = intent.getIntExtra("x", 0);
             int y = intent.getIntExtra("y", 0);
 
-            final FrameLayout fl = findViewById(R.id.zoomLayout);
-            FrameLayout.LayoutParams p = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
-                    FrameLayout.LayoutParams.WRAP_CONTENT, 10);
-            int left = (int)(gameView.calculateOffsetX() + x * gameView.calculateBoxSize() - 80);
-            int top = (int)(gameView.calculateOffsetY() + y * gameView.calculateBoxSize() - 80);
-            p.setMargins(left, top, 0, 0);
-
-            final ImageView expImgView = new ImageView(context);
-            expImgView.setImageResource(R.drawable.explosion);
-            expImgView.setLayoutParams(p);
-
-            final float[] scale = {0.2f};
-            expImgView.setScaleX(scale[0]);
-            expImgView.setScaleY(scale[0]);
-            fl.addView(expImgView);
-
-            new CountDownTimer(700, 100) {
-                public void onTick(long millisUntilFinished) {
-                    scale[0] += 0.04f;
-                    expImgView.setScaleX(scale[0]);
-                    expImgView.setScaleY(scale[0]);
-                }
-
-                public void onFinish() {
-                    fl.removeView(expImgView);
-                }
-            }.start();
+            animateExplosion(x, y, context);
         }
+    }
+
+    private void animateExplosion(int x, int y, Context context) {
+        final FrameLayout fl = findViewById(R.id.zoomLayout);
+        FrameLayout.LayoutParams p = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT, 10);
+        int left = (int)(gameView.calculateOffsetX() + x * gameView.calculateBoxSize() - 70);
+        int top = (int)(gameView.calculateOffsetY() + y * gameView.calculateBoxSize() - 70);
+        p.setMargins(left, top, 0, 0);
+
+        final ImageView expImgView = new ImageView(context);
+        expImgView.setImageResource(R.drawable.explosion);
+        expImgView.setLayoutParams(p);
+
+        final float[] scale = {0.2f};
+        expImgView.setScaleX(scale[0]);
+        expImgView.setScaleY(scale[0]);
+        fl.addView(expImgView);
+
+        new CountDownTimer(850, 100) {
+            public void onTick(long millisUntilFinished) {
+                scale[0] += 0.04f;
+                expImgView.setScaleX(scale[0]);
+                expImgView.setScaleY(scale[0]);
+            }
+
+            public void onFinish() {
+                fl.removeView(expImgView);
+            }
+        }.start();
     }
 
     private void setStatistics(Map<Team, Integer> statics ) {
