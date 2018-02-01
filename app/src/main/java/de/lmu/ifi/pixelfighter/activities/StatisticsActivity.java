@@ -60,7 +60,7 @@ public class StatisticsActivity extends AppCompatActivity {
                         userData.setWon(0);
                         Database.UserData(userData.getUid()).setValue(userData);
                         Pixelfighter.getInstance().setUserData(userData);
-                        //Todo: Reload view to show resetted data
+                        getStats();
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
