@@ -21,7 +21,8 @@
         <activity android:name=".activities.GameDescActivity" />
         <activity android:name=".activities.MenuActivity" />
         <activity android:name=".activities.ChooseTeamActivity" android:noHistory="true"/>
-        <activity android:name=".activities.ZoomableGameActivity" />
+        <activity android:name=".activities.ZoomableGameActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activities.OnboardingActivity"
             android:label="@string/title_activity_onboarding"

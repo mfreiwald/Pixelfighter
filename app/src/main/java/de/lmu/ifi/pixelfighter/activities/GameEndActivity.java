@@ -40,6 +40,8 @@ public class GameEndActivity extends AppCompatActivity {
     int yellow;
     int index;
 
+    int color;
+
     Boolean won = false;
     String playerTeam;
 
@@ -71,6 +73,7 @@ public class GameEndActivity extends AppCompatActivity {
 
 
                 teamWon.setText(winner);
+                teamWon.setBackgroundColor(color);
                 String redStr = " Team Red filled " + String.valueOf(red) + " pixel(s). ";
                 String blueStr = " Team Blue filled " + String.valueOf(blue) + " pixel(s). ";
                 String greenStr = " Team Green filled " + String.valueOf(green) + " pixel(s). ";
@@ -169,21 +172,25 @@ public class GameEndActivity extends AppCompatActivity {
             case 1:
                 team = "Red";
                 winner = "The winner is RED!";
+                color = ContextCompat.getColor(this, R.color.btn_red);
                 //teamWon.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_red));
                 break;
             case 2:
                 team = "Blue";
                 winner = "The winner is BLUE!";
+                color = ContextCompat.getColor(this, R.color.btn_blue);
                 //teamWon.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_blue));
                 break;
             case 3:
                 team = "Green";
                 winner = "The winner is GREEN!";
+                color = ContextCompat.getColor(this, R.color.btn_green);
                 //teamWon.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_green));
                 break;
             case 4:
                 team = "Yellow";
                 winner = "The winner is YELLOW!";
+                color = ContextCompat.getColor(this, R.color.btn_yellow);
                 //teamWon.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_yellow));
                 break;
         }
