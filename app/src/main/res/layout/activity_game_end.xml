@@ -40,7 +40,7 @@
         android:background="@color/btn_blue"
         android:layout_marginBottom="@dimen/space_margin"
         android:textSize="20sp"
-        android:text="Team blue: "
+        android:text="Team Blue: "
         android:layout_below="@+id/red"/>
     <TextView
         android:id="@+id/green"

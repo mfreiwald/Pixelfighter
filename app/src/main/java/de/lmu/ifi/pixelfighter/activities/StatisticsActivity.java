@@ -40,7 +40,7 @@ public class StatisticsActivity extends AppCompatActivity {
 
         gamesView = (TextView) findViewById(R.id.gamesTextView);
         myScore = (TextView) findViewById(R.id.statsScore);
-        wonGames = (TextView) findViewById(R.id.wonTextView);
+        //wonGames = (TextView) findViewById(R.id.wonTextView);
 
         getStats();
 
@@ -60,7 +60,7 @@ public class StatisticsActivity extends AppCompatActivity {
                         userData.setWon(0);
                         Database.UserData(userData.getUid()).setValue(userData);
                         Pixelfighter.getInstance().setUserData(userData);
-                        //Todo: Reload view to show resetted data
+                        getStats();
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -85,7 +85,7 @@ public class StatisticsActivity extends AppCompatActivity {
 
         gamesWon = userData.getWon();
         String gamesText = "Games won: " + String.valueOf(gamesWon);
-        wonGames.setText(gamesText);
+        //wonGames.setText(gamesText);
 
         score = userData.getScore();
         String scoreText = "Score: " + String.valueOf(score);

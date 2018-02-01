@@ -187,9 +187,9 @@ public class GameEndActivity extends AppCompatActivity {
                 //teamWon.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_yellow));
                 break;
         }
-        if(team.equals(playerTeam)) {
-            won = true;
-        }
+//        if(team.equals(playerTeam)) {
+//            won = true;
+//        }
 
     }
 
@@ -205,9 +205,9 @@ public class GameEndActivity extends AppCompatActivity {
         }
         userData.setScore(userData.getScore() + score);
         userData.setGames(userData.getGames() + 1);
-        if (won) {
-            userData.setWon(userData.getWon()+1);
-        }
+//        if (won) {
+//            userData.setWon(userData.getWon()+1);
+//        }
         String gamesStr = Integer.toString(userData.getGames());
         String scoreStr = Integer.toString(userData.getScore());
         Log.d(TAG + "games: ", gamesStr);
