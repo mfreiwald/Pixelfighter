@@ -50,7 +50,6 @@ public class BoardHandling {
     }
 
     public void placePixel(final int x, final int y, final PixelModification modification, final ServiceCallback<Pixel> callback) {
-        sendBroadcastToGameView(x,y);
         Database.Game(gameSettings.getGameKey()).Pixel(x, y).runTransaction(new GenericReference.Handler<Pixel>() {
 
             @Override
