@@ -173,30 +173,26 @@ public class GameEndActivity extends AppCompatActivity {
                 team = "Red";
                 winner = "The winner is RED!";
                 color = ContextCompat.getColor(this, R.color.btn_red);
-                //teamWon.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_red));
                 break;
             case 2:
                 team = "Blue";
                 winner = "The winner is BLUE!";
                 color = ContextCompat.getColor(this, R.color.btn_blue);
-                //teamWon.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_blue));
                 break;
             case 3:
                 team = "Green";
                 winner = "The winner is GREEN!";
                 color = ContextCompat.getColor(this, R.color.btn_green);
-                //teamWon.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_green));
                 break;
             case 4:
                 team = "Yellow";
                 winner = "The winner is YELLOW!";
                 color = ContextCompat.getColor(this, R.color.btn_yellow);
-                //teamWon.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_yellow));
                 break;
         }
-//        if(team.equals(playerTeam)) {
-//            won = true;
-//        }
+        if(team.equals(playerTeam)) {
+            won = true;
+        }
 
     }
 
@@ -212,9 +208,9 @@ public class GameEndActivity extends AppCompatActivity {
         }
         userData.setScore(userData.getScore() + score);
         userData.setGames(userData.getGames() + 1);
-//        if (won) {
-//            userData.setWon(userData.getWon()+1);
-//        }
+        if (won) {
+            userData.setWon(userData.getWon()+1);
+        }
         String gamesStr = Integer.toString(userData.getGames());
         String scoreStr = Integer.toString(userData.getScore());
         Log.d(TAG + "games: ", gamesStr);

@@ -40,7 +40,7 @@ public class StatisticsActivity extends AppCompatActivity {
 
         gamesView = (TextView) findViewById(R.id.gamesTextView);
         myScore = (TextView) findViewById(R.id.statsScore);
-        //wonGames = (TextView) findViewById(R.id.wonTextView);
+        wonGames = (TextView) findViewById(R.id.wonTextView);
 
         getStats();
 
@@ -85,7 +85,7 @@ public class StatisticsActivity extends AppCompatActivity {
 
         gamesWon = userData.getWon();
         String gamesText = "Games won: " + String.valueOf(gamesWon);
-        //wonGames.setText(gamesText);
+        wonGames.setText(gamesText);
 
         score = userData.getScore();
         String scoreText = "Score: " + String.valueOf(score);
