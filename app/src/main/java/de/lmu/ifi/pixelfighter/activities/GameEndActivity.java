@@ -43,6 +43,8 @@ public class GameEndActivity extends AppCompatActivity {
     int yellow;
     int index;
     int color;
+    int width;
+    int height;
 
     Boolean won = false;
     String playerTeam;
@@ -54,14 +56,16 @@ public class GameEndActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_end);
-        
+
         userData = Pixelfighter.getInstance().getUserData();
 
         Database.Game(Pixelfighter.getInstance().getUserData().getGameKey()).Board().addSingleListener(new GenericReference.ValueListener<Board>() {
             @Override
             public void onData(Board object) {
                 board = object;
-
+                width = board.getWidth();
+                height = board.getHeight();
+                pixelDoublelist = board.getPixels();
                 init();
 
                 teamWon = (TextView) findViewById(R.id.teamWonTextview);
@@ -111,12 +115,11 @@ public class GameEndActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String key = intent.getStringExtra("gamekey");
         playerTeam = intent.getStringExtra("team");
-        getPixellist(key);
+        //getPixellist(key);
         getStats(pixelDoublelist);
         getHighest();
         setWinner(index);
         saveStats(pixelDoublelist);
-
     }
 
     public void getPixellist(String key){
@@ -124,9 +127,11 @@ public class GameEndActivity extends AppCompatActivity {
     }
 
     public void getStats(ArrayList<ArrayList<Pixel>> pixels) {
+        Log.d(TAG, "getStats");
         try {
-            for (int i=0; i<pixels.size(); i++) {
-                for (int j= 0; j<pixels.size(); j++) {
+            for (int i=0; i<width-1; i++) {
+                for (int j= 0; j<height-1; j++) {
+                    Log.d(TAG, pixels.get(i).get(j).getTeam().toString());
                     switch (pixels.get(i).get(j).getTeam()) {
                         case None:
                             break;
@@ -154,7 +159,10 @@ public class GameEndActivity extends AppCompatActivity {
     }
 
     private void getHighest() {
+        Log.d(TAG, "getHighest");
         int []stats = {0,red, blue, green, yellow};
+        Log.d(TAG + " Stats", Integer.toString(red) + Integer.toString(blue)
+                + Integer.toString(green)+ Integer.toString(yellow));
         //gibt den Index des Teams zurück, welches die meisten Pixel gefüllt hat, NICHT die Anzahl der meisten Pixel
         int highest = 0;
 
@@ -162,11 +170,14 @@ public class GameEndActivity extends AppCompatActivity {
             if(stats[i]>highest){
                 highest=stats[i];
                 index = i;
+                Log.d(TAG + "Index", Integer.toString(index));
+
             }
         }
     }
 
     private void setWinner(int winIndex){
+        Log.d(TAG, "setWinner");
         String team = "None";
         winner = "The winner is...";
         switch (winIndex) {
@@ -202,9 +213,12 @@ public class GameEndActivity extends AppCompatActivity {
     private void saveStats(ArrayList<ArrayList<Pixel>> pixels) {
         Log.d(TAG, "saveStatsCalled");
         int score =0;
-        for (int i=0; i<pixels.size(); i++) {
-            for (int j= 0; j<pixels.size(); j++) {
+        for (int i=0; i<width-1; i++) {
+            for (int j= 0; j<height-1; j++) {
+                Log.d(TAG + " i", Integer.toString(i));
+                Log.d(TAG + " j", Integer.toString(j));
                 if(pixels.get(i).get(j).getPlayerKey().equals(userData.getUid())) {
+                    Log.d(TAG + "Teampixel", "true");
                     score = score +2;
                 }
             }

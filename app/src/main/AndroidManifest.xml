@@ -18,7 +18,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.StatisticsActivity" />
-        <activity android:name=".activities.GameDescActivity" />
         <activity android:name=".activities.MenuActivity" />
         <activity android:name=".activities.ChooseTeamActivity" android:noHistory="true"/>
         <activity android:name=".activities.ZoomableGameActivity"
