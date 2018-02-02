@@ -50,6 +50,8 @@ public class BoardHandling {
     }
 
     public void placePixel(final int x, final int y, final PixelModification modification, final ServiceCallback<Pixel> callback) {
+        asdf = 0;
+
         Database.Game(gameSettings.getGameKey()).Pixel(x, y).runTransaction(new GenericReference.Handler<Pixel>() {
 
             @Override
@@ -111,7 +113,12 @@ public class BoardHandling {
         String uid;
     }
 
+    private int asdf = 0;
+
     public void executeReplacing(final int x, final int y, final Team ownTeam, final String uid) {
+        if(asdf > 5) return;
+        asdf++;
+
         Database.Game(gameSettings.getGameKey()).Pixel(x, y).runTransaction(new GenericReference.Handler<Pixel>() {
             @Override
             public Pixel doTransaction(Pixel mutable) {
