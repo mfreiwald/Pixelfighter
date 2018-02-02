@@ -46,6 +46,7 @@ public class MenuActivity extends AppCompatActivity {
 
 
         UserData userData = Pixelfighter.getInstance().getUserData();
+        if(userData == null) return;
         String gameKey = userData.getGameKey();
 
         if(gameKey == null || gameKey.isEmpty()) {
