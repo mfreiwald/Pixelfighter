@@ -69,7 +69,7 @@ public class GameEndActivity extends AppCompatActivity {
                 init();
 
                 teamWon = (TextView) findViewById(R.id.teamWonTextview);
-                ownTeamWon = (TextView) findViewById(R.id.ownTeamWonTv);
+                //ownTeamWon = (TextView) findViewById(R.id.ownTeamWonTv);
                 linTeamWon = (LinearLayout) findViewById(R.id.linTeamWon);
                 blueText = (TextView) findViewById(R.id.blue);
                 redText = (TextView) findViewById(R.id.red);
@@ -80,7 +80,7 @@ public class GameEndActivity extends AppCompatActivity {
                 teamWon.setText(winner);
                 linTeamWon.setBackgroundColor(color);
                 if(won) {
-                    ownTeamWon.setVisibility(View.VISIBLE);
+                    //ownTeamWon.setVisibility(View.VISIBLE);
                 }
                 String redStr = " Team Red filled " + String.valueOf(red) + " pixel(s). ";
                 String blueStr = " Team Blue filled " + String.valueOf(blue) + " pixel(s). ";
