@@ -222,9 +222,9 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
                 } else if (pixel.getPixelMod() == PixelModification.Bomb && team.equals(Team.None)) {
                     drawMod(mRect, canvas, R.drawable.ic_bomb_transparent);
                 } else if (pixel.getPixelMod() == PixelModification.Protection && team.equals(playerTeam)) {
-                    drawMod(mRect, canvas, R.drawable.ic_indicator_selected);
+                    drawMod(mRect, canvas, R.drawable.ic_protection);
                 } else if (pixel.getPixelMod() == PixelModification.Protection && team.equals(Team.None)) {
-                    drawMod(mRect, canvas, R.drawable.ic_indicator_unselected);
+                    drawMod(mRect, canvas, R.drawable.ic_protection_transparent);
                 }
 
             }

@@ -137,7 +137,7 @@
             app:layout_constraintEnd_toStartOf="@+id/protectionCountView"
             app:layout_constraintStart_toStartOf="@+id/protectionToggle"
             app:layout_constraintTop_toBottomOf="@+id/protectionToggle"
-            app:srcCompat="@drawable/ic_indicator_selected" />
+            app:srcCompat="@drawable/ic_protection" />
 
         <TextView
             android:id="@+id/protectionCountView"
