@@ -117,7 +117,7 @@ public class BoardHandling {
             public Pixel doTransaction(Pixel mutable) {
 
                 if (mutable.getPixelMod() == PixelModification.Protection) {
-                    sendBroadcastToGameView(x, y);
+//                    sendBroadcastToGameView(x, y);
                     return null;
                 }
                 // Check if replaced Pixel has a Bomb
