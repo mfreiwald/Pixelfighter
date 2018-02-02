@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import butterknife.ButterKnife;
 import de.lmu.ifi.pixelfighter.R;
@@ -16,8 +17,6 @@ import de.lmu.ifi.pixelfighter.services.firebase.GamesService;
 import de.lmu.ifi.pixelfighter.utils.StartActivityHelper;
 
 public class ChooseTeamActivity extends AppCompatActivity {
-
-    private Game game;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +37,12 @@ public class ChooseTeamActivity extends AppCompatActivity {
             default: selectedTeam = RandomTeam.evaluateRandomTeam();
         }
 
+
+        findViewById(android.R.id.content).setBackgroundColor(getColor(R.color.background));
+        findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+        findViewById(R.id.linChoose1).setVisibility(View.GONE);
+        findViewById(R.id.linChoose2).setVisibility(View.GONE);
+        findViewById(R.id.btnRandom).setVisibility(View.GONE);
 
         GamesService.getInstance().searchAndJoinGame(Pixelfighter.getInstance().getUserData().getUid(), selectedTeam, new Callback<Game>() {
             @Override

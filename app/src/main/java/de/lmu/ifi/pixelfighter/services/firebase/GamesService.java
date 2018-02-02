@@ -54,7 +54,6 @@ public class GamesService extends BaseKeyService<Game> {
                 // ToDo: Besseren Suchalgorithmus
                 boolean found = false;
                 for (Game game : games) {
-                    Log.d("Games", "Game with Key " + game.getKey());
                     if (game.isActive()) {
                         callback.success(game);
                         found = true;
