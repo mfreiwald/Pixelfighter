@@ -21,7 +21,7 @@
     <color name="btn_red_dark">#ac0000</color>
 
     <color name="btn_yellow">#ffb400</color>
-    <color name="btn_yellow_pending">#eeee00</color>
+    <color name="btn_yellow_pending">#ffd700</color>
     <color name="btn_yellow_dark">#ab8e00</color>
 
     <color name="btn_blue">#6383cb</color>
