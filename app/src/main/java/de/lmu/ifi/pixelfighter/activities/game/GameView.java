@@ -176,14 +176,14 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
                     if (oldPixel.getPixelMod() == PixelModification.Bomb && oldPixel.getTeam() != Team.None && pixel.getPixelMod() == PixelModification.None) {
                         Log.d("Bomb", "bomb exploeded at " + pixel.toString());
                         //Toast.makeText(getContext(), "Bomb exploded", Toast.LENGTH_SHORT).show();
-                        sendBroadcastToUI(x, y, ZoomableGameActivity.MyBroadcastReceiver.EXPLOSION);
+                        sendBroadcastToUI(x, y);
                     }
                 }
 
-                for (int[] coords : triggeredProtections) {
-                    sendBroadcastToUI(coords[0], coords[1], ZoomableGameActivity.MyBroadcastReceiver.PROTECTION);
-                }
-                triggeredProtections.clear();
+//                for (int[] coords : triggeredProtections) {
+//                    sendBroadcastToUI(coords[0], coords[1], ZoomableGameActivity.MyBroadcastReceiver.PROTECTION);
+//                }
+//                triggeredProtections.clear();
 
 
                 oldPixels.get(x).set(y, pixel);
@@ -343,38 +343,38 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
         if (gameSettings == null) return;
         this.gameSettings = gameSettings;
 
-        BroadcastReceiver br = new MyBroadcastReceiver();
-        IntentFilter filter = new IntentFilter("de.lmu.ifi.pixelfighter.PROTECTION_TRIGGERED");
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(br, filter);
+//        BroadcastReceiver br = new MyBroadcastReceiver();
+//        IntentFilter filter = new IntentFilter("de.lmu.ifi.pixelfighter.PROTECTION_TRIGGERED");
+//        LocalBroadcastManager.getInstance(getContext()).registerReceiver(br, filter);
     }
 
-    private void sendBroadcastToUI(int x, int y, int typeOfAction) {
+    private void sendBroadcastToUI(int x, int y) {
         Intent intent = new Intent();
         intent.putExtra("x", x);
         intent.putExtra("y", y);
 
-        switch (typeOfAction) {
-            case ZoomableGameActivity.MyBroadcastReceiver.EXPLOSION:
-                intent.setAction("de.lmu.ifi.pixelfighter.BOMB_WAS_EXECUTED");
-            case ZoomableGameActivity.MyBroadcastReceiver.PROTECTION:
-                intent.setAction("de.lmu.ifi.pixelfighter.PROTECTION_WAS_EXECUTED");
-        }
+//        switch (typeOfAction) {
+//            case ZoomableGameActivity.MyBroadcastReceiver.EXPLOSION:
+//                intent.setAction("de.lmu.ifi.pixelfighter.BOMB_WAS_EXECUTED");
+//            case ZoomableGameActivity.MyBroadcastReceiver.PROTECTION:
+//                intent.setAction("de.lmu.ifi.pixelfighter.PROTECTION_WAS_EXECUTED");
+//        }
 
+        intent.setAction("de.lmu.ifi.pixelfighter.BOMB_WAS_EXECUTED");
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
-        Log.d("GAMEVIEW", "sent actionType:" + typeOfAction + " broadcast to UI");
+        Log.d("GAMEVIEW", "sent broadcast to UI");
     }
 
-    private class MyBroadcastReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int x = intent.getIntExtra("x", 0);
-            int y = intent.getIntExtra("y", 0);
-
-            triggeredProtections.add(new int[]{x, y});
-        }
-
-    }
+//    private class MyBroadcastReceiver extends BroadcastReceiver {
+//
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            int x = intent.getIntExtra("x", 0);
+//            int y = intent.getIntExtra("y", 0);
+//
+//            triggeredProtections.add(new int[]{x, y});
+//        }
+//    }
 
     public interface OnClickListener {
         void onClick(int x, int y);

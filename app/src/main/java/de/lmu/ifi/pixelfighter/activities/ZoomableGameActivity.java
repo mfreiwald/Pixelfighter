@@ -114,9 +114,9 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         updateProtectionView(0);
 
         BroadcastReceiver br = new MyBroadcastReceiver();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("de.lmu.ifi.pixelfighter.BOMB_WAS_EXECUTED");
-        filter.addAction("de.lmu.ifi.pixelfighter.PROTECTION_WAS_EXECUTED");
+        IntentFilter filter = new IntentFilter("de.lmu.ifi.pixelfighter.BOMB_WAS_EXECUTED");
+//        filter.addAction("de.lmu.ifi.pixelfighter.BOMB_WAS_EXECUTED");
+//        filter.addAction("de.lmu.ifi.pixelfighter.PROTECTION_WAS_EXECUTED");
         LocalBroadcastManager.getInstance(this).registerReceiver(br, filter);
 
     }
@@ -241,22 +241,29 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(Objects.equals(intent.getAction(), "de.lmu.ifi.pixelfighter.BOMB_WAS_EXECUTED")) {
-                Log.d(TAG, "received bomb broadcast");
-                Log.d(TAG, "action: " + intent.getAction());
-                int x = intent.getIntExtra("x", 0);
-                int y = intent.getIntExtra("y", 0);
+//            if(Objects.equals(intent.getAction(), "de.lmu.ifi.pixelfighter.BOMB_WAS_EXECUTED")) {
+//                Log.d(TAG, "received bomb broadcast");
+//                Log.d(TAG, "action: " + intent.getAction());
+//                int x = intent.getIntExtra("x", 0);
+//                int y = intent.getIntExtra("y", 0);
+//
+//                animateIcon(x, y, context, MyBroadcastReceiver.EXPLOSION);
+//
+//            } else if(Objects.equals(intent.getAction(), "de.lmu.ifi.pixelfighter.PROTECTION_WAS_EXECUTED")) {
+//                Log.d(TAG, "received protection broadcast");
+//                Log.d(TAG, "action: " + intent.getAction());
+//                int x = intent.getIntExtra("x", 0);
+//                int y = intent.getIntExtra("y", 0);
+//
+//                animateIcon(x, y, context, MyBroadcastReceiver.PROTECTION);
+//            }
 
-                animateIcon(x, y, context, MyBroadcastReceiver.EXPLOSION);
+            Log.d(TAG, "received bomb broadcast");
+            Log.d(TAG, "action: " + intent.getAction());
+            int x = intent.getIntExtra("x", 0);
+            int y = intent.getIntExtra("y", 0);
 
-            } else if(Objects.equals(intent.getAction(), "de.lmu.ifi.pixelfighter.PROTECTION_WAS_EXECUTED")) {
-                Log.d(TAG, "received protection broadcast");
-                Log.d(TAG, "action: " + intent.getAction());
-                int x = intent.getIntExtra("x", 0);
-                int y = intent.getIntExtra("y", 0);
-
-                animateIcon(x, y, context, MyBroadcastReceiver.PROTECTION);
-            }
+            animateIcon(x, y, context, MyBroadcastReceiver.EXPLOSION);
         }
     }
 
@@ -264,23 +271,24 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         final FrameLayout fl = findViewById(R.id.zoomLayout);
         FrameLayout.LayoutParams p = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
                 FrameLayout.LayoutParams.WRAP_CONTENT, 10);
-        int left = (int)(gameView.calculateOffsetX() + x * gameView.calculateBoxSize() - 40);
-        int top = (int)(gameView.calculateOffsetY() + y * gameView.calculateBoxSize() - 40);
+        int left = (int)(gameView.calculateOffsetX() + x * gameView.calculateBoxSize());
+        int top = (int)(gameView.calculateOffsetY() + y * gameView.calculateBoxSize());
         p.setMargins(left, top, 0, 0);
 
         final ImageView iconImgView = new ImageView(context);
-        switch (typeOfAnimation) {
-
-            case MyBroadcastReceiver.EXPLOSION:
-                iconImgView.setImageResource(R.drawable.explosion);
-                break;
-            case MyBroadcastReceiver.PROTECTION:
-                iconImgView.setImageResource(R.drawable.shield);
-                break;
-            default:
-                iconImgView.setImageResource(R.drawable.explosion);
-                break;
-        }
+//        switch (typeOfAnimation) {
+//
+//            case MyBroadcastReceiver.EXPLOSION:
+//                iconImgView.setImageResource(R.drawable.explosion);
+//                break;
+//            case MyBroadcastReceiver.PROTECTION:
+//                iconImgView.setImageResource(R.drawable.shield);
+//                break;
+//            default:
+//                iconImgView.setImageResource(R.drawable.explosion);
+//                break;
+//        }
+        iconImgView.setImageResource(R.drawable.explosion);
         iconImgView.setLayoutParams(p);
 
         final float[] scale = {0.2f};
