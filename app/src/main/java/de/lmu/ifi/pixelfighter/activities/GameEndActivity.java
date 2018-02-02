@@ -42,7 +42,6 @@ public class GameEndActivity extends AppCompatActivity {
     int green;
     int yellow;
     int index;
-
     int color;
 
     Boolean won = false;
@@ -55,11 +54,8 @@ public class GameEndActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_end);
-
-        Log.d(TAG, "Oncreate called");
-
+        
         userData = Pixelfighter.getInstance().getUserData();
-        Log.d("UserData: Name ", userData.getUsername());
 
         Database.Game(Pixelfighter.getInstance().getUserData().getGameKey()).Board().addSingleListener(new GenericReference.ValueListener<Board>() {
             @Override
@@ -201,7 +197,6 @@ public class GameEndActivity extends AppCompatActivity {
         if(team.equals(playerTeam)) {
             won = true;
         }
-
     }
 
     private void saveStats(ArrayList<ArrayList<Pixel>> pixels) {
@@ -225,5 +220,11 @@ public class GameEndActivity extends AppCompatActivity {
         Log.d(TAG + "score: ", scoreStr);
         Database.UserData(userData.getUid()).setValue(userData);
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, MenuActivity.class);
+        startActivity(intent);
     }
 }

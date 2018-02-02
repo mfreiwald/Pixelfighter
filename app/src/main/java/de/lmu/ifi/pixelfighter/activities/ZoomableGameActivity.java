@@ -151,7 +151,7 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
         Log.d("GameOver: ", "OnGameOver called");
         Toast.makeText(this, "Game is over", Toast.LENGTH_LONG).show();
         Intent intent = new Intent(ZoomableGameActivity.this, GameEndActivity.class);
-        intent.putExtra("board", gameSettings.getBoard().getPixels());
+        //intent.putExtra("board", gameSettings.getBoard().getPixels());
         String key = gameSettings.getGameKey();
         intent.putExtra("gamekey",key);
         String team = gameSettings.getTeam().toString();
