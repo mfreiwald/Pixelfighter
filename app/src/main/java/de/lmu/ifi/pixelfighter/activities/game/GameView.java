@@ -176,7 +176,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
                     if (oldPixel.getPixelMod() == PixelModification.Bomb && oldPixel.getTeam() != Team.None && pixel.getPixelMod() == PixelModification.None) {
                         Log.d("Bomb", "bomb exploeded at " + pixel.toString());
                         //Toast.makeText(getContext(), "Bomb exploded", Toast.LENGTH_SHORT).show();
-                        sendBroadcastToUI(x, y);
+                        sendBroadcastToUI(left, top);
                     }
                 }
 
@@ -348,7 +348,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
 //        LocalBroadcastManager.getInstance(getContext()).registerReceiver(br, filter);
     }
 
-    private void sendBroadcastToUI(int x, int y) {
+    private void sendBroadcastToUI(float x, float y) {
         Intent intent = new Intent();
         intent.putExtra("x", x);
         intent.putExtra("y", y);

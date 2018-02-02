@@ -260,20 +260,20 @@ public class ZoomableGameActivity extends AppCompatActivity implements OnGameUpd
 
             Log.d(TAG, "received bomb broadcast");
             Log.d(TAG, "action: " + intent.getAction());
-            int x = intent.getIntExtra("x", 0);
-            int y = intent.getIntExtra("y", 0);
+            float x = intent.getFloatExtra("x", 0);
+            float y = intent.getFloatExtra("y", 0);
 
             animateIcon(x, y, context, MyBroadcastReceiver.EXPLOSION);
         }
     }
 
-    private void animateIcon(int x, int y, Context context, int typeOfAnimation) {
+    private void animateIcon(float x, float y, Context context, int typeOfAnimation) {
         final FrameLayout fl = findViewById(R.id.zoomLayout);
         FrameLayout.LayoutParams p = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
                 FrameLayout.LayoutParams.WRAP_CONTENT, 10);
-        int left = (int)(gameView.calculateOffsetX() + x * gameView.calculateBoxSize());
-        int top = (int)(gameView.calculateOffsetY() + y * gameView.calculateBoxSize());
-        p.setMargins(left, top, 0, 0);
+        //int left = (int)(gameView.calculateOffsetX() + x * gameView.calculateBoxSize());
+        //int top = (int)(gameView.calculateOffsetY() + y * gameView.calculateBoxSize());
+        p.setMargins((int)((x-64)/gameView.getScale()), (int)((y-64)/gameView.getScale()), 0, 0);
 
         final ImageView iconImgView = new ImageView(context);
 //        switch (typeOfAnimation) {

@@ -164,4 +164,8 @@ public class ZoomableSurfaceView extends SurfaceView {
                     .start();
         }
     }
+
+    public float getScale() {
+        return scale;
+    }
 }
