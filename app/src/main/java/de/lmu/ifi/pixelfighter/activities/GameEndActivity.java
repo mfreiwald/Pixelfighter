@@ -113,17 +113,11 @@ public class GameEndActivity extends AppCompatActivity {
 
     public void init() {
         Intent intent = getIntent();
-        String key = intent.getStringExtra("gamekey");
         playerTeam = intent.getStringExtra("team");
-        //getPixellist(key);
         getStats(pixelDoublelist);
         getHighest();
         setWinner(index);
         saveStats(pixelDoublelist);
-    }
-
-    public void getPixellist(String key){
-        pixelDoublelist = this.board.getPixels();
     }
 
     public void getStats(ArrayList<ArrayList<Pixel>> pixels) {
@@ -131,7 +125,6 @@ public class GameEndActivity extends AppCompatActivity {
         try {
             for (int i=0; i<width-1; i++) {
                 for (int j= 0; j<height-1; j++) {
-                    Log.d(TAG, pixels.get(i).get(j).getTeam().toString());
                     switch (pixels.get(i).get(j).getTeam()) {
                         case None:
                             break;
@@ -218,7 +211,6 @@ public class GameEndActivity extends AppCompatActivity {
                 Log.d(TAG + " i", Integer.toString(i));
                 Log.d(TAG + " j", Integer.toString(j));
                 if(pixels.get(i).get(j).getPlayerKey().equals(userData.getUid())) {
-                    Log.d(TAG + "Teampixel", "true");
                     score = score +2;
                 }
             }
@@ -228,10 +220,6 @@ public class GameEndActivity extends AppCompatActivity {
         if (won) {
             userData.setWon(userData.getWon()+1);
         }
-        String gamesStr = Integer.toString(userData.getGames());
-        String scoreStr = Integer.toString(userData.getScore());
-        Log.d(TAG + "games: ", gamesStr);
-        Log.d(TAG + "score: ", scoreStr);
         Database.UserData(userData.getUid()).setValue(userData);
 
     }
