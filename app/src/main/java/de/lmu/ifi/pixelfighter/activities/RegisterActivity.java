@@ -44,7 +44,7 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if(keyCode == KeyEvent.KEYCODE_ENTER) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
                     register();
                     return true;
                 }
@@ -56,10 +56,10 @@ public class RegisterActivity extends AppCompatActivity {
 
     @OnClick(R.id.registerButton)
     public void register() {
-        if(registerCalled) return;
+        if (registerCalled) return;
         registerCalled = true;
 
-        if(userNameEditText.getText().toString().isEmpty()) {
+        if (userNameEditText.getText().toString().isEmpty()) {
             textView.setTextColor(Color.RED);
             return;
         }
@@ -75,7 +75,7 @@ public class RegisterActivity extends AppCompatActivity {
                         .setDisplayName(username).build();
                 user.updateProfile(profileUpdates);
 
-                UserData userData = new UserData(user.getUid(), username,0,0,0);
+                UserData userData = new UserData(user.getUid(), username, 0, 0, 0);
                 Database.UserData(user.getUid()).setValue(userData, new GenericReference.CompletionListener() {
                     @Override
                     public void onComplete() {

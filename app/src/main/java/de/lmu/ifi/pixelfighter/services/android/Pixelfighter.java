@@ -1,10 +1,7 @@
 package de.lmu.ifi.pixelfighter.services.android;
 
-import android.graphics.Color;
-
 import de.lmu.ifi.pixelfighter.DefaultApp;
 import de.lmu.ifi.pixelfighter.R;
-import de.lmu.ifi.pixelfighter.models.Game;
 import de.lmu.ifi.pixelfighter.models.Team;
 import de.lmu.ifi.pixelfighter.models.UserData;
 
@@ -15,17 +12,15 @@ import de.lmu.ifi.pixelfighter.models.UserData;
 public class Pixelfighter {
 
     private static Pixelfighter INSTANCE = new Pixelfighter();
-
-    public static Pixelfighter getInstance() {
-        return INSTANCE;
-    }
-
     private UserData userData;
-
     private boolean useDark = false;
 
     private Pixelfighter() {
 
+    }
+
+    public static Pixelfighter getInstance() {
+        return INSTANCE;
     }
 
     public boolean isUseDark() {
@@ -37,30 +32,40 @@ public class Pixelfighter {
     }
 
     public int getTeamColor(Team team) {
-        if(useDark) {
-            switch(team) {
-                case Red: return DefaultApp.getAppContext().getColor(R.color.btn_red_dark);
-                case Blue: return DefaultApp.getAppContext().getColor(R.color.btn_blue_dark);
-                case Yellow: return DefaultApp.getAppContext().getColor(R.color.btn_yellow_dark);
-                case Green: return DefaultApp.getAppContext().getColor(R.color.btn_green_dark);
-                default: return DefaultApp.getAppContext().getColor(R.color.btn_none_dark);
+        if (useDark) {
+            switch (team) {
+                case Red:
+                    return DefaultApp.getAppContext().getColor(R.color.btn_red_dark);
+                case Blue:
+                    return DefaultApp.getAppContext().getColor(R.color.btn_blue_dark);
+                case Yellow:
+                    return DefaultApp.getAppContext().getColor(R.color.btn_yellow_dark);
+                case Green:
+                    return DefaultApp.getAppContext().getColor(R.color.btn_green_dark);
+                default:
+                    return DefaultApp.getAppContext().getColor(R.color.btn_none_dark);
             }
         } else {
-            switch(team) {
-                case Red: return DefaultApp.getAppContext().getColor(R.color.btn_red);
-                case Blue: return DefaultApp.getAppContext().getColor(R.color.btn_blue);
-                case Yellow: return DefaultApp.getAppContext().getColor(R.color.btn_yellow);
-                case Green: return DefaultApp.getAppContext().getColor(R.color.btn_green);
-                default: return DefaultApp.getAppContext().getColor(R.color.btn_none);
+            switch (team) {
+                case Red:
+                    return DefaultApp.getAppContext().getColor(R.color.btn_red);
+                case Blue:
+                    return DefaultApp.getAppContext().getColor(R.color.btn_blue);
+                case Yellow:
+                    return DefaultApp.getAppContext().getColor(R.color.btn_yellow);
+                case Green:
+                    return DefaultApp.getAppContext().getColor(R.color.btn_green);
+                default:
+                    return DefaultApp.getAppContext().getColor(R.color.btn_none);
             }
         }
     }
 
-    public void setUserData(UserData userData) {
-        this.userData = userData;
-    }
-
     public UserData getUserData() {
         return userData;
+    }
+
+    public void setUserData(UserData userData) {
+        this.userData = userData;
     }
 }

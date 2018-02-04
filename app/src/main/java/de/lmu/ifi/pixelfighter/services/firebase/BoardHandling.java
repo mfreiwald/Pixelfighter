@@ -24,6 +24,10 @@ public class BoardHandling {
 
     private final GameSettings gameSettings;
     private GameActivity zoomActivity;
+    private volatile int enemiesToConvertCount = 0;
+    private volatile int enemiesConverted = 0;
+    private List<BombCount> bombsToExecute = new ArrayList<>();
+    private int asdf = 0;
 
     public BoardHandling(GameActivity zoomActivity, GameSettings gameSettings) {
         this.zoomActivity = zoomActivity;
@@ -102,21 +106,8 @@ public class BoardHandling {
         });
     }
 
-    private volatile int enemiesToConvertCount = 0;
-    private volatile int enemiesConverted = 0;
-    private List<BombCount> bombsToExecute = new ArrayList<>();
-
-    private static class BombCount {
-        int x;
-        int y;
-        Team team;
-        String uid;
-    }
-
-    private int asdf = 0;
-
     public void executeReplacing(final int x, final int y, final Team ownTeam, final String uid) {
-        if(asdf > 5) return;
+        if (asdf > 5) return;
         asdf++;
 
         Database.Game(gameSettings.getGameKey()).Pixel(x, y).runTransaction(new GenericReference.Handler<Pixel>() {
@@ -171,7 +162,6 @@ public class BoardHandling {
         }
     }
 
-
     public void executeBombFrom(final int x, final int y, Team team, String uid) {
         // Get all neighbors
         overridePixel(x, y, team, uid, PixelModification.None, null);
@@ -179,7 +169,6 @@ public class BoardHandling {
             overridePixel(pixel.getX(), pixel.getY(), team, uid, PixelModification.None, null);
         }
     }
-
 
     private List<Pixel> getNeighbours(int x, int y) {
         List<Pixel> result = new ArrayList<>();
@@ -219,7 +208,6 @@ public class BoardHandling {
         return result;
     }
 
-
     public void overridePixel(int x, int y, final Team team, final String uid, final PixelModification modification, final ServiceCallback<Pixel> callback) {
         Database.Game(this.gameSettings.getGameKey()).Pixel(x, y).runTransaction(new GenericReference.Handler<Pixel>() {
             @Override
@@ -247,6 +235,13 @@ public class BoardHandling {
         intent.putExtra("y", y);
         LocalBroadcastManager.getInstance(zoomActivity).sendBroadcast(intent);
         Log.d("BOARDHANDLING", "sent protection broadcast to GameView");
+    }
+
+    private static class BombCount {
+        int x;
+        int y;
+        Team team;
+        String uid;
     }
 
 

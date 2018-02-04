@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.ProgressBar;
 
 import butterknife.ButterKnife;
 import de.lmu.ifi.pixelfighter.R;
@@ -28,13 +27,24 @@ public class ChooseTeamActivity extends AppCompatActivity {
 
     public void selectedTeam(View view) {
         Team selectedTeam;
-        switch(view.getId()) {
-            case R.id.btnRandom: selectedTeam = RandomTeam.evaluateRandomTeam(); break;
-            case R.id.imgbtnred: selectedTeam = Team.Red; break;
-            case R.id.imgbtnblue: selectedTeam = Team.Blue; break;
-            case R.id.imgbtngreen: selectedTeam = Team.Green; break;
-            case R.id.imgbtnyellow: selectedTeam = Team.Yellow; break;
-            default: selectedTeam = RandomTeam.evaluateRandomTeam();
+        switch (view.getId()) {
+            case R.id.btnRandom:
+                selectedTeam = RandomTeam.evaluateRandomTeam();
+                break;
+            case R.id.imgbtnred:
+                selectedTeam = Team.Red;
+                break;
+            case R.id.imgbtnblue:
+                selectedTeam = Team.Blue;
+                break;
+            case R.id.imgbtngreen:
+                selectedTeam = Team.Green;
+                break;
+            case R.id.imgbtnyellow:
+                selectedTeam = Team.Yellow;
+                break;
+            default:
+                selectedTeam = RandomTeam.evaluateRandomTeam();
         }
 
 

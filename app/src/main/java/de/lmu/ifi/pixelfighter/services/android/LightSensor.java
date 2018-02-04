@@ -36,12 +36,12 @@ public class LightSensor implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         float light = event.values[0];
-        if(light < LUX_THRESHOLD) {
+        if (light < LUX_THRESHOLD) {
             Pixelfighter.getInstance().setUseDark(true);
-            if(listener != null) listener.onChanged(true);
+            if (listener != null) listener.onChanged(true);
         } else {
             Pixelfighter.getInstance().setUseDark(false);
-            if(listener != null) listener.onChanged(false);
+            if (listener != null) listener.onChanged(false);
         }
     }
 

@@ -6,14 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.util.Map;
-
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.lmu.ifi.pixelfighter.R;
 import de.lmu.ifi.pixelfighter.models.Game;
-import de.lmu.ifi.pixelfighter.models.GamePlayer;
-import de.lmu.ifi.pixelfighter.models.Team;
 import de.lmu.ifi.pixelfighter.models.UserData;
 import de.lmu.ifi.pixelfighter.models.callbacks.GameCallback;
 import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
@@ -46,10 +42,10 @@ public class MenuActivity extends AppCompatActivity {
 
 
         UserData userData = Pixelfighter.getInstance().getUserData();
-        if(userData == null) return;
+        if (userData == null) return;
         String gameKey = userData.getGameKey();
 
-        if(gameKey == null || gameKey.isEmpty()) {
+        if (gameKey == null || gameKey.isEmpty()) {
             // ToDo: choose team!
 
             Intent intent = new Intent(MenuActivity.this, ChooseTeamActivity.class);

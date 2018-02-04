@@ -114,7 +114,7 @@ public class Board extends BaseModel {
     private ArrayList<ArrayList<Pixel>> pixels;
 
     public Board() {
-        int world = RandomTeam.random(0, WORLD.length-1);
+        int world = RandomTeam.random(0, WORLD.length - 1);
         this.width = WORLD[world][0].length;
         this.height = WORLD[world].length;
         reset(width, height, world);
@@ -122,11 +122,11 @@ public class Board extends BaseModel {
 
     private void reset(int size_x, int size_y, int world) {
         pixels = new ArrayList<>();
-        for(int x=0; x<size_x; x++) {
+        for (int x = 0; x < size_x; x++) {
             ArrayList<Pixel> column = new ArrayList<>();
-            for(int y=0; y<size_y; y++) {
+            for (int y = 0; y < size_y; y++) {
                 int a = WORLD[world][y][x];
-                if(a == 0) {
+                if (a == 0) {
                     column.add(new Pixel(x, y, true));
                 } else {
                     column.add(new Pixel(x, y, false));

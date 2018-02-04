@@ -5,9 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
-
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -76,7 +74,7 @@ public class StatisticsActivity extends AppCompatActivity {
         Log.d("getStats", "UserData: " + userData.getGameKey());
 
         gamesCount = userData.getGames();
-        if (gamesCount!=0) {
+        if (gamesCount != 0) {
             String gamesText = "Games played: " + String.valueOf(gamesCount);
             gamesView.setText(gamesText);
         } else {

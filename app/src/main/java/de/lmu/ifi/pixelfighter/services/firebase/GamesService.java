@@ -30,14 +30,14 @@ public class GamesService extends BaseKeyService<Game> {
 
     private static GamesService INSTANCE;
 
+    private GamesService() {
+        super("games");
+    }
+
     public static GamesService getInstance() {
         if (INSTANCE == null)
             INSTANCE = new GamesService();
         return INSTANCE;
-    }
-
-    private GamesService() {
-        super("games");
     }
 
     @Override
@@ -159,7 +159,7 @@ public class GamesService extends BaseKeyService<Game> {
                     return Transaction.success(mutableData);
                 }
                 Map teams = game.getPlayers().get(team.name());
-                if(teams == null) {
+                if (teams == null) {
                     game.getPlayers().put(team.name(), new HashMap<String, GamePlayer>());
                 }
                 GamePlayer gamePlayer = new GamePlayer();

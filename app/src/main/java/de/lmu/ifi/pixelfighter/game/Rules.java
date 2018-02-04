@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.Pixel;
-import de.lmu.ifi.pixelfighter.models.PixelModification;
 import de.lmu.ifi.pixelfighter.models.Team;
 
 /**
@@ -15,12 +14,20 @@ import de.lmu.ifi.pixelfighter.models.Team;
 
 public class Rules {
 
-    private static boolean ALLOW_DIAGONAL = false;
-
-    private final static double PERCNTGE_OF_NECES_SURR_ENEMIES = 0.3;
-
     public final static double BOMB_PLCMNT_PROB = 0.02;
     public final static double PROT_PLCMNT_PROB = 0.01;
+    private final static double PERCNTGE_OF_NECES_SURR_ENEMIES = 0.3;
+    private static boolean ALLOW_DIAGONAL = false;
+    private final Board board;
+    private final Team team;
+    private final int x;
+    private final int y;
+    public Rules(Board board, Team team, int x, int y) {
+        this.board = board;
+        this.team = team;
+        this.x = x;
+        this.y = y;
+    }
 
     public static ArrayList<Pixel> checkForEnemiesToConvert(Board board, final Team team, final int x, final int y) {
         Rules rules = new Rules(board, team, x, y);
@@ -31,18 +38,6 @@ public class Rules {
         ArrayList<Pixel> updateList = rules.calculateOverwritings(adjacentEnemies, adjacentPixels.size());
 
         return updateList;
-    }
-
-    private final Board board;
-    private final Team team;
-    private final int x;
-    private final int y;
-
-    public Rules(Board board, Team team, int x, int y) {
-        this.board = board;
-        this.team = team;
-        this.x = x;
-        this.y = y;
     }
 
     private ArrayList<Pixel> extractSurroundingPixelsFor(final int x, final int y) {
@@ -109,8 +104,8 @@ public class Rules {
                         && checkIfAlliesStandTogether(adjacentAllies)
                         ) {
                     //if (enemy.getPixelMod() == PixelModification.None) {
-                        //enemy.setTeam(team);
-                        updateList.add(enemy);
+                    //enemy.setTeam(team);
+                    updateList.add(enemy);
                     //} else {
                     //    Log.d("RULES", "Found MOD on Pixel, running check");
                     //    updateList.addAll(calculateAffectedPixelsByMod(enemy));

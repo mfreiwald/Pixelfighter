@@ -5,7 +5,6 @@ import android.graphics.Color;
 import de.lmu.ifi.pixelfighter.DefaultApp;
 import de.lmu.ifi.pixelfighter.R;
 import de.lmu.ifi.pixelfighter.models.Team;
-import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 
 /**
  * Created by michael on 16.01.18.
@@ -22,6 +21,24 @@ public class PendingClick {
         this.color = getTeamPendingColor(team);
     }
 
+    static int getTeamPendingColor(Team team) {
+        if (team == null) {
+            return Color.BLACK;
+        }
+        switch (team) {
+            case Red:
+                return DefaultApp.getAppContext().getColor(R.color.btn_red_pending);
+            case Blue:
+                return DefaultApp.getAppContext().getColor(R.color.btn_blue_pending);
+            case Yellow:
+                return DefaultApp.getAppContext().getColor(R.color.btn_yellow_pending);
+            case Green:
+                return DefaultApp.getAppContext().getColor(R.color.btn_green_pending);
+            default:
+                return Color.GRAY;
+        }
+    }
+
     public int getX() {
         return x;
     }
@@ -32,18 +49,5 @@ public class PendingClick {
 
     public int getColor() {
         return color;
-    }
-
-    static int getTeamPendingColor(Team team) {
-        if(team == null) {
-            return Color.BLACK;
-        }
-        switch(team) {
-            case Red: return DefaultApp.getAppContext().getColor(R.color.btn_red_pending);
-            case Blue: return DefaultApp.getAppContext().getColor(R.color.btn_blue_pending);
-            case Yellow: return DefaultApp.getAppContext().getColor(R.color.btn_yellow_pending);
-            case Green: return DefaultApp.getAppContext().getColor(R.color.btn_green_pending);
-            default: return Color.GRAY;
-        }
     }
 }

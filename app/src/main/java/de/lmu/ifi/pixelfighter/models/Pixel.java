@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Created by michael on 23.11.17.
  */
 
-public class Pixel implements Serializable{
+public class Pixel implements Serializable {
 
     private boolean invalid = false;
     private Team team;

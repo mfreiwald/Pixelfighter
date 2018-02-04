@@ -8,6 +8,8 @@ import de.lmu.ifi.pixelfighter.models.GamePlayer;
 
 public interface OnGameUpdateCallback {
     void onGameReady(GameSettings gameSettings);
+
     void onGameOver();
+
     void onGamePlayerChanged(GamePlayer gamePlayer);
 }

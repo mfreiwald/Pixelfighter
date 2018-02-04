@@ -6,5 +6,6 @@ package de.lmu.ifi.pixelfighter.services.firebase.callbacks;
 
 public interface ServiceCallback<Model> {
     void success(Model model);
+
     void failure(String message);
 }

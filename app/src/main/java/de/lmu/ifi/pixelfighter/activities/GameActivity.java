@@ -12,9 +12,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.LinearLayout;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -97,7 +97,7 @@ public class GameActivity extends AppCompatActivity implements OnGameUpdateCallb
         this.lightSensor = new LightSensor(new LightSensor.LightListener() {
             @Override
             public void onChanged(boolean useDark) {
-                if(useDark) {
+                if (useDark) {
                     buttonsLayout.setBackgroundColor(getColor(R.color.game_background_dark));
                     bombImage.setColorFilter(getColor(R.color.game_background));
                     protectionImage.setColorFilter(getColor(R.color.game_background));
@@ -170,7 +170,7 @@ public class GameActivity extends AppCompatActivity implements OnGameUpdateCallb
 
         // Check what to do
         BoardHandling handling = new BoardHandling(this, gameSettings);
-        handling.placePixel(x ,y, currentModification, new ServiceCallback<Pixel>() {
+        handling.placePixel(x, y, currentModification, new ServiceCallback<Pixel>() {
             @Override
             public void success(Pixel pixel) {
                 gameView.removePendingClick(click);
@@ -198,7 +198,7 @@ public class GameActivity extends AppCompatActivity implements OnGameUpdateCallb
 
     @OnCheckedChanged(R.id.bombToggle)
     public void onCheckedChangedBomb(CompoundButton buttonView, final boolean isChecked) {
-        if(isChecked) {
+        if (isChecked) {
             currentModification = PixelModification.Bomb;
         } else {
             currentModification = PixelModification.None;
@@ -207,7 +207,7 @@ public class GameActivity extends AppCompatActivity implements OnGameUpdateCallb
 
     @OnCheckedChanged(R.id.protectionToggle)
     public void onCheckedChangedProtection(CompoundButton buttonView, final boolean isChecked) {
-        if(isChecked) {
+        if (isChecked) {
             currentModification = PixelModification.Protection;
         } else {
             currentModification = PixelModification.None;
@@ -216,54 +216,21 @@ public class GameActivity extends AppCompatActivity implements OnGameUpdateCallb
 
 
     private void updateBombView(int amount) {
-        if(amount < 1) {
+        if (amount < 1) {
             bombToggle.setEnabled(false);
         } else {
             bombToggle.setEnabled(true);
         }
-        bombCounterView.setText(""+amount);
+        bombCounterView.setText("" + amount);
     }
 
     private void updateProtectionView(int amount) {
-        if(amount < 1) {
+        if (amount < 1) {
             protectionToggle.setEnabled(false);
         } else {
             protectionToggle.setEnabled(true);
         }
-        protectionCountView.setText(""+amount);
-    }
-
-    public class MyBroadcastReceiver extends BroadcastReceiver {
-
-        public final static int EXPLOSION = 1;
-        public final static int PROTECTION = 2;
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-//            if(Objects.equals(intent.getAction(), "de.lmu.ifi.pixelfighter.BOMB_WAS_EXECUTED")) {
-//                Log.d(TAG, "received bomb broadcast");
-//                Log.d(TAG, "action: " + intent.getAction());
-//                int x = intent.getIntExtra("x", 0);
-//                int y = intent.getIntExtra("y", 0);
-//
-//                animateIcon(x, y, context, MyBroadcastReceiver.EXPLOSION);
-//
-//            } else if(Objects.equals(intent.getAction(), "de.lmu.ifi.pixelfighter.PROTECTION_WAS_EXECUTED")) {
-//                Log.d(TAG, "received protection broadcast");
-//                Log.d(TAG, "action: " + intent.getAction());
-//                int x = intent.getIntExtra("x", 0);
-//                int y = intent.getIntExtra("y", 0);
-//
-//                animateIcon(x, y, context, MyBroadcastReceiver.PROTECTION);
-//            }
-
-            Log.d(TAG, "received bomb broadcast");
-            Log.d(TAG, "action: " + intent.getAction());
-            float x = intent.getFloatExtra("x", 0);
-            float y = intent.getFloatExtra("y", 0);
-
-            animateIcon(x, y, context, MyBroadcastReceiver.EXPLOSION);
-        }
+        protectionCountView.setText("" + amount);
     }
 
     private void animateIcon(float x, float y, Context context, int typeOfAnimation) {
@@ -272,7 +239,7 @@ public class GameActivity extends AppCompatActivity implements OnGameUpdateCallb
                 FrameLayout.LayoutParams.WRAP_CONTENT, 10);
         //int left = (int)(gameView.calculateOffsetX() + x * gameView.calculateBoxSize());
         //int top = (int)(gameView.calculateOffsetY() + y * gameView.calculateBoxSize());
-        p.setMargins((int)((x-64)/gameView.getScale()), (int)((y-64)/gameView.getScale()), 0, 0);
+        p.setMargins((int) ((x - 64) / gameView.getScale()), (int) ((y - 64) / gameView.getScale()), 0, 0);
 
         final ImageView iconImgView = new ImageView(context);
 //        switch (typeOfAnimation) {
@@ -308,8 +275,7 @@ public class GameActivity extends AppCompatActivity implements OnGameUpdateCallb
         }.start();
     }
 
-
-    private void setStatistics(Map<Team, Integer> statics ) {
+    private void setStatistics(Map<Team, Integer> statics) {
         int full = findViewById(android.R.id.content).getWidth();
 
         int red = statics.get(Team.Red);
@@ -319,25 +285,25 @@ public class GameActivity extends AppCompatActivity implements OnGameUpdateCallb
         int free = statics.get(Team.None);
         int pixels = red + blue + green + yellow + free;
 
-        if (red!=0) {
+        if (red != 0) {
             redPixel.setVisibility(View.VISIBLE);
-            red = (statics.get(Team.Red)*full/pixels) ;
+            red = (statics.get(Team.Red) * full / pixels);
         }
-        if(blue!=0){
+        if (blue != 0) {
             bluePixel.setVisibility(View.VISIBLE);
-            blue = (statics.get(Team.Blue)*full/pixels);
+            blue = (statics.get(Team.Blue) * full / pixels);
 
         }
-        if(green!=0 ) {
+        if (green != 0) {
             greenPixel.setVisibility(View.VISIBLE);
-            green = (statics.get(Team.Green)*full/pixels);
+            green = (statics.get(Team.Green) * full / pixels);
         }
-        if(yellow!=0) {
+        if (yellow != 0) {
             yellowPixel.setVisibility(View.VISIBLE);
-            yellow = (statics.get(Team.Yellow)*full/pixels);
+            yellow = (statics.get(Team.Yellow) * full / pixels);
         }
-        if(free!=0) {
-            free = (statics.get(Team.None)*full/pixels);
+        if (free != 0) {
+            free = (statics.get(Team.None) * full / pixels);
         }
 
         LinearLayout.LayoutParams lpNone = (LinearLayout.LayoutParams) freePixel.getLayoutParams();
@@ -357,6 +323,39 @@ public class GameActivity extends AppCompatActivity implements OnGameUpdateCallb
         bluePixel.setLayoutParams(lpBlue);
         greenPixel.setLayoutParams(lpGreen);
         yellowPixel.setLayoutParams(lpYellow);
+    }
+
+    public class MyBroadcastReceiver extends BroadcastReceiver {
+
+        public final static int EXPLOSION = 1;
+        public final static int PROTECTION = 2;
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+//            if(Objects.equals(intent.getAction(), "de.lmu.ifi.pixelfighter.BOMB_WAS_EXECUTED")) {
+//                Log.d(TAG, "received bomb broadcast");
+//                Log.d(TAG, "action: " + intent.getAction());
+//                int x = intent.getIntExtra("x", 0);
+//                int y = intent.getIntExtra("y", 0);
+//
+//                animateIcon(x, y, context, MyBroadcastReceiver.EXPLOSION);
+//
+//            } else if(Objects.equals(intent.getAction(), "de.lmu.ifi.pixelfighter.PROTECTION_WAS_EXECUTED")) {
+//                Log.d(TAG, "received protection broadcast");
+//                Log.d(TAG, "action: " + intent.getAction());
+//                int x = intent.getIntExtra("x", 0);
+//                int y = intent.getIntExtra("y", 0);
+//
+//                animateIcon(x, y, context, MyBroadcastReceiver.PROTECTION);
+//            }
+
+            Log.d(TAG, "received bomb broadcast");
+            Log.d(TAG, "action: " + intent.getAction());
+            float x = intent.getFloatExtra("x", 0);
+            float y = intent.getFloatExtra("y", 0);
+
+            animateIcon(x, y, context, MyBroadcastReceiver.EXPLOSION);
+        }
     }
 
 }

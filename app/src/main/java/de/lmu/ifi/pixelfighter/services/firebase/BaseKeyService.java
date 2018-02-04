@@ -32,7 +32,7 @@ public abstract class BaseKeyService<Model extends BaseKeyModel> extends BaseSer
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Model m = wrapModel(dataSnapshot);
-                if(m == null) callback.failure("Model is null. " + dataSnapshot);
+                if (m == null) callback.failure("Model is null. " + dataSnapshot);
                 else callback.success(m);
             }
 
@@ -48,7 +48,7 @@ public abstract class BaseKeyService<Model extends BaseKeyModel> extends BaseSer
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Model> result = new ArrayList<>();
-                for(DataSnapshot child : dataSnapshot.getChildren()) {
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
                     Model childObj = wrapModel(child);
                     result.add(childObj);
                 }
@@ -69,7 +69,7 @@ public abstract class BaseKeyService<Model extends BaseKeyModel> extends BaseSer
         objRef.setValue(model, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                if(databaseError == null) callback.success(model);
+                if (databaseError == null) callback.success(model);
                 else callback.failure(databaseError.getMessage());
             }
         });

@@ -18,30 +18,30 @@ import java.util.Map;
 
 public abstract class GenericReference<CLS> {
     public final DatabaseReference reference;
+    private Map<ValueListener, ValueEventListener> listeners = new HashMap<>();
 
     public GenericReference(DatabaseReference reference) {
         this.reference = reference;
     }
 
     public abstract CLS wrap(DataSnapshot dataSnapshot);
+
     public abstract CLS wrap(MutableData mutableData);
 
-    private Map<ValueListener, ValueEventListener> listeners = new HashMap<>();
-
     public void addListener(@NonNull final ValueListener<CLS> listener) {
-        if(listener == null) throw new IllegalArgumentException("ValueListener is null");
+        if (listener == null) throw new IllegalArgumentException("ValueListener is null");
         ValueEventListener valueEventListener = generateValueEventListener(listener);
         listeners.put(listener, valueEventListener);
         reference.addValueEventListener(valueEventListener);
     }
 
     public void removeListener(@NonNull final ValueListener<CLS> listener) {
-        if(listener == null) throw new IllegalArgumentException("ValueListener is null");
+        if (listener == null) throw new IllegalArgumentException("ValueListener is null");
         reference.removeEventListener(listeners.remove(listener));
     }
 
     public void addSingleListener(@NonNull final ValueListener<CLS> listener) {
-        if(listener == null) throw new IllegalArgumentException("ValueListener is null");
+        if (listener == null) throw new IllegalArgumentException("ValueListener is null");
         reference.addListenerForSingleValueEvent(generateValueEventListener(listener));
     }
 
@@ -71,7 +71,8 @@ public abstract class GenericReference<CLS> {
     }
 
     public void setValue(final CLS value, @NonNull final CompletionListener completionListener) {
-        if(completionListener == null) throw new IllegalArgumentException("CompletionListener is null");
+        if (completionListener == null)
+            throw new IllegalArgumentException("CompletionListener is null");
         reference.setValue(value, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
@@ -85,7 +86,7 @@ public abstract class GenericReference<CLS> {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
                 CLS result = handler.doTransaction(wrap(mutableData));
-                if(result == null) {
+                if (result == null) {
                     return Transaction.abort();
                 } else {
                     mutableData.setValue(result);
@@ -101,23 +102,6 @@ public abstract class GenericReference<CLS> {
     }
 
 
-    public interface CompletionListener {
-        void onComplete();
-    }
-
-    public interface ValueListener<CLS> {
-        void onData(CLS object);
-        void onError(Error error);
-    }
-
-    public interface Handler<CLS> {
-        CLS doTransaction(CLS mutable);
-        void onComplete(boolean changed, CLS object);
-    }
-
-
-
-
     public enum Error {
         Database,
         Exception,
@@ -129,7 +113,7 @@ public abstract class GenericReference<CLS> {
         @Override
         public String toString() {
             String result = this.name();
-            switch(this) {
+            switch (this) {
                 case Database:
                     return result += ": " + databaseError.toString();
                 case Exception:
@@ -137,5 +121,22 @@ public abstract class GenericReference<CLS> {
             }
             return result;
         }
+    }
+
+    public interface CompletionListener {
+        void onComplete();
+    }
+
+    public interface ValueListener<CLS> {
+        void onData(CLS object);
+
+        void onError(Error error);
+    }
+
+
+    public interface Handler<CLS> {
+        CLS doTransaction(CLS mutable);
+
+        void onComplete(boolean changed, CLS object);
     }
 }

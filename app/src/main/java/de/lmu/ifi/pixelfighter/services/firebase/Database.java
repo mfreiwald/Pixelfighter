@@ -40,6 +40,7 @@ public class Database {
 
         private final String key;
         private final DatabaseReference shortReference;
+
         private GameResult(String key) {
             this.key = key;
             shortReference = FirebaseDatabase.getInstance().getReference().child("games").child(key);
@@ -116,10 +117,6 @@ public class Database {
             };
         }
     }
-
-
-
-
 
 
 }

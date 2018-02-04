@@ -2,7 +2,6 @@ package de.lmu.ifi.pixelfighter.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -16,7 +15,6 @@ import java.util.ArrayList;
 import de.lmu.ifi.pixelfighter.R;
 import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.Pixel;
-import de.lmu.ifi.pixelfighter.models.Team;
 import de.lmu.ifi.pixelfighter.models.UserData;
 import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 import de.lmu.ifi.pixelfighter.services.firebase.Database;
@@ -79,7 +77,7 @@ public class GameEndActivity extends AppCompatActivity {
 
                 teamWon.setText(winner);
                 linTeamWon.setBackgroundColor(color);
-                if(won) {
+                if (won) {
                     //ownTeamWon.setVisibility(View.VISIBLE);
                 }
                 String redStr = " Team Red filled " + String.valueOf(red) + " pixel(s). ";
@@ -123,8 +121,8 @@ public class GameEndActivity extends AppCompatActivity {
     public void getStats(ArrayList<ArrayList<Pixel>> pixels) {
         Log.d(TAG, "getStats");
         try {
-            for (int i=0; i<width-1; i++) {
-                for (int j= 0; j<height-1; j++) {
+            for (int i = 0; i < width - 1; i++) {
+                for (int j = 0; j < height - 1; j++) {
                     switch (pixels.get(i).get(j).getTeam()) {
                         case None:
                             break;
@@ -153,15 +151,15 @@ public class GameEndActivity extends AppCompatActivity {
 
     private void getHighest() {
         Log.d(TAG, "getHighest");
-        int []stats = {0,red, blue, green, yellow};
+        int[] stats = {0, red, blue, green, yellow};
         Log.d(TAG + " Stats", Integer.toString(red) + Integer.toString(blue)
-                + Integer.toString(green)+ Integer.toString(yellow));
+                + Integer.toString(green) + Integer.toString(yellow));
         //gibt den Index des Teams zurück, welches die meisten Pixel gefüllt hat, NICHT die Anzahl der meisten Pixel
         int highest = 0;
 
-        for(int i=0;i<stats.length;i++){
-            if(stats[i]>highest){
-                highest=stats[i];
+        for (int i = 0; i < stats.length; i++) {
+            if (stats[i] > highest) {
+                highest = stats[i];
                 index = i;
                 Log.d(TAG + "Index", Integer.toString(index));
 
@@ -169,7 +167,7 @@ public class GameEndActivity extends AppCompatActivity {
         }
     }
 
-    private void setWinner(int winIndex){
+    private void setWinner(int winIndex) {
         Log.d(TAG, "setWinner");
         String team = "None";
         winner = "The winner is...";
@@ -198,27 +196,27 @@ public class GameEndActivity extends AppCompatActivity {
                 color = ContextCompat.getColor(this, R.color.btn_yellow);
                 break;
         }
-        if(team.equals(playerTeam)) {
+        if (team.equals(playerTeam)) {
             won = true;
         }
     }
 
     private void saveStats(ArrayList<ArrayList<Pixel>> pixels) {
         Log.d(TAG, "saveStatsCalled");
-        int score =0;
-        for (int i=0; i<width-1; i++) {
-            for (int j= 0; j<height-1; j++) {
+        int score = 0;
+        for (int i = 0; i < width - 1; i++) {
+            for (int j = 0; j < height - 1; j++) {
                 Log.d(TAG + " i", Integer.toString(i));
                 Log.d(TAG + " j", Integer.toString(j));
-                if(pixels.get(i).get(j).getPlayerKey().equals(userData.getUid())) {
-                    score = score +2;
+                if (pixels.get(i).get(j).getPlayerKey().equals(userData.getUid())) {
+                    score = score + 2;
                 }
             }
         }
         userData.setScore(userData.getScore() + score);
         userData.setGames(userData.getGames() + 1);
         if (won) {
-            userData.setWon(userData.getWon()+1);
+            userData.setWon(userData.getWon() + 1);
         }
         Database.UserData(userData.getUid()).setValue(userData);
 

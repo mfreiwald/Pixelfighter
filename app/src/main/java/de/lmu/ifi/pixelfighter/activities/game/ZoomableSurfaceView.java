@@ -17,6 +17,7 @@ import android.widget.FrameLayout;
 
 public class ZoomableSurfaceView extends SurfaceView {
 
+    int left, top, right, bottom;
     private ScaleGestureDetector SGD;
     private Context context;
     private boolean isSingleTouch;
@@ -24,7 +25,6 @@ public class ZoomableSurfaceView extends SurfaceView {
     private float scale = 1f;
     private float minScale = 1f;
     private float maxScale = 5f;
-    int left, top, right, bottom;
 
     public ZoomableSurfaceView(Context context) {
         super(context);
@@ -71,6 +71,45 @@ public class ZoomableSurfaceView extends SurfaceView {
 
     public void setMaxScale(float maxScale) {
         this.maxScale = maxScale;
+    }
+
+    private void checkDimension(View vi) {
+
+        if (vi.getX() > left) {
+            vi.animate()
+                    .x(left)
+                    .y(vi.getY())
+                    .setDuration(0)
+                    .start();
+        }
+
+        if ((vi.getWidth() + vi.getX()) < right) {
+            vi.animate()
+                    .x(right - vi.getWidth())
+                    .y(vi.getY())
+                    .setDuration(0)
+                    .start();
+        }
+
+        if (vi.getY() > top) {
+            vi.animate()
+                    .x(vi.getX())
+                    .y(top)
+                    .setDuration(0)
+                    .start();
+        }
+
+        if ((vi.getHeight() + vi.getY()) < bottom) {
+            vi.animate()
+                    .x(vi.getX())
+                    .y(bottom - vi.getHeight())
+                    .setDuration(0)
+                    .start();
+        }
+    }
+
+    public float getScale() {
+        return scale;
     }
 
     private class MyTouchListeners implements View.OnTouchListener {
@@ -129,44 +168,5 @@ public class ZoomableSurfaceView extends SurfaceView {
             checkDimension(ZoomableSurfaceView.this);
             return true;
         }
-    }
-
-    private void checkDimension(View vi) {
-
-        if (vi.getX() > left) {
-            vi.animate()
-                    .x(left)
-                    .y(vi.getY())
-                    .setDuration(0)
-                    .start();
-        }
-
-        if ((vi.getWidth() + vi.getX()) < right) {
-            vi.animate()
-                    .x(right - vi.getWidth())
-                    .y(vi.getY())
-                    .setDuration(0)
-                    .start();
-        }
-
-        if (vi.getY() > top) {
-            vi.animate()
-                    .x(vi.getX())
-                    .y(top)
-                    .setDuration(0)
-                    .start();
-        }
-
-        if ((vi.getHeight() + vi.getY()) < bottom) {
-            vi.animate()
-                    .x(vi.getX())
-                    .y(bottom - vi.getHeight())
-                    .setDuration(0)
-                    .start();
-        }
-    }
-
-    public float getScale() {
-        return scale;
     }
 }

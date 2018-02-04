@@ -21,13 +21,14 @@ public abstract class BaseService<Model extends BaseModel> {
     }
 
     protected abstract Model wrap(DataSnapshot dataSnapshot);
+
     protected Model wrapKey(DataSnapshot dataSnapshot, Model model) {
         return model;
     }
 
     protected Model wrapModel(DataSnapshot dataSnapshot) {
         Model noKey = wrap(dataSnapshot);
-        if(noKey == null) return null;
+        if (noKey == null) return null;
         return wrapKey(dataSnapshot, noKey);
     }
 

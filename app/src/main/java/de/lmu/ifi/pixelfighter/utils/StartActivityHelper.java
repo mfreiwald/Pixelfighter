@@ -3,9 +3,9 @@ package de.lmu.ifi.pixelfighter.utils;
 import android.app.Activity;
 import android.content.Intent;
 
+import de.lmu.ifi.pixelfighter.activities.GameActivity;
 import de.lmu.ifi.pixelfighter.activities.MenuActivity;
 import de.lmu.ifi.pixelfighter.activities.RegisterActivity;
-import de.lmu.ifi.pixelfighter.activities.GameActivity;
 import de.lmu.ifi.pixelfighter.models.UserData;
 import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 import de.lmu.ifi.pixelfighter.services.firebase.Database;

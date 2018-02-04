@@ -37,36 +37,29 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
     private static final int OFFSET = 10;
 
     private static final int MIN_PIXELS_ON_SCALE = 7;
-
+    public final int TARGET_FPS = 40;
+    public long ACTUAL_FPS = 0;
     /**
      * Call if there is a call on the Game Field
      */
     private OnClickListener onClickListener;
-
     /**
      * Show light clicks on the game view
      */
     private CopyOnWriteArrayList<PendingClick> pendingClicks = new CopyOnWriteArrayList<>();
-
     /**
      * get current state of the board etc.
      */
     private GameSettings gameSettings;
-
     /**
      * Store the old pixels of animating the bomb
      */
     private ArrayList<ArrayList<Pixel>> oldPixels;
-
-
     private SurfaceHolder surfaceHolder;
     private boolean running;
     private Thread gameThread;
     private long startTime;
     private long endTime;
-    public final int TARGET_FPS = 40;
-    public long ACTUAL_FPS = 0;
-
     private int CLICK_ACTION_THRESHOLD = 200;
     private float startX;
     private float startY;

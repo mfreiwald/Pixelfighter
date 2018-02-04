@@ -23,15 +23,49 @@ public class GameUpdate {
 
     private final GenericReference<Game> gameReference;
     private final GenericReference<Boolean> activeGameReference;
-    private GenericReference<GamePlayer> gamePlayerReference;
     private final List<GenericReference<Pixel>> pixelReferences;
-
     private final OnGameUpdateCallback gameUpdates;
-
+    private GenericReference<GamePlayer> gamePlayerReference;
     /**
      * Ist erst nach @onGameReady nicht mehr null
      */
     private GameSettings gameSettings;
+    private GenericReference.ValueListener<Boolean> activeListener = new GenericReference.ValueListener<Boolean>() {
+        @Override
+        public void onData(Boolean object) {
+            if (!object) {
+                gameUpdates.onGameOver();
+            }
+        }
+
+        @Override
+        public void onError(GenericReference.Error error) {
+
+        }
+    };
+    private GenericReference.ValueListener<GamePlayer> gamePlayerListener = new GenericReference.ValueListener<GamePlayer>() {
+        @Override
+        public void onData(GamePlayer object) {
+            gameSettings.setGamePlayer(object);
+            gameUpdates.onGamePlayerChanged(object);
+        }
+
+        @Override
+        public void onError(GenericReference.Error error) {
+
+        }
+    };
+    private GenericReference.ValueListener<Pixel> pixelListener = new GenericReference.ValueListener<Pixel>() {
+        @Override
+        public void onData(Pixel object) {
+            gameSettings.getBoard().getPixels().get(object.getX()).set(object.getY(), object);
+        }
+
+        @Override
+        public void onError(GenericReference.Error error) {
+
+        }
+    };
 
     public GameUpdate(String gameKey, String uid, final OnGameUpdateCallback gameUpdates) {
         this.gameKey = gameKey;
@@ -65,7 +99,7 @@ public class GameUpdate {
                         pixelReferences.add(Database.Game(gameKey).Pixel(x, y));
 
                         Team pixelTeam = object.getBoard().getPixels().get(x).get(y).getTeam();
-                        statics.put(pixelTeam, statics.get(pixelTeam)+1);
+                        statics.put(pixelTeam, statics.get(pixelTeam) + 1);
                     }
                 }
                 gameSettings.setStatics(statics);
@@ -85,68 +119,29 @@ public class GameUpdate {
     }
 
     public void addListeners() {
-        if(this.gameSettings == null) return;
+        if (this.gameSettings == null) return;
 
         activeGameReference.addListener(activeListener);
         gamePlayerReference.addListener(gamePlayerListener);
-        for(GenericReference<Pixel> pixelReference : pixelReferences) {
+        for (GenericReference<Pixel> pixelReference : pixelReferences) {
             pixelReference.addListener(pixelListener);
         }
     }
 
     public void removeListeners() {
-        if(this.gameSettings == null) return;
+        if (this.gameSettings == null) return;
 
         activeGameReference.removeListener(activeListener);
         gamePlayerReference.removeListener(gamePlayerListener);
-        for(GenericReference<Pixel> pixelReference : pixelReferences) {
+        for (GenericReference<Pixel> pixelReference : pixelReferences) {
             pixelReference.removeListener(pixelListener);
         }
     }
-    
-    private GenericReference.ValueListener<Boolean> activeListener = new GenericReference.ValueListener<Boolean>() {
-        @Override
-        public void onData(Boolean object) {
-            if(!object) {
-                gameUpdates.onGameOver();
-            }
-        }
-
-        @Override
-        public void onError(GenericReference.Error error) {
-
-        }
-    };
-
-    private GenericReference.ValueListener<GamePlayer> gamePlayerListener = new GenericReference.ValueListener<GamePlayer>() {
-        @Override
-        public void onData(GamePlayer object) {
-            gameSettings.setGamePlayer(object);
-            gameUpdates.onGamePlayerChanged(object);
-        }
-
-        @Override
-        public void onError(GenericReference.Error error) {
-
-        }
-    };
-
-    private GenericReference.ValueListener<Pixel> pixelListener = new GenericReference.ValueListener<Pixel>() {
-        @Override
-        public void onData(Pixel object) {
-            gameSettings.getBoard().getPixels().get(object.getX()).set(object.getY(), object);
-        }
-
-        @Override
-        public void onError(GenericReference.Error error) {
-
-        }
-    };
 
     private Team searchTeam(Game object, String uid) {
         // search for my team
-        for(Map.Entry<String, Map<String, GamePlayer>> playersInTeam : object.getPlayers().entrySet()) {
-            if(playersInTeam.getValue().containsKey(uid)) {
+        for (Map.Entry<String, Map<String, GamePlayer>> playersInTeam : object.getPlayers().entrySet()) {
+            if (playersInTeam.getValue().containsKey(uid)) {
                 return Team.valueOf(playersInTeam.getKey());
             }
         }
@@ -154,8 +149,8 @@ public class GameUpdate {
     }
 
     private GamePlayer searchGamePlayer(Game object, String uid) {
-        for(Map.Entry<String, Map<String, GamePlayer>> playersInTeam : object.getPlayers().entrySet()) {
-            if(playersInTeam.getValue().containsKey(uid)) {
+        for (Map.Entry<String, Map<String, GamePlayer>> playersInTeam : object.getPlayers().entrySet()) {
+            if (playersInTeam.getValue().containsKey(uid)) {
                 return playersInTeam.getValue().get(uid);
             }
         }

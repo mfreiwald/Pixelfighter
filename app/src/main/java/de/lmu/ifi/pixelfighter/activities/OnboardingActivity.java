@@ -1,7 +1,6 @@
 package de.lmu.ifi.pixelfighter.activities;
 
 import android.animation.ArgbEvaluator;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -25,6 +24,17 @@ import de.lmu.ifi.pixelfighter.R;
 
 public class OnboardingActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
 
+    @BindView(R.id.onbrd_btn_skip)
+    Button skip_button;
+    @BindView(R.id.onbrd_btn_finish)
+    Button finish_button;
+    @BindView(R.id.onbrd_btn_next)
+    ImageButton next_button;
+    @BindView(R.id.onbrd_btn_prev)
+    ImageButton prev_button;
+    @BindViews({R.id.intro_indicator_0, R.id.intro_indicator_1, R.id.intro_indicator_2, R.id.intro_indicator_3})
+    ImageView[] indicators;
+    int[] colorList;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -34,31 +44,11 @@ public class OnboardingActivity extends AppCompatActivity implements ViewPager.O
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
     private String TAG = "OnboardingActivity";
-
-
-    @BindView(R.id.onbrd_btn_skip)
-    Button skip_button;
-    @BindView(R.id.onbrd_btn_finish)
-    Button finish_button;
-    @BindView(R.id.onbrd_btn_next)
-    ImageButton next_button;
-    @BindView(R.id.onbrd_btn_prev)
-    ImageButton prev_button;
-
-    @BindViews({R.id.intro_indicator_0, R.id.intro_indicator_1, R.id.intro_indicator_2, R.id.intro_indicator_3})
-    ImageView[] indicators;
-
-
     //page variables
     private int page = 0;
-
     //Color variables
     private ArgbEvaluator evaluator = new ArgbEvaluator();
-
-    int[] colorList;
-
     /**
      * The {@link ViewPager} that will host the section contents.
      */

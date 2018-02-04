@@ -3,8 +3,6 @@ package de.lmu.ifi.pixelfighter;
 import android.app.Application;
 import android.content.Context;
 
-import com.google.firebase.database.FirebaseDatabase;
-
 import net.danlew.android.joda.JodaTimeAndroid;
 
 /**
@@ -14,6 +12,7 @@ import net.danlew.android.joda.JodaTimeAndroid;
 public class DefaultApp extends Application {
 
     private static Context appContext;
+
     public static Context getAppContext() {
         return appContext;
     }
