@@ -1,9 +1,7 @@
 package de.lmu.ifi.pixelfighter.activities.game;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -14,8 +12,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
-import android.widget.Toast;
-import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +20,6 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.lmu.ifi.pixelfighter.R;
-import de.lmu.ifi.pixelfighter.activities.ZoomableGameActivity;
 import de.lmu.ifi.pixelfighter.models.Pixel;
 import de.lmu.ifi.pixelfighter.models.PixelModification;
 import de.lmu.ifi.pixelfighter.models.Team;
@@ -36,24 +31,47 @@ import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 
 public class GameView extends ZoomableSurfaceView implements Runnable {
 
+    /**
+     * Margin Offset of the GameView
+     */
     private static final int OFFSET = 10;
 
+    private static final int MIN_PIXELS_ON_SCALE = 7;
+
+    /**
+     * Call if there is a call on the Game Field
+     */
     private OnClickListener onClickListener;
+
+    /**
+     * Show light clicks on the game view
+     */
+    private CopyOnWriteArrayList<PendingClick> pendingClicks = new CopyOnWriteArrayList<>();
+
+    /**
+     * get current state of the board etc.
+     */
+    private GameSettings gameSettings;
+
+    /**
+     * Store the old pixels of animating the bomb
+     */
+    private ArrayList<ArrayList<Pixel>> oldPixels;
+
 
     private SurfaceHolder surfaceHolder;
     private boolean running;
     private Thread gameThread;
-
     private long startTime;
     private long endTime;
     public final int TARGET_FPS = 40;
     public long ACTUAL_FPS = 0;
 
-    private CopyOnWriteArrayList<PendingClick> pendingClicks = new CopyOnWriteArrayList<>();
-    private GameSettings gameSettings;
+    private int CLICK_ACTION_THRESHOLD = 200;
+    private float startX;
+    private float startY;
 
-    ArrayList<ArrayList<Pixel>> oldPixels;
-    ArrayList<int[]> triggeredProtections = new ArrayList<>();
+    private PendingClick downEventClick;
 
     public GameView(Context context) {
         super(context);
@@ -76,6 +94,21 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
 
     public void setOnClickListener(OnClickListener onClickListener) {
         this.onClickListener = onClickListener;
+    }
+
+    public void pause() {
+        running = false;
+        try {
+            // Stop the thread (rejoin the main thread)
+            gameThread.join();
+        } catch (InterruptedException e) {
+        }
+    }
+
+    public void resume() {
+        running = true;
+        gameThread = new Thread(this);
+        gameThread.start();
     }
 
     @Override
@@ -135,7 +168,7 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
         // Scale=5 => 4 Pixel
         // => Pixels / Scale = #Pixel
         // Scale = #PixelsWidth/maxPixel
-        float scale = gameSettings.getBoard().getWidth() / 7.0f;
+        float scale = gameSettings.getBoard().getWidth() / new Float(MIN_PIXELS_ON_SCALE);
         this.setMaxScale(scale);
 
         float offsetX = calculateOffsetX();
@@ -175,19 +208,11 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
                 if (oldPixel != null) {
                     if (oldPixel.getPixelMod() == PixelModification.Bomb && oldPixel.getTeam() != Team.None && pixel.getPixelMod() == PixelModification.None) {
                         Log.d("Bomb", "bomb exploeded at " + pixel.toString());
-                        //Toast.makeText(getContext(), "Bomb exploded", Toast.LENGTH_SHORT).show();
                         sendBroadcastToUI(left, top);
                     }
                 }
 
-//                for (int[] coords : triggeredProtections) {
-//                    sendBroadcastToUI(coords[0], coords[1], ZoomableGameActivity.MyBroadcastReceiver.PROTECTION);
-//                }
-//                triggeredProtections.clear();
-
-
                 oldPixels.get(x).set(y, pixel);
-
 
                 Team team = pixel.getTeam();
                 statistics.put(team, statistics.get(team) + 1);
@@ -258,27 +283,6 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
         return (this.getHeight() - this.gameSettings.getBoard().getHeight() * calculateBoxSize() - OFFSET * 2) / 2.0f;
     }
 
-    public void pause() {
-        running = false;
-        try {
-            // Stop the thread (rejoin the main thread)
-            gameThread.join();
-        } catch (InterruptedException e) {
-        }
-    }
-
-    public void resume() {
-        running = true;
-        gameThread = new Thread(this);
-        gameThread.start();
-    }
-
-    private int CLICK_ACTION_THRESHOLD = 200;
-    private float startX;
-    private float startY;
-
-    private PendingClick downEventClick;
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (gameSettings == null) return false;
@@ -342,10 +346,6 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
     public void setGameSettings(GameSettings gameSettings) {
         if (gameSettings == null) return;
         this.gameSettings = gameSettings;
-
-//        BroadcastReceiver br = new MyBroadcastReceiver();
-//        IntentFilter filter = new IntentFilter("de.lmu.ifi.pixelfighter.PROTECTION_TRIGGERED");
-//        LocalBroadcastManager.getInstance(getContext()).registerReceiver(br, filter);
     }
 
     private void sendBroadcastToUI(float x, float y) {
@@ -353,28 +353,10 @@ public class GameView extends ZoomableSurfaceView implements Runnable {
         intent.putExtra("x", x);
         intent.putExtra("y", y);
 
-//        switch (typeOfAction) {
-//            case ZoomableGameActivity.MyBroadcastReceiver.EXPLOSION:
-//                intent.setAction("de.lmu.ifi.pixelfighter.BOMB_WAS_EXECUTED");
-//            case ZoomableGameActivity.MyBroadcastReceiver.PROTECTION:
-//                intent.setAction("de.lmu.ifi.pixelfighter.PROTECTION_WAS_EXECUTED");
-//        }
-
         intent.setAction("de.lmu.ifi.pixelfighter.BOMB_WAS_EXECUTED");
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
         Log.d("GAMEVIEW", "sent broadcast to UI");
     }
-
-//    private class MyBroadcastReceiver extends BroadcastReceiver {
-//
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            int x = intent.getIntExtra("x", 0);
-//            int y = intent.getIntExtra("y", 0);
-//
-//            triggeredProtections.add(new int[]{x, y});
-//        }
-//    }
 
     public interface OnClickListener {
         void onClick(int x, int y);

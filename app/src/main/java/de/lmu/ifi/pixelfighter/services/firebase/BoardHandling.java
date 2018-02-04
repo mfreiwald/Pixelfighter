@@ -7,7 +7,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.lmu.ifi.pixelfighter.activities.ZoomableGameActivity;
+import de.lmu.ifi.pixelfighter.activities.GameActivity;
 import de.lmu.ifi.pixelfighter.activities.game.GameSettings;
 import de.lmu.ifi.pixelfighter.game.Rules;
 import de.lmu.ifi.pixelfighter.models.GamePlayer;
@@ -23,9 +23,9 @@ import de.lmu.ifi.pixelfighter.services.firebase.callbacks.ServiceCallback;
 public class BoardHandling {
 
     private final GameSettings gameSettings;
-    private ZoomableGameActivity zoomActivity;
+    private GameActivity zoomActivity;
 
-    public BoardHandling(ZoomableGameActivity zoomActivity, GameSettings gameSettings) {
+    public BoardHandling(GameActivity zoomActivity, GameSettings gameSettings) {
         this.zoomActivity = zoomActivity;
         this.gameSettings = gameSettings;
     }

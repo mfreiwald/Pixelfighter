@@ -8,7 +8,6 @@ import de.lmu.ifi.pixelfighter.models.Board;
 import de.lmu.ifi.pixelfighter.models.Pixel;
 import de.lmu.ifi.pixelfighter.models.PixelModification;
 import de.lmu.ifi.pixelfighter.models.Team;
-import de.lmu.ifi.pixelfighter.services.firebase.GameService;
 
 /**
  * Created by michael on 11.12.17.
@@ -23,23 +22,6 @@ public class Rules {
     public final static double BOMB_PLCMNT_PROB = 0.02;
     public final static double PROT_PLCMNT_PROB = 0.01;
 
-    public static boolean validate(final Board board, final Team team, final int x, final int y) {
-
-        Log.d("Rules", "Validate " + team + " at (" + x + "," + y + ")");
-        Rules rules = new Rules(board, team, x, y);
-
-        Log.d("Rules", "isFree = " + rules.isFree());
-        if (!rules.isFree())
-            return false;
-
-        Log.d("Rules", "isAtOwnTeam = " + rules.isAtOwnTeam());
-        if (!rules.isAtOwnTeam())
-            return false;
-
-
-        return true;
-    }
-
     public static ArrayList<Pixel> checkForEnemiesToConvert(Board board, final Team team, final int x, final int y) {
         Rules rules = new Rules(board, team, x, y);
 
@@ -50,21 +32,6 @@ public class Rules {
 
         return updateList;
     }
-
-    //Bombe darf nur auf eigener Farbe platziert werden
-    public static boolean validateForPixelModification(final Team team, Pixel currentPixel) {
-        return currentPixel.getTeam().equals(team);
-    }
-
-    public static void checkForLootModification(GameService gameService, Board board, Pixel currentPixel) {
-        if (board.getPixels().get(currentPixel.getX()).get(currentPixel.getY()).getPixelMod().equals(PixelModification.Bomb)) {
-            Log.d("RULES", "empty Pixel had bomb");
-            //gameService.foundBomb();
-        } else {
-            Log.d("RULES", "empty Pixel had no Mod");
-        }
-    }
-
 
     private final Board board;
     private final Team team;
@@ -165,26 +132,6 @@ public class Rules {
         }
 
         return true;
-    }
-
-    private ArrayList<Pixel> calculateAffectedPixelsByMod(Pixel pixel) {
-        ArrayList<Pixel> affectedPixels = new ArrayList<>();
-
-        if (pixel.getPixelMod() == PixelModification.Bomb) {
-            Team newTeam = pixel.getTeam();
-            affectedPixels.addAll(extractSurroundingPixelsFor(pixel.getX(), pixel.getY()));
-            pixel.setPixelMod(PixelModification.None); //Reset mod
-
-            for (Pixel p : affectedPixels) {
-                p.setTeam(newTeam);
-            }
-
-            affectedPixels.add(pixel); //Add central pixel too
-
-            Log.d("RULES", affectedPixels.size() + " Pixels affected by Mod: Bomb. Coloring into Team: " + newTeam);
-        }
-
-        return affectedPixels;
     }
 
     public boolean isFree() {

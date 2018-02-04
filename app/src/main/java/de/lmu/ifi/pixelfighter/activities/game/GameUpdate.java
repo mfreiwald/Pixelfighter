@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.lmu.ifi.pixelfighter.activities.ZoomableGameActivity;
 import de.lmu.ifi.pixelfighter.models.Game;
 import de.lmu.ifi.pixelfighter.models.GamePlayer;
 import de.lmu.ifi.pixelfighter.models.Pixel;
@@ -80,8 +79,6 @@ public class GameUpdate {
         });
     }
 
-
-
     private void onGameReady(GameSettings gameSettings) {
         this.gameSettings = gameSettings;
         this.gameUpdates.onGameReady(gameSettings);
@@ -106,8 +103,7 @@ public class GameUpdate {
             pixelReference.removeListener(pixelListener);
         }
     }
-
-
+    
     private GenericReference.ValueListener<Boolean> activeListener = new GenericReference.ValueListener<Boolean>() {
         @Override
         public void onData(Boolean object) {
@@ -147,11 +143,6 @@ public class GameUpdate {
         }
     };
 
-
-
-
-
-
     private Team searchTeam(Game object, String uid) {
         // search for my team
         for(Map.Entry<String, Map<String, GamePlayer>> playersInTeam : object.getPlayers().entrySet()) {
@@ -170,6 +161,5 @@ public class GameUpdate {
         }
         return null;
     }
-
 
 }

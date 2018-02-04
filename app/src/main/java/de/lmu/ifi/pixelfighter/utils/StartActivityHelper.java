@@ -5,7 +5,7 @@ import android.content.Intent;
 
 import de.lmu.ifi.pixelfighter.activities.MenuActivity;
 import de.lmu.ifi.pixelfighter.activities.RegisterActivity;
-import de.lmu.ifi.pixelfighter.activities.ZoomableGameActivity;
+import de.lmu.ifi.pixelfighter.activities.GameActivity;
 import de.lmu.ifi.pixelfighter.models.UserData;
 import de.lmu.ifi.pixelfighter.services.android.Pixelfighter;
 import de.lmu.ifi.pixelfighter.services.firebase.Database;
@@ -44,7 +44,7 @@ public class StartActivityHelper {
         userData.setGameKey(gameKey);
         Database.UserData(userData.getUid()).setValue(userData);
 
-        Intent intent = new Intent(activity, ZoomableGameActivity.class);
+        Intent intent = new Intent(activity, GameActivity.class);
         intent.putExtra("gameKey", gameKey);
         activity.startActivity(intent);
     }

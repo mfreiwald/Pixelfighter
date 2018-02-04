@@ -7,7 +7,6 @@ import de.lmu.ifi.pixelfighter.services.firebase.Database;
  */
 
 public class UserData {
-    public static Class clazz = UserData.class;
 
     private String uid;
     private String username;

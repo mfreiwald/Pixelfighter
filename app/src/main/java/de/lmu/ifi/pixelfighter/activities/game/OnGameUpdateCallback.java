@@ -1,6 +1,5 @@
 package de.lmu.ifi.pixelfighter.activities.game;
 
-import de.lmu.ifi.pixelfighter.activities.ZoomableGameActivity;
 import de.lmu.ifi.pixelfighter.models.GamePlayer;
 
 /**
