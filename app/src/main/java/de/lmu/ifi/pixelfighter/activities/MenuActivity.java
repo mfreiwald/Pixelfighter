@@ -46,8 +46,6 @@ public class MenuActivity extends AppCompatActivity {
         String gameKey = userData.getGameKey();
 
         if (gameKey == null || gameKey.isEmpty()) {
-            // ToDo: choose team!
-
             Intent intent = new Intent(MenuActivity.this, ChooseTeamActivity.class);
             startActivity(intent);
 
